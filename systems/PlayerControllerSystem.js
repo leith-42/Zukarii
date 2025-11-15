@@ -61,6 +61,7 @@ export class PlayerControllerSystem {
                     const direction = this.getMouseDirection(position, mouseTarget);
                     //const target = this.getMouseTarget(mouseTarget); // we can do later. onlt needed to direct damage casts not projectiles
                     const target = null;
+                  
                     // Create or update SkillIntent
                     let skillIntent = player.getComponent('SkillIntent');
                     if (!skillIntent) {
@@ -149,7 +150,7 @@ export class PlayerControllerSystem {
         }
 
         // Mouse movement: set intent as the mouse target position
-        if (mouseTarget && mouseTarget.active && !hasKeyboardInput ) {
+        if (mouseTarget && !hasKeyboardInput ) {
             const targetX = mouseTarget.targetX;
             const targetY = mouseTarget.targetY;
             // Only set intent if not already at target

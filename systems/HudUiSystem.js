@@ -96,7 +96,58 @@ export class HudUiSystem extends System {
             this.lastMana = mana.mana;
             mana.updated = false;
         }
+
+        const actionTargetComp = this.entityManager.getEntity('player').getComponent('MouseActionTarget');
+        if (actionTargetComp && actionTargetComp.entityId!=null) {
+            this.updateHudTarget(actionTargetComp);
+        }
+        
     }
+
+    updateHudTarget(actionTargetComp) {
+        const hudTargetElement = document.getElementById('target-info');
+        if (!hudTargetElement) {
+            console.warn('HudUiSystem: HUD target element not found');
+            return;
+        }
+       
+        const targetEntity = this.entityManager.getEntity(actionTargetComp.entityId);
+        if (!targetEntity) {
+            console.warn(`HudUiSystem: Target entity ${actionTargetComp.entityId} not found`);
+            hudTargetElement.style.display = 'none';
+            return;
+        }
+
+        hudTargetElement.style.display = 'flex';
+        const targetNameElement = document.getElementById('target-name');
+        const targetIconElement = document.querySelector('#target-nameplate-icon img');
+
+        let targetName = 'Unknown';
+
+        let targetImage = 'img/avatars/player.png';
+        const VisualsComponent = targetEntity.getComponent('Visuals');
+        if (VisualsComponent && VisualsComponent.avatar) {
+            targetImage = VisualsComponent.avatar;
+        }
+
+        if (targetEntity.hasComponent('MonsterData')) {
+            const monsterData = targetEntity.getComponent('MonsterData');
+            targetName = monsterData.name || targetName;
+        }
+        else if (targetEntity.hasComponent('LootData')) {
+            const lootData = targetEntity.getComponent('LootData');
+            targetName = lootData.name || targetName;
+        }
+        else if (targetEntity.hasComponent('PlayerState')) {
+            const playerState = targetEntity.getComponent('PlayerState');
+            targetName = playerState.name || targetName;
+        }
+
+        if (targetNameElement) targetNameElement.textContent = targetName;
+        if (targetIconElement) targetIconElement.src = targetImage;
+
+        // Future implementation for updating HUD target info
+    } 
 
     setupHudLogTabs() {
         const logHudTabs = document.getElementById('hud-log-tabs');
@@ -230,8 +281,5 @@ export class HudUiSystem extends System {
         hudLogElement.innerHTML = hudLogMessages.map(line => `<p class="channel-${line.channel} ${line.classNames}">${line.message}</p>`).join('');
     }
 
-    updateHudTarget() {
-
-        // Future implementation for updating HUD target info
-    } 
+    
 }

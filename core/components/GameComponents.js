@@ -15,13 +15,20 @@ export class UIComponent {
 }
 
 export class MouseTargetComponent {
-    constructor(targetX, targetY, entityId = null, direction = { dx: 0, dy: 0 }) {
+    constructor(targetX, targetY) {
         this.type = 'MouseTarget';
         this.targetX = targetX;
         this.targetY = targetY;
-        this.entityId = entityId; // Optional: ID of the entity being targeted
-        this.direction = direction; // Normalized direction vector from the player to the cursor
-        this.active = true; // Indicates if the target is actively being used (default: true)
+    }
+}
+
+export class MouseActionTargetComponent {
+    constructor(targetX = 0, targetY = 0, entityId = null, direction = { dx: 0, dy: 0 }) {
+        this.type = 'MouseActionTarget';
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.entityId = entityId; // ID of the entity being hovered over (if any)
+        this.direction = direction; // Normalized direction vector from the player to the target
     }
 }
 

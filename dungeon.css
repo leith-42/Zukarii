@@ -325,7 +325,7 @@ hr {
     padding: .3125rem;
     pointer-events: none;
     margin: 0;
-    display: flex;
+    display: none;
     flex-direction: row;
     border: 2px solid #0f0;
     border-radius: 0.625rem;

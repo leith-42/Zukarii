@@ -47,11 +47,27 @@ export class SkillSystem extends System {
                 break;
 
             case 'BasicRanged':
-                if (!params.direction) {
-                    console.warn(`SkillSystem: BasicRanged skill requires a valid direction parameter. ${params.direction}`);
+                let attackDirection = params.direction;
+
+                if (!attackDirection || attackDirection === null) {
+                    const player = this.entityManager.getEntity('player');
+                    const actionTargetComp = player.getComponent('MouseActionTarget');
+                    const position = player.getComponent('Position');
+                    if (actionTargetComp) {
+                        const actionTarget = { x: actionTargetComp.targetX, y: actionTargetComp.targetY };
+                        attackDirection = actionTargetComp.direction;
+                        if (!attackDirection || attackDirection===null) {
+                            //attackDirection = this.utilities.calculateDirection(position, actionTarget);
+                        }
+                        //target = actionTargetComp.entityId;
+                    }
+
+                }
+                if (!attackDirection || attackDirection===null) {
+                    console.warn(`SkillSystem: BasicRanged skill requires a valid attackDirection parameter. ${attackDirection}`);
                     return;
                 }
-                this.eventBus.emit('RangedAttack', params.direction);
+                this.eventBus.emit('RangedAttack', attackDirection);
             break;
 
         }
