@@ -224,8 +224,6 @@ export class PlayerSystem extends System {
         stats.agility = stats._internal.base.agility + (stats._internal.incremented.agility || 0)
             + (stats._internal.gear.agility || 0) + (stats._internal.temp.agility || 0);
 
-       
-
         const combinedProwess = stats._internal.base.prowess + (stats._internal.incremented.prowess || 0);
         const combinedIntellect = stats._internal.base.intellect + (stats._internal.incremented.intellect || 0);
 

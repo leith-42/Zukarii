@@ -58,7 +58,7 @@ export class State {
             new GameOptionsComponent({
                 type: 'GameOptions',
                 soundEnabled: true,
-                globalVolume: .75,
+                globalVolume: 1,
             })
         );
         console.log('State.js: Created gameState entity with GameState component:', this.entityManager.getEntity('gameState'));

@@ -37,7 +37,7 @@
     </script>
 </head>
 <body>
-    <div id="" style="pointer-events:none;position:fixed;top:5px;left:20%;color:#11fb40cc;background:none;padding:2px 8px;z-index:200;font-family:monospace;font-size:.727rem;width:55%;text-align:left;">
+    <div id="perf" style="pointer-events:none;position:fixed;top:55px;left:auto;color:#11fb407e;background:none;padding:2px 8px;z-index:200;font-family:monospace;font-size:.727rem;width:100%;text-align:center;">
         <span class="zfont"> Zukarii </span>
         <span id="fps-counter">FPS: 0</span>
     </div>
@@ -61,8 +61,6 @@
     </div>
 
     <div id="hud-layer" style="visibility:hidden;">
-
-
 
         <div id="dialogue-window" style="display: none;">
             <div id="dialogue-text" class="sharp-text"></div>
@@ -125,6 +123,16 @@
 
             </div>
             <!-- after top left -->
+            <div id="hud-top-center">
+                <div id="target-info">
+                    <div id="target-nameplate-icon">
+                        <img src="img/nameplate_icon.png" />
+                    </div>
+                    <div id="target-nameplate-text">
+                        <h3 id="target-name">Target</h3>
+                    </div>
+                </div>
+            </div>
 
             <div id="hud-top-right">
                 <div id="minimap-wrapper" class="hidden">
@@ -400,8 +408,13 @@
                     </div>
 
                 <div id="log-content" class="ui-tab">
-                    <h2>Adventure Log</h2>
-                    <div id="log"></div>
+                    <div id="log-wrap">
+                        <h2>Adventure Log</h2>
+                        <div id="log-window-wrapper">
+                            <div id="log-tabs"></div>
+                            <div id="log"></div>
+                        </div>
+                    </div>
                 </div>
                 <div id="journey-content" class="ui-tab">
                     <div id="journey">

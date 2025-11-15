@@ -307,6 +307,71 @@ hr {
     gap: .625rem; /* ~10px */
 }
 
+
+#hud-top-center{
+    position: absolute;
+    top: .5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    z-index: 599;
+    gap: .625rem; /* ~5px */
+}
+#target-info {
+    width: 254px;
+    padding: .3125rem;
+    pointer-events: none;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    border: 2px solid #0f0;
+    border-radius: 0.625rem;
+    background-color: #222222cc;
+    overflow: hidden; /* Prevent child overflow */
+    box-shadow: 0 0 6px rgba(0, 255, 0, 0.8);
+    gap: .625rem; /* ~5px */
+}
+
+
+#target-nameplate-icon {
+    height: 1.5rem; /* ~48px */
+    width: 1.5rem; /* ~48px */
+    padding: 0.125rem; /* ~2px */
+    background-color: black;
+    border: 1px solid #0f0; /* ~1px */
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(0, 255, 0, 0.8);
+}
+
+    #target-nameplate-icon img {
+        height: 1.3125rem;
+        border-radius: 50%;
+        margin: 0;
+        padding: 0;
+    }
+#target-nameplate-text {
+    display: flex;
+    flex-direction: row;
+    width:100%;
+}
+
+    #target-name {
+        font-size: 1.25rem; /* ~24px */
+    }
+    #target-nameplace-text > * {
+        font-weight: bold;
+        text-align: center;
+        color: #ff000088;
+        z-index: 600;
+        padding: 0.1725rem;
+        margin: 0;
+        pointer-events: none;
+    }
+
+
 #hud-top-right {
     position: absolute;
     top: .5rem;
@@ -823,9 +888,34 @@ hud-log-content-wrapper {
 }
 
 #log-content {
-    height: 28rem; /* ~400px */
+    height: 28.625rem; /* ~400px */
     width: 100%;
     overflow-y: hidden;
+}
+
+#log-wrap {
+    display: flex;
+    flex-direction: column;
+    height: 28rem; /* ~400px */
+    width: 100%;
+    margin-top: 0.625rem; /* ~10px */
+}
+
+#log-window-wrapper {
+    padding: 0;
+    margin: 0;
+    border-radius:.625rem;
+    height: 25rem;
+    width: 100%;
+}
+#log-tabs {
+    height: 0rem;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: .3125rem; /* ~5px */
+    border-radius: inherit;
+    width: 100%;    
 }
 
 #log {
@@ -902,7 +992,7 @@ hud-log-content-wrapper {
 #character-stat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 24.8rem; 
+    height: 28rem; 
     width: 100%;
     gap: .125rem; /* Optional: controls spacing between items */
     font-size: 0.75rem; /* ~12px */
@@ -946,7 +1036,7 @@ hud-log-content-wrapper {
 
 #equipped-items {
     width: 100%;
-    height:24.8rem;
+    height:28rem;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -955,7 +1045,7 @@ hud-log-content-wrapper {
     background: rgba(20, 30, 20, 0.7);
     border: 0.125rem solid #0f0; /* ~1px */
     border-radius: .625rem;
-    margin-bottom: 0.625rem; /* ~10px */
+   
 }
 
     #equipped-items div.col {
@@ -1219,15 +1309,17 @@ li.new-save-game {
     display: flex;
     flex-direction: column;
     height: 28rem; /* ~400px */
-    width: 98%;
+    width: 100%;
     margin-top: 0.625rem; /* ~10px */
 }
 
-    #journey p {
-        display: flex;
-        margin-bottom: 0.3125rem; /* ~5px */
-        line-height: 1.2;
-    }
+
+
+#journey p {
+    display: flex;
+    margin-bottom: 0.3125rem; /* ~5px */
+    line-height: 1.2;
+}
 
 /* Journey Tab Styles */
 #journey-window-wrapper {
@@ -1367,7 +1459,7 @@ li.new-save-game {
     -webkit-align-content: flex-start;
     align-content: flex-start;
     gap: 0.625rem;
-    height: 23rem; /* Keep max height but let content dictate rows */
+    height: 24rem; /* Keep max height but let content dictate rows */
     padding: 0.625rem; /* Outer padding */
     border: 0.125rem solid #0f0;
     -moz-border-radius: 0px;
@@ -1760,7 +1852,7 @@ tooltip-description {
 #shop-left {
     display: flex;
     flex-direction: column;
-    height: 31.25rem;
+    height: 28rem;
     width: 30%;
     margin-top: 0.625rem;
 }
@@ -1796,7 +1888,7 @@ tooltip-description {
 #shop-inventory-wrapper {
     display: flex;
     flex-direction: column;
-    height: 31.75rem;
+    height: 28rem;
     width: 68%;
     margin-top: 0.625rem;
 }
@@ -1818,7 +1910,7 @@ tooltip-description {
     align-content: flex-start;
     gap: 0.625rem;
     width: 100%;
-    height: 25rem;
+    height: 24rem;
     padding: 0.625rem;
     border: 0.125rem solid #0f0;
     border-radius: 0px 0px .625rem .625rem;

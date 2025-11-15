@@ -15,10 +15,13 @@ export class UIComponent {
 }
 
 export class MouseTargetComponent {
-    constructor(targetX, targetY) {
+    constructor(targetX, targetY, entityId = null, direction = { dx: 0, dy: 0 }) {
         this.type = 'MouseTarget';
         this.targetX = targetX;
         this.targetY = targetY;
+        this.entityId = entityId; // Optional: ID of the entity being targeted
+        this.direction = direction; // Normalized direction vector from the player to the cursor
+        this.active = true; // Indicates if the target is actively being used (default: true)
     }
 }
 
@@ -82,7 +85,7 @@ export class GameStateComponent {
 export class GameOptionsComponent {
     constructor({
         soundEnabled = true,
-        globalVolume = .7, // Global audio volume
+        globalVolume = 1, // Global audio volume
     } = {}) {
         this.type = 'GameOptions';
         soundEnabled = soundEnabled; // Boolean: Whether sound is enabled

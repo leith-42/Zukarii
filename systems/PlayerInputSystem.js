@@ -104,6 +104,9 @@ export class PlayerInputSystem {
             if (mappedKey === ' ') {
                 this.handleNonMovementKeys(event, mappedKey, false);
             }
+            if (['1', '2', '3', '4', '5', '6'].includes(mappedKey)) {
+                this.handleNonMovementKeys(event, mappedKey, false);
+            }
         }
     }
 
@@ -159,12 +162,18 @@ export class PlayerInputSystem {
                 case '5':
                 case '6':
                     event.preventDefault();
-                    ////console.log('PlayerInputSystem: handleKeyDown - mappedKey:', mappedKey);
                     const player = this.entityManager.getEntity('player');
-                    if (!player.hasComponent('HotbarIntent')) {
-                        const hotBarComp = new HotBarIntentComponent(mappedKey)
-                        this.entityManager.addComponentToEntity('player', hotBarComp );
-                       // //console.log('PlayerInputSystem: Added HotBarIntentComponent to player with hotBarKey:',hotBarComp, mappedKey);
+                    let hotBarComp = player.getComponent('HotBarIntent');
+                    if (!hotBarComp) {
+                        hotBarComp = new HotBarIntentComponent();
+                        this.entityManager.addComponentToEntity('player', hotBarComp);
+                    }
+                    // Update or add the action for the pressed key
+                    const existingAction = hotBarComp.hotBarActions.find(a => a.slot === mappedKey);
+                    if (existingAction) {
+                        existingAction.isKeyDown = isKeyDown;
+                    } else {
+                        hotBarComp.hotBarActions.push({ slot: mappedKey, action: 'use', isKeyDown });
                     }
                     break;
         }

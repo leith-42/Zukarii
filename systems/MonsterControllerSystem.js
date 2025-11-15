@@ -15,7 +15,7 @@ export class MonsterControllerSystem extends System {
         this.invTileBucket = 1 / (this.TILE_SIZE * this.BUCKET_SIZE);
         this.AGGRO_RANGE = 4 * this.TILE_SIZE; // 4 tiles in pixels (32 pixels per tile)
         this.MELEE_RANGE = 1.5 * this.TILE_SIZE; // Pixel distance to trigger melee attack
-        this.MONSTER_WANDER_CHANCE = .001;
+        this.MONSTER_WANDER_CHANCE = .005;
 
         const tier = this.entityManager.getEntity('gameState').getComponent('GameState').tier;
         const levelEntity = this.entityManager.getEntitiesWith(['Map', 'Tier']).find(e => e.getComponent('Tier').value === tier);
@@ -128,7 +128,7 @@ export class MonsterControllerSystem extends System {
                 this.entityManager.addComponentToEntity(monster.id, new MovementIntentComponent(playerPos.x, playerPos.y));
 
             } else {
-            /*    
+                
                 if (!monster.hasComponent('MovementIntent') && !monsterData.isAggro && !monsterData.isBoss && monsterData.isElite) {
 
                     const { tileX, tileY } = this.utilities.getTileFromPixel(pos.x, pos.y);
@@ -197,7 +197,7 @@ export class MonsterControllerSystem extends System {
                     }
 
                 }
-            */
+
             }
            
         });

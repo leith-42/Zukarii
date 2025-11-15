@@ -52,6 +52,7 @@ import { NPCControllerSystem } from './systems/NPCControllerSystem.js';
 import { EntityGenerationSystem } from './systems/EntityGenerationSystem.js';
 import { TriggerAreaSystem } from './systems/TriggerAreaSystem.js'; 
 import { HotBarSystem } from './systems/HotBarSystem.js';
+import { SkillSystem } from './systems/SkillSystem.js';
 import { PortalSystem } from './systems/PortalSystem.js';
 
 
@@ -324,6 +325,7 @@ export class Game {
         activeGameSystems.entityRemoval = new EntityRemovalSystem(this.entityManager);
         activeGameSystems.npcController = new NPCControllerSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.hotBar = new HotBarSystem(this.entityManager, this.state.eventBus, this.utilities);
+        activeGameSystems.skill = new SkillSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.portal = new PortalSystem(this.entityManager, this.state.eventBus, this.utilities);
 
         Object.values(activeGameSystems).forEach(system => system.init());
@@ -382,6 +384,7 @@ export class Game {
             'hotBar',
             'playerController',
             'playerTimer',
+            'skill',
             'lighting',
             'player',
             'exploration',
@@ -477,7 +480,7 @@ export class Game {
         }
         document.getElementById('hud-layer').style.visibility = 'visible';
         gameState.needsRender = true;
-        const musicVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume  * .05;
+        const musicVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume  * .2;
         this.trackControlQueue.push({ track: 'backgroundMusic', play: true, volume: musicVolume });
 
         const player = this.entityManager.getEntity('player');
@@ -487,10 +490,10 @@ export class Game {
             const saveId = null;
             this.state.eventBus.emit('RequestSaveGame', { saveId });
             player.removeComponent('NewCharacter');
-            const introVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume * 0.25;
+            const introVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume * 0.45;
             setTimeout(() => { this.state.eventBus.emit('PlaySfxImmediate', { sfx: 'intro', volume: introVolume }); }, 2000);
         }
-        this.state.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.01 });
+        this.state.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.2 });
 
         if (!this.GameLoopRunning) {
             this.startGameLoop();

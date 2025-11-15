@@ -195,7 +195,7 @@ export class MenuUiSystem extends System {
                     this.updateMenu();
 
                     if (button.id === 'exit-button') {
-                        this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal0', volume: 0.01 });
+                        this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal0', volume: 0.2 });
                         setTimeout(() => {
                             location.reload(true);
                         }, 2000);
@@ -230,7 +230,7 @@ export class MenuUiSystem extends System {
                 if (loadButton && !loadButton.disabled) {
                     //console.log('MenuUiSystem: Load button clicked, emitting RequestLoadGame');
                     const saveId = loadButton.dataset.saveId;
-                    this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal0', volume: 0.01 });
+                    this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal0', volume: 0.2 });
                     this.eventBus.emit('ToggleOverlay', { tab: 'menu' });
                     this.splashMenu = document.getElementById('splash-menu');
                     this.splashMenu.style.transition = 'opacity 0.5s ease-in-out';
@@ -239,7 +239,7 @@ export class MenuUiSystem extends System {
                         this.eventBus.emit('RequestLoadGame', { saveId }, (result) => {
                             if (result.success) {
                                 //console.log('MenuUiSystem: Load successful, waiting for TransitionLoad');
-                                this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.01 });
+                                this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.2 });
                             }
                         });
                         this.eventBus.emit('ToggleOverlay', { tab: 'journey' });

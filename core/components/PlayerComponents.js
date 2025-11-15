@@ -170,9 +170,31 @@ export class ShopInteractionComponent {
 }
 
 export class HotBarIntentComponent {
-    constructor(hotBarKey = null) {
+    constructor(hotBarActions = []) {
         this.type = 'HotBarIntent';
-        this.hotBarKey = hotBarKey; // Array of hotbar intents, e.g., [{ slot: 1, action: 'use', target: 'itemId' }]
+        this.hotBarActions = hotBarActions; // Array of hotbar intents, e.g., [{ slot: 1, action: 'use', target: 'itemId' }]
+    }
+}
+
+export class HotBarSkillMapComponent {
+    constructor(skillMap = {}) {
+        this.type = 'HotBarSkillMap';
+        this.skillMap = skillMap; // e.g., { 1: 'fireball', 2: 'heal' }
+    }
+
+}
+
+export class HotBarActionIntentComponent {
+    constructor() {
+        this.type = 'HotBarActionIntent';
+        this.actionIntents = []; // Array of skill intents, e.g., [{ skillId, slot, params }]
+    }
+}
+
+export class SkillIntentComponent {
+    constructor() {
+        this.type = 'SkillIntent';
+        this.intents = []; // Array of skill intents, e.g., [{ skillId, slot, params }]
     }
 }
 

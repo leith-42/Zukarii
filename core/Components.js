@@ -30,6 +30,9 @@ import {
     PlayerAchievementsComponent,
     JourneyRewardComponent,
     HotBarIntentComponent,
+    HotBarSkillMapComponent,
+    HotBarActionIntentComponent,
+    SkillIntentComponent,
     PortalBindingComponent,
 } from './components/PlayerComponents.js';
 
@@ -117,6 +120,9 @@ export {
     PlayerAchievementsComponent,
     JourneyRewardComponent,
     HotBarIntentComponent,
+    HotBarSkillMapComponent,
+    HotBarActionIntentComponent,
+    SkillIntentComponent,
     PortalBindingComponent,
 
     // Game-related components

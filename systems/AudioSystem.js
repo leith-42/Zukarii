@@ -9,8 +9,8 @@ export class AudioSystem extends System {
         this.trackState = new Map();
         this.playingTracks = new Set();
         this.fadeTimeouts = new Map();
-        this.globalVolumeMultiplier = .7; // Global volume multiplier (0 = muted, 1 = full volume)
-        this.ltGlobalVolumeMultiplier = 0.7; // Last known global volume multiplier
+        this.globalVolumeMultiplier = 1; // Global volume multiplier (0 = muted, 1 = full volume)
+        this.ltGlobalVolumeMultiplier = 1; // Last known global volume multiplier
         this.preloadSounds();
     }
 
@@ -142,7 +142,7 @@ export class AudioSystem extends System {
         }
     }
 
-    playTrackControl({ track, play = true, volume = 0.05, fadeIn = 0.5, fadeOut = 0.5 }) {
+    playTrackControl({ track, play = true, volume = 0.2, fadeIn = 0.5, fadeOut = 0.5 }) {
         if (this.gameOptions.soundEnabled === false) return;
         if (this.fadeTimeouts.has(track)) {
             clearTimeout(this.fadeTimeouts.get(track));

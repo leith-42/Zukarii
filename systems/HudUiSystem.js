@@ -229,4 +229,9 @@ export class HudUiSystem extends System {
         //console.log('HudUiSystem: updateHudLog called', hudLogMessages);
         hudLogElement.innerHTML = hudLogMessages.map(line => `<p class="channel-${line.channel} ${line.classNames}">${line.message}</p>`).join('');
     }
+
+    updateHudTarget() {
+
+        // Future implementation for updating HUD target info
+    } 
 }

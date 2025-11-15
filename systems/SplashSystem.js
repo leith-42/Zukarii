@@ -74,8 +74,8 @@ export class SplashSystem extends System {
         // Wait for audio to load
         this.eventBus.on('AudioLoaded', () => {
             console.log('SplashSystem: Audio loaded, playing sounds');
-            this.eventBus.emit('PlayTrackControl', { track: 'backgroundMusic', play: true, volume: 0.025 });
-            this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.01 });
+            this.eventBus.emit('PlayTrackControl', { track: 'backgroundMusic', play: true, volume: 0.25 });
+            this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.2 });
         });
 
         // Start animation loop
@@ -248,7 +248,7 @@ export class SplashSystem extends System {
             this.entityManager.addComponentToEntity('player', new NewCharacterComponent({ name: playerName }));
             this.eventBus.emit('PlayerStateUpdated', { entityId: 'player' });
             setTimeout(() => { this.createNewGame(); this.eventBus.emit('ToggleOverlay', { tab: 'character' }); }, 2000);
-            this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal0', volume: 0.01 });
+            this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal0', volume: 0.2 });
             
             
         });

@@ -284,7 +284,7 @@ export class InventorySystem extends System {
         shopComponent.items.splice(itemIndex, 1);
 
         this.utilities.logMessage({ channel: "loot", message: `Bought ${item.name} for ${item.purchasePrice} gold` });
-        this.eventBus.emit('PlaySfxImmediate', { sfx: 'coin', volume: 0.25 });
+        this.sfxQueue.push({ sfx: 'loot0', volume: .33 });
         this.eventBus.emit('StatsUpdated', { entityId: 'player' });
         this.eventBus.emit('PlayerStateUpdated', { entityId: 'player' });
 

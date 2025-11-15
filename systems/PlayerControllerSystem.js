@@ -1,4 +1,5 @@
-﻿import { MovementIntentComponent, NeedsRenderComponent } from '../core/Components.js';
+﻿import { MovementIntentComponent, NeedsRenderComponent, HotBarSkillMapComponent, SkillIntentComponent } from '../core/Components.js';
+
 
 const BASE_MOVE_DISTANCE = 32; // Set to your tile size or desired step in pixels
 
@@ -14,6 +15,17 @@ export class PlayerControllerSystem {
         if (player) {
             this.position = player.getComponent('Position');
             this.VisualsComponent = player.getComponent('Visuals');
+            if (!player.hasComponent('HotBarSkillMap')) {
+                const defaultHotbarMapping = {
+                    1: 'BasicRanged',
+                    2: 'BasicMelee',
+                    3: 'HealPotion',
+                    4: null,
+                    5: null,
+                    6: null
+                };
+                this.entityManager.addComponentToEntity('player', new HotBarSkillMapComponent(defaultHotbarMapping));
+            }
         }
         this.eventBus.on('ToggleRangedMode', (data) => this.toggleRangedMode(data));
         this.sfxQueue = this.entityManager.getEntity('gameState').getComponent('AudioQueue').SFX || [];
@@ -35,6 +47,36 @@ export class PlayerControllerSystem {
         attackSpeed.elapsedSinceLastAttack += deltaTime * 1000;
 
         if (!gameState || gameState.gameOver || gameState.transitionLock) return;
+
+
+        // Process HotBarActionIntent if attack speed allows
+        const actionIntentComp = player.getComponent('HotBarActionIntent');
+        if (actionIntentComp) {
+            const actionIntents = actionIntentComp.actionIntents;
+            if (actionIntents && attackSpeed.elapsedSinceLastAttack >= attackSpeed.attackSpeed) {
+                for (const action of actionIntents) {
+                    const { skillId, slot } = action;
+
+                    // Use MouseTarget to calculate direction and determine target
+                    const direction = this.getMouseDirection(position, mouseTarget);
+                    //const target = this.getMouseTarget(mouseTarget); // we can do later. onlt needed to direct damage casts not projectiles
+                    const target = null;
+                    // Create or update SkillIntent
+                    let skillIntent = player.getComponent('SkillIntent');
+                    if (!skillIntent) {
+                        skillIntent = new SkillIntentComponent();
+                        player.addComponent(skillIntent);
+                    }
+                    skillIntent.intents.push({ skillId, slot, params: { direction, target } });
+                }
+
+                // Reset elapsed time for attack speed
+                attackSpeed.elapsedSinceLastAttack = 0;
+
+                // Remove the HotBarActionIntent after processing
+                player.removeComponent('HotBarActionIntent');
+            }
+        }
 
         // Ranged mode (keyboard input)
         if (gameState.isRangedMode) {
@@ -107,7 +149,7 @@ export class PlayerControllerSystem {
         }
 
         // Mouse movement: set intent as the mouse target position
-        if (mouseTarget && !hasKeyboardInput) {
+        if (mouseTarget && mouseTarget.active && !hasKeyboardInput ) {
             const targetX = mouseTarget.targetX;
             const targetY = mouseTarget.targetY;
             // Only set intent if not already at target
@@ -149,10 +191,15 @@ export class PlayerControllerSystem {
         const offWeapon = playerInventory.equipped.offhand;
         const mainWeapon = playerInventory.equipped.mainhand;
 
-        if (event.type === 'keyup' && event.key === ' ') {
+        if ((event.type === 'keyup' && event.key === ' ') ||
+            (event.type === 'mouseup' && (event.button === 3 || event.button === 4))
+        ) {
             //document.body.style.cursor = 'pointer'; // Change cursor to crosshair for ranged attack
             gameState.isRangedMode = false;
-        } else if (event.type === 'keydown' && event.key === ' ' && !event.repeat) {
+        } else if ((event.type === 'keydown' && event.key === ' ' && !event.repeat) ||
+            (event.type === 'mousedown' && (event.button === 3 || event.button === 4) && !event.repeat)
+
+        ) {
             if ((offWeapon?.attackType === 'ranged' && offWeapon?.baseRange > 0) ||
                 (mainWeapon?.attackType === 'ranged' && mainWeapon?.baseRange > 0)) {
                     //keeping this here as a reminder that this could be a place to hook into cast supression for projectiles
@@ -163,5 +210,13 @@ export class PlayerControllerSystem {
                 this.eventBus.emit('LogMessage', { message: 'You need a valid ranged weapon equipped to use ranged mode!' });
             }
         }
+    }
+
+    getMouseDirection(playerPosition, mouseTarget) {
+        if (!mouseTarget) return null;
+        const dx = mouseTarget.targetX - playerPosition.x;
+        const dy = mouseTarget.targetY - playerPosition.y;
+        const magnitude = Math.sqrt(dx * dx + dy * dy);
+        return magnitude > 0 ? { dx: dx / magnitude, dy: dy / magnitude } : { dx: 0, dy: 0 };
     }
 }
