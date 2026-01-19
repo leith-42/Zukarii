@@ -25,6 +25,11 @@ export class PlayerInputSystem {
         this.lastInputUpdate = 0;
         this.inputUpdateCooldown = 50; // Update every 50ms
 
+        this.repeatableKeys = {
+            '1': '100', '2': '100', '3': '100', '4': '100', '5': '100', '6': '100'
+        }
+        this.lastKeyTimes = {};
+
         this.keydownHandler = (e) => this.handleKeyDown(e);
         this.keyupHandler = (e) => this.handleKeyUp(e);
 
@@ -49,16 +54,11 @@ export class PlayerInputSystem {
             if (!document.activeElement.id === 'player-name-input' && mappedKey) {
                 event.preventDefault();  // Prevent default action for mapped keys
             } else {
-                //moving start game to only be called on laod game or new game from UI
-                //this.eventBus.emit('StartGame');
                 return;
             }
-           
-            
-           
         }
          
-        ////console.log('PlayerInputSystem: handleKeyDown - raw key:', event.key);ssssssss
+        ////console.log('PlayerInputSystem: handleKeyDown - raw key:', event.key);
         const mappedKey = this.keyMap[event.key];
         ////console.log('PlayerInputSystem: handleKeyDown - mappedKey:', mappedKey);
 
@@ -67,11 +67,12 @@ export class PlayerInputSystem {
         } else if (mappedKey) {
             event.preventDefault();  // Prevent default action for mapped keys
         } 
-
+        /* handled elsewhere
         if (event.repeat) {
             ////console.log('PlayerInputSystem: Ignoring repeated key press:', event.key);
             return;
         }
+        */
 
         ////console.log('PlayerInputSystem: handleKeyDown - raw key pressed:', event.key);
         if (mappedKey) {
@@ -82,8 +83,6 @@ export class PlayerInputSystem {
                 this.updateInputState();
                 this.lastInputUpdate = now;
             }
-
-
             this.handleNonMovementKeys(event, mappedKey, true);
         }
     }
@@ -122,60 +121,70 @@ export class PlayerInputSystem {
     handleNonMovementKeys(event, mappedKey, isKeyDown) {
         const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
 
-        if (!gameState || gameState.gameOver || event.repeat) return;
+        if (!gameState || gameState.gameOver) return;
 
-            switch (mappedKey) {
-                case 'c':
-                    this.eventBus.emit('ToggleOverlay', { tab: 'character' });
-                    break;
-                case 'l':
-                    this.eventBus.emit('ToggleOverlay', { tab: 'log' });
-                    break;
-                case 'j':
-                    this.eventBus.emit('ToggleOverlay', { tab: 'journey' });
-                    break;
-                case 'escape':
-                    this.eventBus.emit('ToggleOverlay', {});
-                    break;
-                case 't':
-                    this.eventBus.emit('LightTorch');
-                    gameState.needsRender = true;
-                    //this.eventBus.emit('RenderNeeded');
-                    break;
-                case 'h':
-                    this.eventBus.emit('DrinkHealPotion');
-                    break;
-                case ' ':
-                    event.preventDefault();
-                    this.eventBus.emit('ToggleRangedMode', { event });
-                    ////console.log('PlayerInputSystem: Emitting ToggleRangedMode - event:', event.type, 'key:', event.key);
-                    break;
-                case 'm':
-                    event.preventDefault();
-                    this.eventBus.emit('ToggleMinimap');
-                   // //console.log('PlayerInputSystem: Emitting ToggleMinimap');
-                    break;
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                    event.preventDefault();
-                    const player = this.entityManager.getEntity('player');
-                    let hotBarComp = player.getComponent('HotBarIntent');
-                    if (!hotBarComp) {
-                        hotBarComp = new HotBarIntentComponent();
-                        this.entityManager.addComponentToEntity('player', hotBarComp);
-                    }
-                    // Update or add the action for the pressed key
-                    const existingAction = hotBarComp.hotBarActions.find(a => a.slot === mappedKey);
-                    if (existingAction) {
-                        existingAction.isKeyDown = isKeyDown;
-                    } else {
-                        hotBarComp.hotBarActions.push({ slot: mappedKey, action: 'use', isKeyDown });
-                    }
-                    break;
+        if (this.repeatableKeys[mappedKey]) {
+            const now = Date.now();
+            const interval = parseInt(this.repeatableKeys[mappedKey], 10);
+            const lastTime = this.lastKeyTimes[mappedKey] || 0;
+
+            if (isKeyDown && now - lastTime < interval) return;
+            this.lastKeyTimes[mappedKey] = now;
+
+        } else if(isKeyDown && event.repeat) return;
+
+        switch (mappedKey) {
+            case 'c':
+                this.eventBus.emit('ToggleOverlay', { tab: 'character' });
+                break;
+            case 'l':
+                this.eventBus.emit('ToggleOverlay', { tab: 'log' });
+                break;
+            case 'j':
+                this.eventBus.emit('ToggleOverlay', { tab: 'journey' });
+                break;
+            case 'escape':
+                this.eventBus.emit('ToggleOverlay', {});
+                break;
+            case 't':
+                this.eventBus.emit('LightTorch');
+                gameState.needsRender = true;
+                //this.eventBus.emit('RenderNeeded');
+                break;
+            case 'h':
+                this.eventBus.emit('DrinkHealPotion');
+                break;
+            case ' ':
+                event.preventDefault();
+                this.eventBus.emit('ToggleRangedMode', { event });
+                ////console.log('PlayerInputSystem: Emitting ToggleRangedMode - event:', event.type, 'key:', event.key);
+                break;
+            case 'm':
+                event.preventDefault();
+                this.eventBus.emit('ToggleMinimap');
+                // //console.log('PlayerInputSystem: Emitting ToggleMinimap');
+                break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+                event.preventDefault();
+                const player = this.entityManager.getEntity('player');
+                let hotBarComp = player.getComponent('HotBarIntent');
+                if (!hotBarComp) {
+                    hotBarComp = new HotBarIntentComponent();
+                    this.entityManager.addComponentToEntity('player', hotBarComp);
+                }
+                // Update or add the action for the pressed key
+                const existingAction = hotBarComp.hotBarActions.find(a => a.slot === mappedKey);
+                if (existingAction) {
+                    existingAction.isKeyDown = isKeyDown;
+                } else {
+                    hotBarComp.hotBarActions.push({ slot: mappedKey, action: 'use', isKeyDown });
+                }
+            break;
         }
     }
 

@@ -98,6 +98,8 @@ export class MapRenderSystem extends System {
             inactiveFountain: 'img/avatars/fountain.png',
             player_idle: 'img/anim/Player/Idle.png',
             player_walk: 'img/anim/Player/Walk.png',
+            player_walk_down: 'img/anim/Player/Walk_Down.png',
+            player_walk_up: 'img/anim/Player/Walk_Up.png',
             player_attack: 'img/anim/Player/Attack_Fire_3.png',
             npc_zu_master: 'img/avatars/npcs/zu-master.png',
             npc_merchant: 'img/avatars/npcs/merchant.png',
@@ -446,10 +448,17 @@ export class MapRenderSystem extends System {
                     console.warn(`MapRenderSystem: No animation data for ${animation.currentAnimation} in ${entity.id}`);
                     continue;
                 }
+                let walkAnimCurrent = 'img/anim/Player/Walk.png';
+                if (visuals.direction.dx === 0 && visuals.direction.dy < 0) {
+                    walkAnimCurrent = 'img/anim/Player/Walk_Up.png';
+                } else if (visuals.direction.dx === 0 && visuals.direction.dy > 0) {
+                    walkAnimCurrent = 'img/anim/Player/Walk_Down.png';
+                }
+                console.log(visuals.direction, 'Selected walk animation:', walkAnimCurrent);
                 // Use attack animation if isAttacking
                 spritePath = animState.isAttacking ? 'img/anim/Player/Attack_Fire_3.png' :
                     animation.currentAnimation === 'idle' ? 'img/anim/Player/Idle.png' :
-                        'img/anim/Player/Walk.png';
+                        walkAnimCurrent;
                 sprite = this.sprites.get(spritePath);
                 if (!sprite || !sprite.complete) {
                     console.warn(`MapRenderSystem: Sprite ${spritePath} not loaded for ${entity.id}`);

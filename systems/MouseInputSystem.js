@@ -144,7 +144,16 @@ export class MouseInputSystem {
 
         // Update MouseActionTarget for hovering
         const targetEntity = this.getEntityAtPosition(worldX, worldY);
-        if (targetEntity && targetEntity != null && this.lastTargetEntityid != targetEntity.id) {
+
+        if (targetEntity && targetEntity.id === 'player') {
+            return;
+        }
+
+        if (targetEntity &&
+            targetEntity != null &&
+            this.lastTargetEntityid != targetEntity.id
+        ) {
+
             this.lastTargetEntityid = targetEntity.id;
             const playerPos = this.player.getComponent('Position');
             const dx = worldX - playerPos.x;
@@ -407,6 +416,26 @@ export class MouseInputSystem {
             const targetY = tileY * this.TILE_SIZE;
             this.setMovementTarget(targetX, targetY);
             return;
+        }
+
+        if (isClick) {
+            const clickedEntity = this.getEntityAtPosition(worldX, worldY);
+            if (clickedEntity && clickedEntity.id === 'player') {
+                const playerPos = player.getComponent('Position');
+                const dx = worldX - playerPos.x;
+                const dy = worldY - playerPos.y;
+                const magnitude = Math.sqrt(dx * dx + dy * dy);
+                const direction = magnitude > 0 ? { dx: dx / magnitude, dy: dy / magnitude } : { dx: 0, dy: 0 };
+
+                let mouseActionTarget = player.getComponent('MouseActionTarget') || new MouseActionTargetComponent();
+                mouseActionTarget.targetX = worldX;
+                mouseActionTarget.targetY = worldY;
+                mouseActionTarget.entityId = 'player';
+                mouseActionTarget.direction = direction;
+                this.entityManager.addComponentToEntity('player', mouseActionTarget);
+                console.log(`MouseInputSystem: MouseActionTarget set to player on click`);
+                return;
+            }
         }
         
         this.setMovementTarget(worldX, worldY);

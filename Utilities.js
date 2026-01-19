@@ -151,8 +151,15 @@ export class Utilities {
         const dx = pos2.x - pos1.x;
         const dy = pos2.y - pos1.y;
         return Math.sqrt(dx * dx + dy * dy);
+    } 
+    getDirectionVector(fromPos, toPos) {
+        const dx = toPos.x - fromPos.x;
+        const dy = toPos.y - fromPos.y;
+        const magnitude = Math.sqrt(dx * dx + dy * dy);
+        const direction = magnitude > 0 ? { dx: dx / magnitude, dy: dy / magnitude } : { dx: 0, dy: 0 };
+        console.log(`getDirectionVector: from (${fromPos.x}, ${fromPos.y}) to (${toPos.x}, ${toPos.y}) => direction (${direction.dx}, ${direction.dy})`);
+        return direction;
     }
-
     logMessage(logData) {
         if (!logData || typeof logData !== 'object' || !logData.message) {
             console.error("Invalid log data provided. Expected an object.");

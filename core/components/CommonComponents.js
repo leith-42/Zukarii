@@ -74,6 +74,7 @@ export class VisualsComponent {
         this.h = h;
         this.w = w;
         this.faceLeft = false; // Indicates if the entity is facing left
+        this.direction = { dx: 1, dy: 0 }; // Default facing right
         this.animations = []
     }
 }

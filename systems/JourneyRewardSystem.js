@@ -150,6 +150,11 @@ export class JourneyRewardSystem extends System {
             console.warn(`JourneyRewardSystem: Item with journeyItemId ${rewardId} not found in journeyItems`);
             return;
         }
+
+        // At some point we will want to be able to take params from the quest rewards to customize items.
+        // Example: StoneOfDescent is currently hardcoded to always go to tier 4, but we may want to make that dynamic later.
+
+
         item.itemId = this.utilities.generateUniqueId();
         this.eventBus.emit('AddItem', {
             entityId: 'player',

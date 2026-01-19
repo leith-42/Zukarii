@@ -139,6 +139,8 @@ export class Game {
         animation.spriteSheets = {
             idle: { src: 'img/anim/Player/Idle.png'},
             walk: { src: 'img/anim/Player/Walk.png' },  
+            walk_up: { src: 'img/anim/Player/Walk_Up.png' },
+            walk_down: { src: 'img/anim/Player/Walk_Down.png' },
             attack: { src: 'img/anim/Player/Attack_Fire_2.png' }
         };
 

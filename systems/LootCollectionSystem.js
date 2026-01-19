@@ -129,7 +129,7 @@ export class LootCollectionSystem extends System {
             //this.eventBus.emit('LogMessage', { message: `Found ${pickupMessage.join(', ')} from ${lootData.name}!` });
             this.utilities.logMessage({
                 channel: 'loot',
-                message: `Found ${pickupMessage.join(', ')} from ${lootData.name}!`
+                message: `Found ${pickupMessage.join(', ')} from the ${lootData.name}!`
             });
         }
 

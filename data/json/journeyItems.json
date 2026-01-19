@@ -15,6 +15,20 @@
   },
   {
     "itemId": null,
+    "journeyItemId": "stoneOfDescent",
+    "name": "Stone of Descent",
+    "type": "consumable",
+    "itemTier": "common",
+    "goldValue": 0,
+    "useItem": true,
+    "useEffect": "teleportToTier",
+    "params": { "tier": 4 },
+    "description": "A mystical stone that teleports you to a specific floor in the fortress.",
+    "icon": "stone_of_return.png",
+    "isSellable": false
+  },
+  {
+    "itemId": null,
     "journeyItemId": "stoneOfVeilPiercing",
     "name": "Stone of Veil Piercing",
     "type": "consumable",

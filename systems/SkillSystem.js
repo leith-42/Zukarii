@@ -1,10 +1,11 @@
 ﻿import { System } from '../core/Systems.js';
 
 export class SkillSystem extends System {
-    constructor(entityManager, eventBus) {
-        super(entityManager, eventBus);
+    constructor(entityManager, eventBus, utilities) {
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['SkillIntent'];
         this.cooldowns = {}; // Track cooldowns for skills
+        this.player = this.entityManager.getEntity('player')
     }
 
     update(deltaTime) {
@@ -48,21 +49,20 @@ export class SkillSystem extends System {
 
             case 'BasicRanged':
                 let attackDirection = params.direction;
+               
+                const actionTargetComp = this.player.getComponent('MouseActionTarget');
+               
+                if (actionTargetComp && actionTargetComp.entityId !== 'player') {
+                    const playerPos = this.player.getComponent('Position');
+                    const targetPos = this.entityManager.getEntity(actionTargetComp.entityId)?.getComponent('Position');
 
-                if (!attackDirection || attackDirection === null) {
-                    const player = this.entityManager.getEntity('player');
-                    const actionTargetComp = player.getComponent('MouseActionTarget');
-                    const position = player.getComponent('Position');
-                    if (actionTargetComp) {
-                        const actionTarget = { x: actionTargetComp.targetX, y: actionTargetComp.targetY };
-                        attackDirection = actionTargetComp.direction;
-                        if (!attackDirection || attackDirection===null) {
-                            //attackDirection = this.utilities.calculateDirection(position, actionTarget);
-                        }
-                        //target = actionTargetComp.entityId;
+                    attackDirection = this.utilities.getDirectionVector(playerPos, targetPos)
+                    console.log('SkillSystem: BasicRanged attackDirection from MouseActionTarget:', attackDirection);
+                    if (!attackDirection || attackDirection === null) {
+                        attackDirection = actionTargetComp.direction || params.direction ;
                     }
+                } 
 
-                }
                 if (!attackDirection || attackDirection===null) {
                     console.warn(`SkillSystem: BasicRanged skill requires a valid attackDirection parameter. ${attackDirection}`);
                     return;

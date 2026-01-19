@@ -113,6 +113,7 @@ export class HudUiSystem extends System {
        
         const targetEntity = this.entityManager.getEntity(actionTargetComp.entityId);
         if (!targetEntity) {
+            this.entityManager.getEntity('player').removeComponent('MouseActionTarget');
             console.warn(`HudUiSystem: Target entity ${actionTargetComp.entityId} not found`);
             hudTargetElement.style.display = 'none';
             return;

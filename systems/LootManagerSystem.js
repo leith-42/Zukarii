@@ -195,7 +195,7 @@ export class LootManagerSystem extends System {
         const lootEntity = this.entityManager.createEntity(`loot_${sourceData.tier}_${uniqueId}`);
         const position = new PositionComponent(sourceData.position.x, sourceData.position.y);
         const lootData = new LootData({
-            name: `The ${sourceData.name} Loot`,
+            name: `${sourceData.name} Loot`,
             gold,
             torches,
             healPotions,

@@ -128,9 +128,11 @@ export class PlayerControllerSystem {
             this.VisualsComponent.faceLeft = false;
             hasKeyboardInput = true;
         }
+        
 
         // Only set a new intent if a direction is pressed
         if (hasKeyboardInput && (dx !== 0 || dy !== 0)) {
+            this.VisualsComponent.direction = { dx, dy };
             // Normalize for diagonal movement
             const magnitude = Math.sqrt(dx * dx + dy * dy);
             const stepX = (dx / magnitude) * BASE_MOVE_DISTANCE;
@@ -162,12 +164,14 @@ export class PlayerControllerSystem {
                 this.entityManager.addComponentToEntity('player', new NeedsRenderComponent(targetX, targetY));
                 gameState.needsRender = true;
                 this.VisualsComponent.faceLeft = dx < 0;
+                this.VisualsComponent.direction = { dx, dy };
             } else {
                 this.entityManager.removeComponentFromEntity('player', 'MouseTarget');
                 if (player.hasComponent('MovementIntent')) {
                     this.entityManager.removeComponentFromEntity('player', 'MovementIntent');
                 }
             }
+
             return;
         }
 
