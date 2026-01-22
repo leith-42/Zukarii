@@ -85,7 +85,7 @@ export class MapRenderSystem extends System {
 
     loadSprites() {
         const spritePaths = {
-            floor: 'img/map/floor.png',
+            floor: 'img/map/floor-gray-brick.png',
             wall: 'img/map/wall.png',
             player: 'img/avatars/player.png',
             stairsup: 'img/avatars/stairsup.png',
@@ -188,7 +188,7 @@ export class MapRenderSystem extends System {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // --- Optimized Floor Rendering ---
-        const floorSprite = this.sprites.get('img/map/floor.png');
+        const floorSprite = this.sprites.get('img/map/floor-gray-brick.png');
         const floorNeedsRedraw =
             this.lastFloorStartX !== startX ||
             this.lastFloorStartY !== startY ||
@@ -243,9 +243,14 @@ export class MapRenderSystem extends System {
                 playerScreenX, playerScreenY, this.TILE_SIZE * this.SCALE_FACTOR * 0.5,
                 playerScreenX, playerScreenY, radius
             );
+            /*
             gradient.addColorStop(0, 'rgba(255, 220, 120, 0.25)');
             gradient.addColorStop(0.5, 'rgba(255, 180, 60, 0.0666)');
             gradient.addColorStop(1, 'rgba(255, 180, 60, 0.0)');
+            */
+            gradient.addColorStop(0.0, 'rgba(255, 230, 180, 0.25)');
+            gradient.addColorStop(0.3, 'rgba(255, 200, 140, 0.0666)');
+            gradient.addColorStop(0.9, 'rgba(255, 200, 140, 0.0)');
 
             this.ctx.save();
             this.ctx.globalCompositeOperation = 'lighter';
