@@ -64,7 +64,7 @@ export class JourneyRewardSystem extends System {
 
     applyRewards(player, rewards) {
         console.log('JourneyRewardSystem: Applying rewards:', rewards);
-
+        const gameState = this.entityManager.getEntity('gameState');
         rewards?.forEach(reward => {
             if (!reward) {
                 console.warn(`JourneyRewardSystem: Skipping null reward`);
@@ -116,8 +116,13 @@ export class JourneyRewardSystem extends System {
                 visuals.avatar = 'img/anim/Portal-Animation-Cleansed.png';
             }
             if (reward.type === 'unlock' && reward.mechanic === 'portalBinding') {
+                const initialBinds = reward.initialBindings || [0, 11];
+                const highestTier = gameState.getComponent('GameState').highestTier || 0;
+                if (highestTier > 11) {
+                    initialBinds.push(highestTier);
+                }
                 this.entityManager.addComponentToEntity('player', new PortalBindingComponent({
-                    bindings: [0,11],
+                    bindings: initialBinds,
                     cleansed: [0,1,2,3,4,5,6,7,8,9,10],
                 }));
                 this.utilities.logMessage({channel:'journey', message: `Unlocked Portal Binding` });
