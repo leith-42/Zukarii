@@ -459,7 +459,7 @@ export class MapRenderSystem extends System {
                 } else if (visuals.direction.dx === 0 && visuals.direction.dy > 0) {
                     walkAnimCurrent = 'img/anim/Player/Walk_Down.png';
                 }
-                console.log(visuals.direction, 'Selected walk animation:', walkAnimCurrent);
+                //console.log(visuals.direction, 'Selected walk animation:', walkAnimCurrent);
                 // Use attack animation if isAttacking
                 spritePath = animState.isAttacking ? 'img/anim/Player/Attack_Fire_3.png' :
                     animation.currentAnimation === 'idle' ? 'img/anim/Player/Idle.png' :

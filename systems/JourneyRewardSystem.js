@@ -117,7 +117,7 @@ export class JourneyRewardSystem extends System {
             }
             if (reward.type === 'unlock' && reward.mechanic === 'portalBinding') {
                 this.entityManager.addComponentToEntity('player', new PortalBindingComponent({
-                    bindings: [0],
+                    bindings: [0,11],
                     cleansed: [0,1,2,3,4,5,6,7,8,9,10],
                 }));
                 this.utilities.logMessage({channel:'journey', message: `Unlocked Portal Binding` });

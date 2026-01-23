@@ -104,6 +104,7 @@ export class Utilities {
             return null;
         }
 
+
         // 3. Return the first portal entity (or all if you want to return an array)
         const portalId = entityList.portals[0];
         const portalEntity = this.entityManager.getEntity(portalId);

@@ -16,6 +16,7 @@ export class PlayerCollisionSystem extends System {
 
         const collision = player.getComponent('Collision');
         const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
+        let levelTransition = null;
 
         if (!collision || !gameState || gameState.gameOver || gameState.transitionLock) {
             return;
@@ -132,7 +133,7 @@ export class PlayerCollisionSystem extends System {
 
                         }
                     }
-                        const levelTransition = this.entityManager.getEntity('gameState').getComponent('LevelTransition');
+                        levelTransition = this.entityManager.getEntity('gameState').getComponent('LevelTransition');
                         player.addComponent(new StairLockComponent());
                         if (levelTransition && levelTransition.pendingTransition === null) {
                             const stairComp = target.getComponent('Stair');
