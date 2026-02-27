@@ -85,7 +85,7 @@ export class MapRenderSystem extends System {
 
     loadSprites() {
         const spritePaths = {
-            floor: 'img/map/floor-gray-brick.png',
+            floor: 'img/map/floor-gray-brick-1.png',
             wall: 'img/map/wall.png',
             player: 'img/avatars/player.png',
             stairsup: 'img/avatars/stairsup.png',
@@ -188,7 +188,7 @@ export class MapRenderSystem extends System {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // --- Optimized Floor Rendering ---
-        const floorSprite = this.sprites.get('img/map/floor-gray-brick.png');
+        const floorSprite = this.sprites.get('img/map/floor-gray-brick-1.png');
         const floorNeedsRedraw =
             this.lastFloorStartX !== startX ||
             this.lastFloorStartY !== startY ||
@@ -599,7 +599,7 @@ export class MapRenderSystem extends System {
 
             const light = entity.getComponent('LightSource');
             const pos = entity.getComponent('Position');
-            
+
 
             let portalYOffset = 0;
             if (entity.hasComponent('Portal')) {

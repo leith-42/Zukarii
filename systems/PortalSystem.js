@@ -72,15 +72,25 @@ export class PortalSystem extends System {
         });
     }
 
+    
+
     processPlayerAction(player, portal, portalComp, portalBindComp, tier, interactionComp) {
         const playerResources = player.getComponent('Resource');
 
         switch (interactionComp.action) {
             case 'cleansePortal':
+                let cleanse = false;
                 if (playerResources.craftResources?.ashenShard >= 10) {
-
-                    const visuals = portal.getComponent('Visuals');
                     playerResources.craftResources.ashenShard -= 10;
+                    cleanse = true;
+                } else if (playerResources.craftResources?.ashenCrystal >= 1) {
+                    playerResources.craftResources.ashenCrystal -= 1;
+                    cleanse = true;
+                }
+
+                if (cleanse) {
+                    const visuals = portal.getComponent('Visuals');
+                    
                     portalComp.cleansed = true; // Update the portal's state
                     
                     portalBindComp.cleansed.push(tier);
@@ -97,7 +107,7 @@ export class PortalSystem extends System {
                 } else {
                     this.eventBus.emit('DialogueMessage', {
                         message: {
-                            message: `You need 10 Ashen Shards to cleanse the portal, but you have only ${playerResources.craftResources.ashenShard}.`,
+                            message: `You need 10 Ashen Shards or 1 Ashen Crystal to cleanse the portal, but you have only ${playerResources.craftResources.ashenShard} Ashen Shards and ${playerResources.craftResources.ashenCrystal} Ashen Crystals.`,
                             options: []
                         }
                     });
