@@ -102,6 +102,7 @@ export class MapRenderSystem extends System {
             player_walk_up: 'img/anim/Player/Walk_Up.png',
             player_attack: 'img/anim/Player/Attack_Fire_3.png',
             npc_zu_master: 'img/avatars/npcs/zu-master.png',
+            npc_zu_master_idle: 'img/anim/ZuMaster/Idle.png',
             npc_merchant: 'img/avatars/npcs/merchant.png',
             shop_counter: 'img/avatars/shop-counter.png',
             ashangal_guardian: `img/avatars/ashangal_guardian.png`,
@@ -293,6 +294,10 @@ export class MapRenderSystem extends System {
             const visuals = entity.getComponent('Visuals');
             if (!visuals) continue;
 
+            // Check if this entity has animation components
+            const animation = entity.hasComponent('Animation') ? entity.getComponent('Animation') : null;
+            const animState = entity.hasComponent('AnimationState') ? entity.getComponent('AnimationState') : null;
+
             let spritePath = visuals.avatar;
             let sprite = null;
 
@@ -320,6 +325,73 @@ export class MapRenderSystem extends System {
                 }
             }
             if (!spritePath) continue;
+
+            // Handle animated NPCs
+            if (animation && animState && entity.hasComponent('NPCData')) {
+                const animData = animation.animations[animation.currentAnimation];
+                if (!animData) {
+                    console.warn(`MapRenderSystem: No animation data for ${animation.currentAnimation} in ${entity.id}`);
+                    continue;
+                }
+
+                // Use the animation spritesheet path
+                spritePath = animation.currentAnimation === 'idle' ? 'img/anim/ZuMaster/Idle.png' : spritePath;
+                sprite = this.sprites.get(spritePath);
+
+                if (!sprite || !sprite.complete) {
+                    console.warn(`MapRenderSystem: Sprite ${spritePath} not loaded for ${entity.id}`);
+                    // Fallback to static sprite - but still skip the rest of the rendering
+                    sprite = this.sprites.get(visuals.avatar);
+                    if (sprite && sprite.complete) {
+                        const renderX = (pos.x - startX) * this.SCALE_FACTOR;
+                        const renderY = (pos.y - startY) * this.SCALE_FACTOR;
+                        this.ctx.save();
+                        this.ctx.drawImage(
+                            sprite,
+                            renderX, renderY,
+                            visuals.w * this.SCALE_FACTOR,
+                            visuals.h * this.SCALE_FACTOR
+                        );
+                        this.ctx.restore();
+                    }
+                    continue; // Skip the rest of the rendering code
+                }
+
+                // Render the animation
+                const frame = animData.frames[animation.currentFrame];
+                const renderX = (pos.x - startX) * this.SCALE_FACTOR;
+                const renderY = (pos.y - startY) * this.SCALE_FACTOR;
+
+                // Calculate render size based on frame dimensions 
+                const renderWidth = animData.frameWidth * this.SCALE_FACTOR * 0.5; 
+                const renderHeight = animData.frameHeight * this.SCALE_FACTOR * 0.5;
+
+                this.ctx.save();
+
+                if (visuals.faceLeft) {
+                    this.ctx.scale(-1, 1);
+                    this.ctx.drawImage(
+                        sprite,
+                        frame.x, 0,
+                        animData.frameWidth, animData.frameHeight,
+                        -(renderX + renderWidth) + (renderWidth - visuals.w * this.SCALE_FACTOR) / 2, 
+                        renderY - (renderHeight - visuals.h * this.SCALE_FACTOR) / 2,
+                        renderWidth, renderHeight
+                    );
+                } else {
+                    this.ctx.drawImage(
+                        sprite,
+                        frame.x, 0,
+                        animData.frameWidth, animData.frameHeight,
+                        renderX - (renderWidth - visuals.w * this.SCALE_FACTOR) / 2, 
+                        renderY - (renderHeight - visuals.h * this.SCALE_FACTOR) / 2,
+                        renderWidth, renderHeight
+                    );
+                }
+                this.ctx.restore();
+                continue; // Skip the rest of the rendering code
+            }
+
             if (!this.sprites.has(spritePath)) {
                 const img = new Image();
                 img.src = spritePath;
@@ -340,6 +412,7 @@ export class MapRenderSystem extends System {
                     this.ctx.shadowBlur = light.glowSize * light.currentGlowIntensity;
                 }
             }
+
             if (entity.hasComponent('Portal')) {
                 const portalComp = entity.getComponent('Portal');
                 if (portalComp.active) {

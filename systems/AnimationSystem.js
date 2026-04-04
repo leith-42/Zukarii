@@ -38,44 +38,56 @@ export class AnimationSystem extends System {
         }
 
         for (const entity of entities) {
-            if (entity.id !== 'player') continue; // Only handle player for now
-
             const animation = entity.getComponent('Animation');
             const animState = entity.getComponent('AnimationState');
             const hasMovement = entity.hasComponent('MovementIntent');
 
-            // Handle attack animation completion
-            if (animState.isAttacking) {
-                const animData = animation.animations[animation.currentAnimation];
-                // Check if the attack animation has reached the last frame
-                if (animation.currentFrame >= animData.frames.length - 1 && animation.frameTimer >= animData.frameTime) {
-                    // Animation complete, switch to idle (force idle after attack)
-                    animState.isIdle = true;
-                    animState.isWalking = false;
-                    animState.isAttacking = false;
-                    animation.currentAnimation = 'idle';
-                    animation.currentFrame = 0;
-                    animation.frameTimer = 0;
-                    //console.log(`AnimationSystem: Switched ${entity.id} to idle after attack`);
+            // Handle player-specific logic
+            if (entity.id === 'player') {
+                // Handle attack animation completion
+                if (animState.isAttacking) {
+                    const animData = animation.animations[animation.currentAnimation];
+                    // Check if the attack animation has reached the last frame
+                    if (animation.currentFrame >= animData.frames.length - 1 && animation.frameTimer >= animData.frameTime) {
+                        // Animation complete, switch to idle (force idle after attack)
+                        animState.isIdle = true;
+                        animState.isWalking = false;
+                        animState.isAttacking = false;
+                        animation.currentAnimation = 'idle';
+                        animation.currentFrame = 0;
+                        animation.frameTimer = 0;
+                        //console.log(`AnimationSystem: Switched ${entity.id} to idle after attack`);
+                    }
+                } else {
+                    // Normal idle/walk state transitions
+                    if (hasMovement && !animState.isWalking) {
+                        animState.isIdle = false;
+                        animState.isWalking = true;
+                        animState.isAttacking = false;
+                        animation.currentAnimation = 'walk';
+                        animation.currentFrame = 0;
+                        animation.frameTimer = 0;
+                        //console.log(`AnimationSystem: Switched ${entity.id} to walk`);
+                    } else if (!hasMovement && !animState.isIdle) {
+                        animState.isIdle = true;
+                        animState.isWalking = false;
+                        animState.isAttacking = false;
+                        animation.currentAnimation = 'idle';
+                        animation.currentFrame = 0;
+                        animation.frameTimer = 0;
+                        //console.log(`AnimationSystem: Switched ${entity.id} to idle`);
+                    }
                 }
-            } else {
-                // Normal idle/walk state transitions
-                if (hasMovement && !animState.isWalking) {
-                    animState.isIdle = false;
-                    animState.isWalking = true;
-                    animState.isAttacking = false;
-                    animation.currentAnimation = 'walk';
-                    animation.currentFrame = 0;
-                    animation.frameTimer = 0;
-                    //console.log(`AnimationSystem: Switched ${entity.id} to walk`);
-                } else if (!hasMovement && !animState.isIdle) {
+            } else if (entity.hasComponent('NPCData')) {
+                // NPC animation logic - for now, just keep them in idle
+                if (!animState.isIdle) {
                     animState.isIdle = true;
                     animState.isWalking = false;
                     animState.isAttacking = false;
                     animation.currentAnimation = 'idle';
                     animation.currentFrame = 0;
                     animation.frameTimer = 0;
-                    //console.log(`AnimationSystem: Switched ${entity.id} to idle`);
+                    console.log(`AnimationSystem: Set ${entity.id} to idle animation`);
                 }
             }
 
@@ -86,9 +98,9 @@ export class AnimationSystem extends System {
                 continue;
             }
 
-            // Adjust frame time based on movement speed for walk animation
+            // Adjust frame time based on movement speed for walk animation (player only)
             let effectiveFrameTime = animData.frameTime;
-            if (animation.currentAnimation === 'walk' && hasMovement) {
+            if (entity.id === 'player' && animation.currentAnimation === 'walk' && hasMovement) {
                 const movementSpeedComp = entity.getComponent('MovementSpeed');
                 if (movementSpeedComp) {
                     const currentSpeed = movementSpeedComp.movementSpeed;

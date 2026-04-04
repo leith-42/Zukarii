@@ -1,5 +1,5 @@
 ﻿import { System } from '../core/Systems.js';
-import { PositionComponent, VisualsComponent, HitboxComponent, NPCDataComponent, JourneyDialogueComponent, ShopComponent, ShopDialogueComponent , LightSourceComponent} from '../core/Components.js';
+import { PositionComponent, VisualsComponent, HitboxComponent, NPCDataComponent, JourneyDialogueComponent, ShopComponent, ShopDialogueComponent , LightSourceComponent, AnimationComponent, AnimationStateComponent} from '../core/Components.js';
 
 export class NPCSpawnSystem extends System {
     constructor(entityManager, eventBus, dataSystem, utilities) {
@@ -73,6 +73,36 @@ export class NPCSpawnSystem extends System {
                 }
                 this.entityManager.addComponentToEntity(entity.id, new HitboxComponent(template.hitboxWidth, template.hitboxHeight));
                 this.entityManager.addComponentToEntity(entity.id, new NPCDataComponent(template.id, template.name, template.greeting));
+
+                // Add animation components for ZuMaster (Sehnrhyx Syliri)
+                if (template.id === 'sehnrhyx_syliri') {
+                    this.entityManager.addComponentToEntity(entity.id, new AnimationStateComponent());
+                    this.entityManager.addComponentToEntity(entity.id, new AnimationComponent());
+                    const animation = entity.getComponent('Animation');
+
+                    animation.spriteSheets = {
+                        idle: { src: 'img/anim/ZuMaster/Idle.png' }
+                    };
+
+                    animation.animations = {
+                        'idle': {
+                            frames: [
+                                { x: 0 }, { x: 128 }, { x: 256 }, { x: 384 },
+                                { x: 512 }, { x: 640 }, { x: 768 }, { x: 896 }
+                            ],
+                            frameWidth: 128,
+                            frameHeight: 128,
+                            frameTime: 100 // Matches player idle animation speed
+                        }
+                    };
+                    console.log(`NPCSpawnSystem: Added animation components to ZuMaster NPC ${entity.id}`, {
+                        hasAnimation: entity.hasComponent('Animation'),
+                        hasAnimState: entity.hasComponent('AnimationState'),
+                        currentAnimation: animation.currentAnimation,
+                        frameCount: animation.animations.idle.frames.length
+                    });
+                }
+
                 if (template.hasJourneyPaths) {
                     this.entityManager.addComponentToEntity(entity.id, new JourneyDialogueComponent());
                     //console.log(`NPCSpawnSystem: Added JourneyDialogueComponent to NPC ${entity.id}`);
