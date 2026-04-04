@@ -527,9 +527,15 @@ export class MapRenderSystem extends System {
                     continue;
                 }
                 let walkAnimCurrent = 'img/anim/Player/Walk.png';
-                if (visuals.direction.dx === 0 && visuals.direction.dy < 0) {
+                // Use up/down animations if movement is mostly vertical (within ~30 degrees of vertical)
+                // This allows some horizontal variance while still showing vertical animations
+                const absDx = Math.abs(visuals.direction.dx);
+                const absDy = Math.abs(visuals.direction.dy);
+                const isMostlyVertical = absDx < absDy * 0.577; // tan(30°) ≈ 0.577
+
+                if (isMostlyVertical && visuals.direction.dy < 0) {
                     walkAnimCurrent = 'img/anim/Player/Walk_Up.png';
-                } else if (visuals.direction.dx === 0 && visuals.direction.dy > 0) {
+                } else if (isMostlyVertical && visuals.direction.dy > 0) {
                     walkAnimCurrent = 'img/anim/Player/Walk_Down.png';
                 }
                 //console.log(visuals.direction, 'Selected walk animation:', walkAnimCurrent);
