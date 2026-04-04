@@ -127,8 +127,9 @@ export class HudUiSystem extends System {
 
         let targetImage = 'img/avatars/player.png';
         const VisualsComponent = targetEntity.getComponent('Visuals');
-        if (VisualsComponent && VisualsComponent.avatar) {
-            targetImage = VisualsComponent.avatar;
+        if (VisualsComponent) {
+            // Prefer hudIcon for HUD display, fallback to avatar
+            targetImage = VisualsComponent.hudIcon || VisualsComponent.avatar || targetImage;
         }
 
         if (targetEntity.hasComponent('MonsterData')) {

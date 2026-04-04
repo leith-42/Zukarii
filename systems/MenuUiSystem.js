@@ -218,7 +218,9 @@ export class MenuUiSystem extends System {
                     saveClickCount++;
                     //console.log('MenuUiSystem: Save button clicked, emitting RequestSaveGame, count:', saveClickCount, 'timestamp:', Date.now());
                     const saveId = saveButton.dataset.saveId === 'new' ? null : saveButton.dataset.saveId;
-                    this.eventBus.emit('RequestSaveGame', { saveId });
+                    const saveNotesInput = document.getElementById('save-notes');
+                    const saveNotes = saveNotesInput ? saveNotesInput.value : '';
+                    this.eventBus.emit('RequestSaveGame', { saveId, saveNotes });
                 }
 
                 if (overwriteButton) {
@@ -834,20 +836,21 @@ export class MenuUiSystem extends System {
 
                         if (isSaveMode) {
                             html += `<li class="new-save-game"><button class="save-game" data-save-id="new" style="background-color:#0f0;">New Save</button> |
-                            <input type="text" id="save-notes" placeholder="Save Game Notes - not yet enabled :p">
+                            <input type="text" id="save-notes" placeholder="Enter save notes (optional)">
                             <select id="character-select" disabled >${selectOptions}<option value="all">All Characters</option></select></li>`;
                         } else {
                             html += `<li class="new-save-game"><select id="character-select" >${selectOptions}<option value="all">All Characters</option></select></li>`;
                         }
 
                         metadata.forEach(save => {
+                            const notesDisplay = save.notes ? ` - ${save.notes}` : '';
                             if (isSaveMode) {
-                                html += `<li class="save-game-item" data-character="${save.characterName}"><button class="overwrite-game" data-save-id="${save.saveId}">Overwrite</button> | <span class="save-game-name">${save.characterName}, Tier ${save.tier} - Saved on ${save.timestamp}</span> | <button class="delete-game" data-save-id="${save.saveId}" style="background: red;">Delete</button></li>`;
+                                html += `<li class="save-game-item" data-character="${save.characterName}"><button class="overwrite-game" data-save-id="${save.saveId}">Overwrite</button> | <span class="save-game-name">${save.characterName}, Tier ${save.tier} - Saved on ${save.timestamp}${notesDisplay}</span> | <button class="delete-game" data-save-id="${save.saveId}" style="background: red;">Delete</button></li>`;
                             } else {
                                 if (save.isDead) {
-                                    html += `<li><button class="load-game" data-save-id="${save.saveId}" disabled>Dead</button> | <span class="save-game-name">${save.characterName}, Tier ${save.tier} - Saved on ${save.timestamp}</span>  | <button class="delete-game" data-save-id="${save.saveId}" style="background: red;">Delete</button></li>`;
+                                    html += `<li><button class="load-game" data-save-id="${save.saveId}" disabled>Dead</button> | <span class="save-game-name">${save.characterName}, Tier ${save.tier} - Saved on ${save.timestamp}${notesDisplay}</span>  | <button class="delete-game" data-save-id="${save.saveId}" style="background: red;">Delete</button></li>`;
                                 } else {
-                                    html += `<li class="save-game-item" data-character="${save.characterName}"><button class="load-game" data-save-id="${save.saveId}">Load</button> | <span class="save-game-name">${save.characterName}, Tier ${save.tier} - Saved on ${save.timestamp}</span> | <button class="delete-game" data-save-id="${save.saveId}" style="background: red;">Delete</button></li>`;
+                                    html += `<li class="save-game-item" data-character="${save.characterName}"><button class="load-game" data-save-id="${save.saveId}">Load</button> | <span class="save-game-name">${save.characterName}, Tier ${save.tier} - Saved on ${save.timestamp}${notesDisplay}</span> | <button class="delete-game" data-save-id="${save.saveId}" style="background: red;">Delete</button></li>`;
                                 }
                             }
                         });

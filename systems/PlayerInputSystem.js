@@ -62,11 +62,14 @@ export class PlayerInputSystem {
         const mappedKey = this.keyMap[event.key];
         ////console.log('PlayerInputSystem: handleKeyDown - mappedKey:', mappedKey);
 
-        if ((document.activeElement.id === 'save-name-input' ) && mappedKey != 'escape') {
-            return; // Ignore keypresses when the save-name-input field is focused
+        // Ignore game controls when any input or textarea is focused (except Escape to close)
+        const activeElement = document.activeElement;
+        const isTextInputFocused = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+        if (isTextInputFocused && mappedKey !== 'escape') {
+            return; // Let the text input handle the key
         } else if (mappedKey) {
             event.preventDefault();  // Prevent default action for mapped keys
-        } 
+        }
         /* handled elsewhere
         if (event.repeat) {
             ////console.log('PlayerInputSystem: Ignoring repeated key press:', event.key);
@@ -93,8 +96,11 @@ export class PlayerInputSystem {
        // //console.log('KeyUp Event Fired:', event.key, 'Mapped:', mappedKey);
         
         if (mappedKey) {
-            if (document.activeElement.id === 'save-name-input' && mappedKey != 'escape') {
-                return; // Ignore keypresses when the save-name-input field is focused
+            // Ignore game controls when any input or textarea is focused (except Escape to close)
+            const activeElement = document.activeElement;
+            const isTextInputFocused = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            if (isTextInputFocused && mappedKey !== 'escape') {
+                return; // Let the text input handle the key
             }
 
             delete this.keysPressed[mappedKey];

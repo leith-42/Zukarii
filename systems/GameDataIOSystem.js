@@ -28,7 +28,7 @@ export class GameDataIOSystem extends System {
         }
     }
 
-    async handleSaveRequest({ saveId = null }) {
+    async handleSaveRequest({ saveId = null, saveNotes = '' }) {
         console.log('GameDataIOSystem: handleSaveRequest called, isProcessing:', this.isProcessing, 'stack:', new Error().stack);
         if (this.isProcessing) {
             console.warn('GameDataIOSystem: Save operation already in progress, aborting');
@@ -41,6 +41,7 @@ export class GameDataIOSystem extends System {
         const saveKey = `save_${newSaveId}`;
         const saveData = this.bundleGameData();
         saveData.id = newSaveId;
+        saveData.notes = saveNotes;
         console.log('GameDataIOSystem: Saving with key:', saveKey, 'data:', JSON.stringify(saveData, null, 2));
 
         const savePromise = new Promise((resolve) => {
@@ -147,7 +148,8 @@ export class GameDataIOSystem extends System {
                             tier: game.data.tier || 0,
                             timestamp: game.data.timestamp || null,
                             timestampDate: game.data.timestamp ? new Date(game.data.timestamp) : new Date(0),
-                            isDead: game.data.isDead || false
+                            isDead: game.data.isDead || false,
+                            notes: game.data.notes || ''
                         };
                     })
                     .sort((a, b) => b.timestampDate - a.timestampDate);

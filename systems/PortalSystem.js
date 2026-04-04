@@ -90,12 +90,13 @@ export class PortalSystem extends System {
 
                 if (cleanse) {
                     const visuals = portal.getComponent('Visuals');
-                    
+
                     portalComp.cleansed = true; // Update the portal's state
-                    
+
                     portalBindComp.cleansed.push(tier);
-                     
+
                     visuals.avatar = 'img/anim/Portal-Animation-Cleansed.png';
+                    visuals.hudIcon = 'img/avatars/portal-cleansed.png';
                     this.eventBus.emit('LightSourceActivated', ({ type: 'portalGreen', entityId: portal.id }));
                     console.log(`EntityGenerationSystem: generatePortal - emitted light source activation request for portal at tier ${tier} with definition portalGreen`);
 

@@ -88,6 +88,7 @@ export class EntityGenerationSystem extends System {
         const hitBox = portalEntity.getComponent('Hitbox');
 
         let visualsImg = 'img/anim/Portal-Animation.png';
+        let hudIconImg = 'img/avatars/portal-corrupted.png';
         let cleansed = false; // Portals are not cleansed by default
         let lightsourceDefinition = 'portalBlue'; // Default light source definition
         const unlockedPortals = player.getComponent('PlayerAchievements').stats.unlockedPortals || [];
@@ -97,16 +98,19 @@ export class EntityGenerationSystem extends System {
             active = true;
             cleansed = true;
             visualsImg = 'img/anim/Portal-Animation-Cleansed.png';
+            hudIconImg = 'img/avatars/portal-cleansed.png';
             lightsourceDefinition = 'portalGreen';
         } else if (tier < 11 && gameState.highestTier < 11) {
             active = false;
             cleansed = false;
             visualsImg = 'img/avatars/inactive-portal.png';
+            hudIconImg = 'img/avatars/inactive-portal.png';
             lightsourceDefinition = null;
         } else if (tier < 11 && gameState.highestTier >= 11) {
             active = true;
             cleansed = true;
             visualsImg = 'img/anim/Portal-Animation-Cleansed.png';
+            hudIconImg = 'img/avatars/portal-cleansed.png';
             lightsourceDefinition = 'portalGreen';
         }
 
@@ -120,6 +124,7 @@ export class EntityGenerationSystem extends System {
         portalComp.active = active;
         portalComp.cleansed = cleansed; 
         visuals.avatar = visualsImg;
+        visuals.hudIcon = hudIconImg;
 
         entityList.portals.push(portalEntity.id);
         mapComp.map[y][x] = '?';
@@ -275,6 +280,7 @@ export class EntityGenerationSystem extends System {
 
         const visuals = fountainEntity.getComponent('Visuals');
         visuals.avatar = 'img/anim/fountain/128x64_fountain_stone_shadow_anim.png';
+        visuals.hudIcon = 'img/avatars/fountain.png';
 
         entityList.fountains.push(fountainEntity.id);
         mapComp.map[y][x] = '≅';

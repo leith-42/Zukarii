@@ -70,7 +70,8 @@ export class CollisionComponent {
 export class VisualsComponent {
     constructor(h = 32, w = 32) {
         this.type = 'Visuals';
-        this.avatar = null; // Placeholder for avatar image
+        this.avatar = null; // Placeholder for avatar image (can be sprite sheet for animations)
+        this.hudIcon = null; // Static icon for HUD display (fallback to avatar if null)
         this.h = h;
         this.w = w;
         this.faceLeft = false; // Indicates if the entity is facing left
