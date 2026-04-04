@@ -179,9 +179,12 @@ export class MouseInputSystem {
 
     getEntityAtPosition(worldX, worldY) {
         const entities = this.entityManager.getEntitiesWith(['Position', 'Hitbox', 'Visuals']);
+        const matchingEntities = [];
+
         for (const entity of entities) {
             const wall = entity.getComponent('Wall');
             if (wall) continue; // Skip walls
+
             const pos = entity.getComponent('Position');
             const hitbox = entity.getComponent('Hitbox');
             if (
@@ -190,10 +193,29 @@ export class MouseInputSystem {
                 worldY >= pos.y &&
                 worldY <= pos.y + hitbox.height
             ) {
-                return entity;
+                matchingEntities.push(entity);
             }
         }
-        return null;
+
+        if (matchingEntities.length === 0) return null;
+        if (matchingEntities.length === 1) return matchingEntities[0];
+
+        // Priority system: NPCs/Monsters/Players > Interactive objects > Static objects
+        const getPriority = (entity) => {
+            if (entity.hasComponent('PlayerState')) return 100;
+            if (entity.hasComponent('NPCData')) return 90;
+            if (entity.hasComponent('MonsterData')) return 80;
+            if (entity.hasComponent('LootData')) return 70;
+            if (entity.hasComponent('Portal')) return 60;
+            if (entity.hasComponent('Stair')) return 60;
+            if (entity.hasComponent('Fountain')) return 50;
+            if (entity.hasComponent('ShopCounter')) return 30;
+            return 10; // Default low priority
+        };
+
+        // Sort by priority (highest first) and return the top entity
+        matchingEntities.sort((a, b) => getPriority(b) - getPriority(a));
+        return matchingEntities[0];
     }
 
     setCursor(worldX, worldY) {

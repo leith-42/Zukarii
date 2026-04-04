@@ -135,6 +135,37 @@ export class HudUiSystem extends System {
             const monsterData = targetEntity.getComponent('MonsterData');
             targetName = monsterData.name || targetName;
         }
+        else if (targetEntity.hasComponent('NPCData')) {
+            const npcData = targetEntity.getComponent('NPCData');
+            targetName = npcData.name || targetName;
+        }
+        else if (targetEntity.hasComponent('Stair')) {
+            const stairComp = targetEntity.getComponent('Stair');
+            targetName = stairComp.direction === 'up' ? 'Stairs Up' : 'Stairs Down';
+        }
+        else if (targetEntity.hasComponent('Portal')) {
+            const portalComp = targetEntity.getComponent('Portal');
+            if (!portalComp.active) {
+                targetName = 'Inactive Portal';
+            } else if (portalComp.cleansed) {
+                targetName = 'Cleansed Portal';
+            } else {
+                targetName = 'Corrupted Portal';
+            }
+        }
+        else if (targetEntity.hasComponent('Fountain')) {
+            const fountainComp = targetEntity.getComponent('Fountain');
+            if (!fountainComp.active) {
+                targetName = 'Inactive Fountain';
+            } else if (fountainComp.used) {
+                targetName = 'Used Fountain';
+            } else {
+                targetName = 'Fountain';
+            }
+        }
+        else if (targetEntity.hasComponent('ShopCounter')) {
+            targetName = 'Shop Counter';
+        }
         else if (targetEntity.hasComponent('LootData')) {
             const lootData = targetEntity.getComponent('LootData');
             targetName = lootData.name || targetName;

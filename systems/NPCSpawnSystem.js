@@ -92,7 +92,7 @@ export class NPCSpawnSystem extends System {
                             ],
                             frameWidth: 128,
                             frameHeight: 128,
-                            frameTime: 100 // Matches player idle animation speed
+                            frameTime: 200 // Matches player idle animation speed
                         }
                     };
                     console.log(`NPCSpawnSystem: Added animation components to ZuMaster NPC ${entity.id}`, {
