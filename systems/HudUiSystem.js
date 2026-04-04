@@ -27,6 +27,8 @@ export class HudUiSystem extends System {
         this.rafPending = null;
         this.lastHealth = null;
         this.lastMana = null;
+        this.lastTargetId = null; // Track current target to avoid unnecessary updates
+        this.lastTargetState = null; // Track target state (cleansed, used, etc.)
         this.activeHudLogTab = 'all'; // Default HUD log tab
         this.lastHudLogUpdate = 0; // Track the last update time
         this.hudLogThrottleDelay = 83.35; // Throttle delay in milliseconds
@@ -98,8 +100,50 @@ export class HudUiSystem extends System {
         }
 
         const actionTargetComp = this.entityManager.getEntity('player').getComponent('MouseActionTarget');
-        if (actionTargetComp && actionTargetComp.entityId!=null) {
-            this.updateHudTarget(actionTargetComp);
+        if (actionTargetComp && actionTargetComp.entityId != null) {
+            const targetEntity = this.entityManager.getEntity(actionTargetComp.entityId);
+
+            // Check if entity exists and is not dead/removed
+            const isEntityValid = targetEntity && 
+                                 !targetEntity.hasComponent('Dead') && 
+                                 !targetEntity.hasComponent('RemoveEntity');
+
+            if (!isEntityValid) {
+                this.entityManager.getEntity('player').removeComponent('MouseActionTarget');
+                const hudTargetElement = document.getElementById('target-info');
+                if (hudTargetElement) {
+                    hudTargetElement.style.display = 'none';
+                }
+                this.lastTargetId = null;
+                this.lastTargetState = null;
+                return;
+            }
+
+            let currentTargetState = null;
+
+            // Build a state hash for entities that can change
+            if (targetEntity.hasComponent('Portal')) {
+                const portal = targetEntity.getComponent('Portal');
+                currentTargetState = `portal_${portal.active}_${portal.cleansed}`;
+            } else if (targetEntity.hasComponent('Fountain')) {
+                const fountain = targetEntity.getComponent('Fountain');
+                currentTargetState = `fountain_${fountain.active}_${fountain.used}`;
+            }
+
+            // Only update if target changed or state changed
+            if (actionTargetComp.entityId !== this.lastTargetId || currentTargetState !== this.lastTargetState) {
+                this.updateHudTarget(actionTargetComp);
+                this.lastTargetId = actionTargetComp.entityId;
+                this.lastTargetState = currentTargetState;
+            }
+        } else if (this.lastTargetId !== null) {
+            // Target was removed, hide the HUD
+            const hudTargetElement = document.getElementById('target-info');
+            if (hudTargetElement) {
+                hudTargetElement.style.display = 'none';
+            }
+            this.lastTargetId = null;
+            this.lastTargetState = null;
         }
         
     }
@@ -130,6 +174,7 @@ export class HudUiSystem extends System {
         if (VisualsComponent) {
             // Prefer hudIcon for HUD display, fallback to avatar
             targetImage = VisualsComponent.hudIcon || VisualsComponent.avatar || targetImage;
+            console.log(`HudUiSystem: Target ${targetEntity.id} - hudIcon: ${VisualsComponent.hudIcon}, avatar: ${VisualsComponent.avatar}, using: ${targetImage}`);
         }
 
         if (targetEntity.hasComponent('MonsterData')) {

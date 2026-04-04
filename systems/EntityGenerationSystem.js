@@ -92,7 +92,7 @@ export class EntityGenerationSystem extends System {
         let cleansed = false; // Portals are not cleansed by default
         let lightsourceDefinition = 'portalBlue'; // Default light source definition
         const unlockedPortals = player.getComponent('PlayerAchievements').stats.unlockedPortals || [];
-        const cleansedPortals = player.getComponent('PortalBindingds')?.cleansed || [];
+        const cleansedPortals = player.getComponent('PortalBinding')?.cleansed || [];
         console.warn(`EntityGenerationSystem: generatePortal - Starting for tier ${tier}`, unlockedPortals, cleansedPortals);
         if (cleansedPortals.includes(tier) || unlockedPortals.includes(tier)) {
             active = true;
@@ -152,61 +152,7 @@ export class EntityGenerationSystem extends System {
         return true; // All distances are greater than or equal to the minimum required
     }
 
-    /*
-    generateFountains(tier, levelData, entityList, mapComp) {
-        const map = mapComp.map;
-        const roomEntityIds = levelData.roomEntityIds;
-        const isCustomLevel = levelData.isCustomLevel || false;
-        console.log(`EntityGenerationSystem: generateFountains - Starting for tier ${tier}`);
-
-        const fountainsPerLevel = () => {
-            let r = Math.random();
-            return r <.03 ? 0 : r < 0.95 ? 1 : 2;
-        }
-        const fountainCount = fountainsPerLevel();
-        console.log(`EntityGenerationSystem: generateFountains - Fountain count for tier ${tier}: ${fountainCount}`);
-        const validRoomIds = roomEntityIds.filter(roomId => {
-            const room = this.entityManager.getEntity(roomId).getComponent('Room');
-            return isCustomLevel || !(Array.isArray(room.hasEntities) && room.hasEntities.some(e => e.type === 'Fountain' || e.type === 'Stair'));
-        });
-
-        if (validRoomIds.length === 0) { console.log(`EntityGeneration: generateFountains() - No valid rooms for fouintain placement`); return; }
-
-        const existingFountainPositions = [];
-        const minDistance = 1162; 
-
-        for (let i = 0; i < fountainCount+5; i++) {
-            
-            const roomId = validRoomIds.splice(Math.floor(Math.random() * validRoomIds.length), 1)[0];
-            const room = this.entityManager.getEntity(roomId).getComponent('Room');
-            let x, y;
-            let attempts = 0;
-            do {
-                x = room.left + 1 + Math.floor(Math.random() * (room.width - 2));
-                y = room.top + 1 + Math.floor(Math.random() * (room.height - 2));
-                attempts++;
-
-                const canPlace = this.minDistanceRequirementCheck({ x, y }, existingFountainPositions, minDistance);
-                if (canPlace) {
-                    // Add the new fountain position to the list of existing positions
-                    existingFountainPositions.push({ x, y });
-                    break;
-                }
-
-                if (attempts > 50) {
-                    console.error(`Failed to place fountain in room after 50 attempts`);
-                    break;
-                }
-            } while (map[y][x] !== ' ');
-            if (attempts <= 50) {
-                const fountainEntity = this.generateFountainEntity(entityList, tier, mapComp, x, y, true, room);
-            }
-        }
-      
-        console.log(`EntityGenerationSystem: generateFountains - Completed for tier ${tier}`);
-        //return fountains;
-    }
-    */
+ 
 
     generateFountains(tier, levelData, entityList, mapComp) {
         const map = mapComp.map;
