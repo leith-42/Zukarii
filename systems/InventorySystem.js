@@ -274,8 +274,30 @@ export class InventorySystem extends System {
         }
 
         const item = shopComponent.items[itemIndex];
-        if (resource.gold < item.purchasePrice) {
+
+        // For stash upgrades, use the item's purchasePrice directly (updated by NPCControllerSystem)
+        const actualPrice = item.purchasePrice;
+
+        // VERBOSE: Log the item found in shop
+        console.log(`InventorySystem: Found item in shop - uniqueId: ${item.uniqueId}, name: ${item.name}, purchasePrice: ${actualPrice}, isStashUpgrade: ${item.isStashUpgrade}`);
+
+        if (resource.gold < actualPrice) {
             this.utilities.logMessage({ channel: "system", message: 'Not enough gold to buy this item!' });
+            return;
+        }
+
+        // Check if this is a stash upgrade purchase
+        if (item.isStashUpgrade) {
+            console.log(`InventorySystem: Processing stash upgrade - deducting ${actualPrice} gold (current gold: ${resource.gold})`);
+            resource.gold -= actualPrice;
+            console.log(`InventorySystem: Gold after purchase: ${resource.gold}`);
+            this.eventBus.emit('UnlockStash', { maxCapacity: 20, message: true });
+            this.utilities.logMessage({ channel: "system", message: `Purchased ${item.name} for ${actualPrice} gold` });
+            this.sfxQueue.push({ sfx: 'loot0', volume: .33 });
+            this.eventBus.emit('StatsUpdated', { entityId: 'player' });
+            this.eventBus.emit('PlayerStateUpdated', { entityId: 'player' });
+            // Note: Shop restock will be triggered by StashUnlocked event in NPCControllerSystem
+            console.log(`InventorySystem: Purchased stash upgrade for ${actualPrice} gold`);
             return;
         }
 

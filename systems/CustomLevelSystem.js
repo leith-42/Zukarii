@@ -223,7 +223,8 @@ export class CustomLevelSystem extends System {
             7: { type: 'TreasureChest' }, // TreasureChest
             8: { type: 'ShopCounter' }, // ShopCounter
             9: { type: 'NPC', id: 'sehnrhyx_syliri' }, // SehnrhyxSyliri
-            10: { type: 'NPC', id: 'shop_keeper' } // ShopKeeper
+            10: { type: 'NPC', id: 'shop_keeper' }, // ShopKeeper
+            11: {type: 'Stash'}
         };
 
         if (!entitiesLayer) {
@@ -327,6 +328,15 @@ export class CustomLevelSystem extends System {
                                 console.warn(`NPC at (${x}, ${y}) missing 'id'`);
                             }
                             break;
+
+                        case 'Stash':
+                            const stashId = this.entityGenerationSystem.generateStashChest(
+                                tier,
+                                x,
+                                y
+                            );
+                            break;
+                            
                         default:
                             console.warn(`Unknown entity type '${entityInfo.type}' at (${x}, ${y})`);
                             break;

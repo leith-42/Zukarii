@@ -43,27 +43,43 @@ export class StashSystem extends System {
         }
 
         if (player.hasComponent('Stash')) {
-            console.warn('StashSystem: Stash already unlocked');
+            // Already unlocked, upgrade capacity instead
+            const stash = player.getComponent('Stash');
+            stash.maxCapacity += 20;
+            stash.upgradeLevel = (stash.upgradeLevel || 0) + 1;
+
+            if (showMessage) {
+                this.utilities.logMessage({ 
+                    channel: 'system', 
+                    message: `Stash expanded! New capacity: ${stash.maxCapacity} slots` 
+                });
+            }
+
+            // Emit event for UI to update
+            this.eventBus.emit('StashUnlocked', { maxCapacity: stash.maxCapacity });
+
+            console.log(`StashSystem: Stash upgraded to ${stash.maxCapacity} slots (level ${stash.upgradeLevel})`);
             return;
         }
 
-        // Add stash component to player
+        // First time unlock
         player.addComponent(new StashComponent({ 
             items: [], 
-            maxCapacity 
+            maxCapacity: 20, // Start with 20 slots
+            upgradeLevel: 0 // Start at 0 (first purchase), next upgrade will be level 1 at 500 * 2^1 = 1000g
         }));
 
         if (showMessage) {
             this.utilities.logMessage({ 
                 channel: 'system', 
-                message: `Stash unlocked! You now have ${maxCapacity} slots of secure storage.` 
+                message: `Stash unlocked! You now have 20 slots of secure storage.` 
             });
         }
 
         // Emit event for UI to update
-        this.eventBus.emit('StashUnlocked', { maxCapacity });
-        
-        console.log(`StashSystem: Stash unlocked with capacity ${maxCapacity}`);
+        this.eventBus.emit('StashUnlocked', { maxCapacity: 20 });
+
+        console.log(`StashSystem: Stash unlocked with 20 slots`);
     }
 
     depositItem(uniqueId) {

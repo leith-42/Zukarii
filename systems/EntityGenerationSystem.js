@@ -18,7 +18,8 @@ import {
     NPCDataComponent,
     ShopComponent,
     TriggerAreaComponent,
-    ShopCounterComponent
+    ShopCounterComponent,
+    StashComponent
 } from '../core/Components.js';
 
 export class EntityGenerationSystem extends System {
@@ -383,6 +384,24 @@ export class EntityGenerationSystem extends System {
             entityList.triggerAreas.push(triggerEntity.id);
         }
         return triggerEntity;
+    }
+
+    generateStashChest(tier, tileX, tileY) {
+        const pixelX = tileX * this.TILE_SIZE;
+        const pixelY = tileY * this.TILE_SIZE;
+        const stashId = `stash_${tier}_${tileX}_${tileY}`;
+
+        const stashEntity = this.entityManager.createEntity(stashId);
+        this.entityManager.addComponentToEntity(stashId, new PositionComponent(pixelX, pixelY));
+        this.entityManager.addComponentToEntity(stashId, new VisualsComponent(32, 32));
+        this.entityManager.addComponentToEntity(stashId, new HitboxComponent(24, 24));
+        this.entityManager.addComponentToEntity(stashId, new StashComponent());
+
+        const visuals = stashEntity.getComponent('Visuals');
+        visuals.avatar = 'img/avatars/stash.png';
+
+        console.log(`EntityGenerationSystem: Created stash chest at (${tileX}, ${tileY}) on tier ${tier}`, stashEntity);
+        return stashId;
     }
 
 }

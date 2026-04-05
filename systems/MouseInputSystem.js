@@ -209,6 +209,7 @@ export class MouseInputSystem {
             if (entity.hasComponent('Portal')) return 60;
             if (entity.hasComponent('Stair')) return 60;
             if (entity.hasComponent('Fountain')) return 50;
+            if (entity.hasComponent('Stash')) return 35;
             if (entity.hasComponent('ShopCounter')) return 30;
             return 10; // Default low priority
         };
@@ -361,6 +362,41 @@ export class MouseInputSystem {
         const visuals = player.getComponent('Visuals');
         const lightingState = this.entityManager.getEntity('lightingState')?.getComponent('LightingState');
 
+        // Check for stash chest interaction first
+        const clickedEntity = this.getEntityAtPosition(worldX, worldY);
+        if (clickedEntity && clickedEntity.hasComponent('Stash') && isClick) {
+            const stashPos = clickedEntity.getComponent('Position');
+            const playerPos = player.getComponent('Position');
+            const dx = stashPos.x - playerPos.x;
+            const dy = stashPos.y - playerPos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) / this.TILE_SIZE;
+            const interactRange = 3;
+
+            if (distance <= interactRange) {
+                // Always open the stash UI - it will show locked message if not unlocked
+                this.entityManager.removeComponentFromEntity('player', 'MouseTarget');
+                this.eventBus.emit('StopMovement', { entityId: 'player' });
+                this.eventBus.emit('ToggleOverlay', { tab: 'stash' });
+
+                // Log message for locked stash
+                if (!player.hasComponent('Stash')) {
+                    this.eventBus.emit('LogMessage', { message: 'Speak to the Shopkeeper about storage space' });
+                    console.log(`MouseInputSystem: Stash chest locked - showing locked UI`);
+                } else {
+                    console.log(`MouseInputSystem: Opening stash UI from chest ${clickedEntity.id}`);
+                }
+                return;
+            } else {
+                const tileX = Math.floor(stashPos.x / this.TILE_SIZE);
+                const tileY = Math.floor(stashPos.y / this.TILE_SIZE);
+                const targetX = tileX * this.TILE_SIZE;
+                const targetY = tileY * this.TILE_SIZE;
+                this.setMovementTarget(targetX, targetY);
+                console.log(`MouseInputSystem: Moving to stash chest at tile (${tileX}, ${tileY})`);
+                return;
+            }
+        }
+
         const npc = this.getNPCAtPosition(worldX, worldY);
         if (npc) {
             const npcPos = npc.getComponent('Position');
@@ -369,7 +405,7 @@ export class MouseInputSystem {
             const dy = npcPos.y - playerPos.y;
             const distance = Math.sqrt(dx * dx + dy * dy) / this.TILE_SIZE;
             const interactRange = 3;
-           
+
             if ( isClick && distance <= interactRange) {
                 if (!this.hasInteractedWithNPC) {
                     this.entityManager.removeComponentFromEntity('player', 'MouseTarget');
@@ -390,7 +426,7 @@ export class MouseInputSystem {
                 //console.log(`MouseInputSystem: Moving to NPC ${npc.id} at tile (${tileX}, ${tileY})`);
                 return;
             }
-            
+
         }
         const target = this.getMonsterAtPosition(worldX, worldY);
         let monster = null, rangeToTarget = 1;

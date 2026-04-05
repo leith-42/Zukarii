@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Gray background -->
+  <rect x="2" y="2" width="60" height="60" rx="6" ry="6" fill="#555555"/>
+
+  <!-- Gold border -->
+  <rect x="2" y="2" width="60" height="60" rx="6" ry="6" fill="none" stroke="#FFD700" stroke-width="3"/>
+
+  <!-- Actual stash chest image -->
+  <image x="16" y="16" width="32" height="32" href="../../../img/avatars/stash.png" />
+</svg>

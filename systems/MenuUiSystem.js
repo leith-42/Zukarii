@@ -98,6 +98,15 @@ export class MenuUiSystem extends System {
                 this.renderOverlay('stash');
             }
         });
+
+        // Listen for shop inventory updates (after prices are updated)
+        this.eventBus.on('ShopInventoryUpdated', () => {
+            console.log('MenuUiSystem: Shop inventory updated, refreshing shop UI');
+            const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
+            if (overlayState.isOpen && overlayState.activeTab === 'shop') {
+                this.renderOverlay('shop');
+            }
+        });
         this.eventBus.on('StashUpdated', () => {
             const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
             if (overlayState.isOpen && overlayState.activeTab === 'stash') {
@@ -847,10 +856,7 @@ export class MenuUiSystem extends System {
                 //console.log('MenuUiSystem: Added ShopInteractionComponent to player');
             }
 
-            // Auto-unlock stash on first shopkeeper interaction
-            if (!player.hasComponent('Stash')) {
-                this.eventBus.emit('UnlockStash', { maxCapacity: 100, message: true });
-            }
+            // Stash must now be purchased from the shop
         } else if (!overlayState.isOpen) {
             overlayState.activeShopNpcId = null;
             if (player.hasComponent('ShopInteraction')) {
@@ -996,7 +1002,8 @@ export class MenuUiSystem extends System {
 
         // Check if player has a ShopInteraction component
         const showShopButton = player.hasComponent('ShopInteraction');
-        const showStashButton = player.hasComponent('ShopInteraction') && player.hasComponent('Stash');
+        // Show stash button if player has Stash component (unlocked) OR if actively viewing stash tab
+        const showStashButton = player.hasComponent('Stash') || activeTab === 'stash';
 
         tabMenuDiv.innerHTML = `
             <button id="menu-tab" class="tabs-button" style="background: ${activeTab === 'menu' ? '#0f0' : '#2c672c'};">Menu</button>
@@ -1350,7 +1357,24 @@ export class MenuUiSystem extends System {
         const stash = player.getComponent('Stash');
 
         if (!stash) {
-            console.error('MenuUiSystem: Stash component not found');
+            console.warn('MenuUiSystem: Stash component not found - showing locked message');
+            // Show locked message in stash items area
+            const stashItemsDiv = document.getElementById('stash-items');
+            if (stashItemsDiv) {
+                stashItemsDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; font-size: 18px; color: #ff6b6b;">
+                        <h3>Stash Locked</h3>
+                        <p style="margin-top: 20px; color: #ffd700;">Speak to the Shopkeeper about storage space</p>
+                        <p style="margin-top: 10px; font-size: 14px; color: #888;">The shopkeeper can provide you with secure storage for your items.</p>
+                    </div>
+                `;
+            }
+            const capacityElement = document.querySelector('.stash-capacity');
+            if (capacityElement) {
+                capacityElement.textContent = 'Locked';
+            }
+            // Still render inventory on the right side
+            this.renderInventory('stash-inventory-wrapper-inner', inventory.items, this.activeInventoryTab);
             return;
         }
 

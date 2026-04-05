@@ -11,10 +11,18 @@ export class NPCControllerSystem extends System {
     init() {
         //console.log('NPCControllerSystem: Initialized');
         // Listen for the GenerateShopInventories event
-        this.eventBus.on('GenerateShopInventories', ({ tier }) => {
-            console.log(`NPCControllerSystem: Received GenerateShopInventories event for tier ${tier}`);
-            this.generateShopInventories(tier);
+        this.eventBus.on('GenerateShopInventories', ({ tier, forceRestock = false }) => {
+            console.log(`NPCControllerSystem: Received GenerateShopInventories event for tier ${tier}, forceRestock: ${forceRestock}`);
+            this.generateShopInventories(tier, forceRestock);
         });
+
+        // Listen for StashUnlocked event to update stash upgrade item pricing
+        this.eventBus.on('StashUnlocked', () => {
+            const currentTier = this.entityManager.getActiveTier();
+            console.log(`NPCControllerSystem: Stash unlocked/upgraded, updating stash item at tier ${currentTier}`);
+            this.updateStashUpgradeItem(currentTier);
+        });
+
         const initTier = this.entityManager.getActiveTier();
         this.generateShopInventories(initTier);
 
@@ -24,8 +32,57 @@ export class NPCControllerSystem extends System {
         // Placeholder for other NPC updates (e.g., AI, movement)
     }
 
-    async generateShopInventories(tier) {
-        console.log(`NPCControllerSystem: Starting generateShopInventories for tier ${tier}`);
+    updateStashUpgradeItem(tier) {
+        const shopEntities = this.entityManager.getEntitiesWith(['ShopComponent'], tier);
+        const npcs = shopEntities.filter(entity => entity.hasComponent('NPCData'));
+        const player = this.entityManager.getEntity('player');
+        const stash = player?.getComponent('Stash');
+
+        if (!stash) {
+            console.warn('NPCControllerSystem: Cannot update stash item - player has no Stash component');
+            return;
+        }
+
+        const upgradeLevel = stash.upgradeLevel || 0;
+        const basePrice = 500;
+        const upgradePrice = basePrice * Math.pow(2, upgradeLevel + 1); // Price for NEXT upgrade
+        const isFirstPurchase = upgradeLevel === 0; // Level 0 means they just bought first unlock
+
+        console.log(`NPCControllerSystem: Updating stash item - upgradeLevel: ${upgradeLevel}, price: ${upgradePrice}`);
+
+        for (const npc of npcs) {
+            const shopComponent = npc.getComponent('ShopComponent');
+            if (!shopComponent || !shopComponent.items) continue;
+
+            // Find the stash upgrade item
+            const stashItem = shopComponent.items.find(item => item.uniqueId === 'stash_upgrade_item');
+            if (stashItem) {
+                console.log(`NPCControllerSystem: BEFORE update - stashItem.purchasePrice: ${stashItem.purchasePrice}`);
+
+                // Update price and description
+                stashItem.purchasePrice = upgradePrice;
+                stashItem.name = 'Expand Stash Storage'; // Always "Expand" after first purchase
+                stashItem.description = `Add 20 more item slots to your stash (Current: ${stash.maxCapacity})`;
+
+                console.log(`NPCControllerSystem: AFTER update - stashItem.purchasePrice: ${stashItem.purchasePrice}`);
+                console.log(`NPCControllerSystem: Updated stash item for NPC ${npc.id} - new price: ${upgradePrice}, capacity: ${stash.maxCapacity}`);
+
+                // VERBOSE: Verify the item is actually in the shop's items array
+                const verifyItem = shopComponent.items.find(item => item.uniqueId === 'stash_upgrade_item');
+                console.log(`NPCControllerSystem: Verification - item still in shop with price: ${verifyItem?.purchasePrice}`);
+            } else {
+                console.warn(`NPCControllerSystem: Stash upgrade item not found in shop for NPC ${npc.id}`);
+            }
+        }
+
+        console.log(`NPCControllerSystem: Completed stash item update for ${npcs.length} NPCs`);
+
+        // Emit event to trigger UI refresh now that prices are updated
+        this.eventBus.emit('ShopInventoryUpdated', { tier });
+    }
+
+    async generateShopInventories(tier, forceRestock = false) {
+        console.log(`NPCControllerSystem: Starting generateShopInventories for tier ${tier}, forceRestock: ${forceRestock}`);
         try {
             // Check if game state is ready
             const gameStateEntity = this.entityManager.getEntity('gameState');
@@ -34,7 +91,7 @@ export class NPCControllerSystem extends System {
                 return;
             }
 
-            
+
             // Query for ShopComponent in the specified tier
             const shopEntities = this.entityManager.getEntitiesWith(['ShopComponent'], tier);
             //console.log('NPCControllerSystem: Found entities with ShopComponent in tier', tier, ':', shopEntities.length, 'IDs:', shopEntities.map(n => n.id));
@@ -100,6 +157,12 @@ export class NPCControllerSystem extends System {
             for (const npc of npcs) {
                 const shopComponent = npc.getComponent('ShopComponent');
                 const now = Date.now();
+
+                // If forceRestock is true, reset the lastRestockTime to bypass cooldown
+                if (forceRestock) {
+                    shopComponent.lastRestockTime = 0;
+                    console.log(`NPCControllerSystem: Force restocking shop for NPC ${npc.id}`);
+                }
 
                 // Check if inventory is expired
                 if (shopComponent.lastRestockTime && now - shopComponent.lastRestockTime < this.INVENTORY_COOLDOWN_MS) {
@@ -184,6 +247,30 @@ export class NPCControllerSystem extends System {
                         purchasePrice: Math.round((item.goldValue || 0) * priceMultiplier)
                     };
                 });
+
+                // Add stash upgrade item
+                const player = this.entityManager.getEntity('player');
+                const stash = player?.getComponent('Stash');
+                const upgradeLevel = stash?.upgradeLevel || 0;
+                const basePrice = 500;
+                const upgradePrice = basePrice * Math.pow(2, upgradeLevel);
+                const isFirstPurchase = !stash;
+
+                const stashUpgradeItem = {
+                    uniqueId: 'stash_upgrade_item',
+                    name: isFirstPurchase ? 'Unlock Stash Storage' : 'Expand Stash Storage',
+                    type: 'service',
+                    itemTier: 'common',
+                    icon: 'stash-space.png',
+                    purchasePrice: upgradePrice,
+                    isStashUpgrade: true,
+                    description: isFirstPurchase 
+                        ? `Unlock secure storage with 20 item slots` 
+                        : `Add 20 more item slots to your stash (Current: ${stash.maxCapacity})`,
+                    goldValue: 0 // Cannot be sold back
+                };
+
+                shopComponent.items.push(stashUpgradeItem);
                 //console.log(`NPCControllerSystem: Generated ${shopComponent.items.length} shop items for NPC ${npc.id}`);
             }
         } catch (err) {
