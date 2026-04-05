@@ -62,6 +62,19 @@ export class InventoryComponent {
     }
 }
 
+export class StashComponent {
+    constructor({
+        items = [],
+        maxCapacity = 180,
+        stashType = 'character', // 'character', 'account', 'shared' 
+    } = {}) {
+        this.type = 'Stash';
+        this.items = items;
+        this.maxCapacity = maxCapacity;
+        this.stashType = stashType;
+    }
+}
+
 export class ResourceComponent {
     constructor({
         torches = 0,

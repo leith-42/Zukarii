@@ -54,6 +54,7 @@ import { TriggerAreaSystem } from './systems/TriggerAreaSystem.js';
 import { HotBarSystem } from './systems/HotBarSystem.js';
 import { SkillSystem } from './systems/SkillSystem.js';
 import { PortalSystem } from './systems/PortalSystem.js';
+import { StashSystem } from './systems/StashSystem.js';
 
 
 import {
@@ -284,6 +285,7 @@ export class Game {
         this.systems.npcSpawn = new NPCSpawnSystem(this.entityManager, this.state.eventBus, this.systems.data, this.utilities);
         this.systems.entityGeneration = new EntityGenerationSystem(this.entityManager, this.state.eventBus, this.state, this.utilities);
         this.systems.inventory = new InventorySystem(this.entityManager, this.state.eventBus, this.utilities);
+        this.systems.stash = new StashSystem(this.entityManager, this.state.eventBus, this.utilities);
         this.systems.path = new PathSystem(this.entityManager, this.state.eventBus, this.utilities);
         this.systems.interaction = new InteractionSystem(this.entityManager, this.state.eventBus, this.utilities);
         this.systems.hudUi = new HudUiSystem(this.entityManager, this.state.eventBus, this.utilities);

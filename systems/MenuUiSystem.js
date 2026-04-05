@@ -16,6 +16,7 @@ export class MenuUiSystem extends System {
         this.activeJourneyTab = 'whispers'; // Default to Whispers
         this.tooltipCache = new Map();
         this.activeInventoryTab = 'all';
+        this.activeStashTab = 'all';
         this.playerEntity = this.entityManager.getEntity('player');
         this.lastInventoryHash = '';
     }
@@ -28,8 +29,9 @@ export class MenuUiSystem extends System {
         this.menuContent = document.getElementById('menu-content');
         this.journeyContent = document.getElementById('journey-content');
         this.shopContent = document.getElementById('shop-content');
+        this.stashContent = document.getElementById('stash-content');
 
-        if (!this.tabs || !this.logContent || !this.characterContent || !this.menuContent || !this.journeyContent || !this.shopContent) {
+        if (!this.tabs || !this.logContent || !this.characterContent || !this.menuContent || !this.journeyContent || !this.shopContent || !this.stashContent) {
             //console.log("Menu", this.menuContent);
             //console.log("Journey", this.journeyContent);
             //console.log("Shop", this.shopContent);
@@ -85,8 +87,30 @@ export class MenuUiSystem extends System {
 
         this.eventBus.emit('GearChanged', { entityId: 'player' });
 
+        // Listen for stash events
+        this.eventBus.on('StashUnlocked', () => {
+            console.log('MenuUiSystem: Stash unlocked, updating UI');
+            const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
+            if (overlayState.isOpen && overlayState.activeTab === 'stash') {
+                this.renderOverlay('stash');
+            }
+        });
+        this.eventBus.on('StashUpdated', () => {
+            const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
+            if (overlayState.isOpen && overlayState.activeTab === 'stash') {
+                this.renderOverlay('stash');
+            }
+        });
+
         this.setupEventListeners();
         //console.log('MenuUiSystem: Event listeners set up');
+
+        // Setup inventory tabs for shop
+        this.setupInventoryTabs('shop-inventory-tabs', 'shop-inventory-wrapper-inner');
+        // Setup inventory tabs for stash inventory (right side)
+        this.setupInventoryTabs('stash-inventory-tabs', 'stash-inventory-wrapper-inner');
+        // Setup stash tabs for stash items (left side)
+        this.setupStashTabs();
     }
 
     update() {
@@ -277,6 +301,8 @@ export class MenuUiSystem extends System {
                     this.toggleOverlay({ tab: 'journey' });
                 } else if (target.id === 'shop-tab') {
                     this.toggleOverlay({ tab: 'shop' });
+                } else if (target.id === 'stash-tab') {
+                    this.toggleOverlay({ tab: 'stash' });
                 } else if (target.id === 'close-tabs') {
                     this.toggleOverlay({});
                 }
@@ -541,6 +567,40 @@ export class MenuUiSystem extends System {
 
         this.setupInventoryTabs('shop-inventory-tabs', 'shop-inventory-wrapper-inner');
 
+        const stashInventoryWrapperInner = document.getElementById('stash-inventory-wrapper-inner');
+        if (stashInventoryWrapperInner) {
+            stashInventoryWrapperInner.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                const target = event.target.closest('.inventory-item');
+                if (!target) return;
+
+                const itemElement = event.target.closest('.item-icon');
+                if (!itemElement) return;
+                const itemData = JSON.parse(itemElement.getAttribute('data-item') || '{}');
+                if (!itemData.uniqueId) {
+                    console.error('MenuUiSystem: Item missing uniqueId:', itemData);
+                    return;
+                }
+                this.hideItemTooltip(itemData);
+                // In stash tab, right-click on inventory items should deposit to stash
+                this.eventBus.emit('DepositToStash', { uniqueId: itemData.uniqueId });
+            });
+
+            stashInventoryWrapperInner.addEventListener('mouseover', (event) => {
+                const target = event.target.closest('.item-icon');
+                if (!target) return;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.showItemTooltip(itemData, event);
+            }, { capture: true });
+
+            stashInventoryWrapperInner.addEventListener('mouseout', (event) => {
+                const target = event.target.closest('.item-icon');
+                if (!target) return;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.hideItemTooltip(itemData);
+            }, { capture: true });
+        }
+
         const statWrapper = document.getElementById('character-stat-wrapper');
         if (statWrapper) {
             statWrapper.addEventListener('click', (event) => {
@@ -617,6 +677,114 @@ export class MenuUiSystem extends System {
         }
     }
 
+    setupStashTabs() {
+        const stashTabs = document.getElementById('stash-tabs');
+        if (stashTabs) {
+            stashTabs.addEventListener('click', (event) => {
+                const target = event.target.closest('.stash-tab-button');
+                if (!target) return;
+
+                const player = this.entityManager.getEntity('player');
+                const stash = player.getComponent('Stash');
+
+                if (!stash) {
+                    console.warn('MenuUiSystem: Stash component not found');
+                    return;
+                }
+
+                if (target.id === 'sort-stash') {
+                    this.eventBus.emit('SortStash');
+                } else if (target.classList.contains('tab')) {
+                    const tabMap = {
+                        'stash-tab-all': 'all',
+                        'stash-tab-armor': 'armor',
+                        'stash-tab-weapon': 'weapon',
+                        'stash-tab-jewelry': 'jewelry',
+                        'stash-tab-journey': 'journey',
+                        'stash-tab-consumables': 'consumables'
+                    };
+
+                    const newTab = tabMap[target.id];
+                    if (newTab && newTab !== this.activeStashTab) {
+                        this.activeStashTab = newTab;
+                        stashTabs.querySelectorAll('.tab').forEach(tab => {
+                            tab.classList.toggle('active', tab.id === target.id);
+                            tab.style.background = tab.id === target.id ? '#0f0' : '#2c672c';
+                        });
+                        this.renderStashItems(stash.items, this.activeStashTab);
+                    }
+                }
+            });
+        }
+    }
+
+    renderStashItems(items, tab) {
+        const stashItemsDiv = document.getElementById('stash-items');
+        if (!stashItemsDiv) {
+            console.error('MenuUiSystem: stash-items container not found');
+            return;
+        }
+
+        let filteredItems = this.filterItems(items, tab);
+        const sortedItems = this.sortItemsByTypeAttackTier(filteredItems);
+        stashItemsDiv.innerHTML = `
+            ${sortedItems.length ? sortedItems.map((item, index) => `
+                <div class="inventory-item" data-index="${index}" data-source="stash">
+                    <p class="inventory-slot ${item.itemTier} ${item.type}">
+                        <img src="img/icons/items/${item.icon}" alt="${item.name}" class="item item-icon ${item.itemTier} ${item.type}" data-item='${JSON.stringify(item)}' data-index='${index}' draggable="true" onerror="this.src='img/icons/items/default.svg';">
+                        <span class="item-label ${item.itemTier}">${item.type}</span>
+                    </p>
+                </div>
+            `).join('') : '<p>No items in this category.</p>'}
+        `;
+
+        // Add dragstart listeners for stash items
+        const stashItemElements = stashItemsDiv.querySelectorAll('.item-icon');
+        stashItemElements.forEach(item => {
+            item.addEventListener('dragstart', (event) => {
+                const target = event.target;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                const index = parseInt(target.closest('.inventory-item').dataset.index, 10);
+                event.dataTransfer.setData('text/plain', JSON.stringify({ item: itemData, index, source: 'stash' }));
+                this.hideItemTooltip(itemData);
+            });
+
+            // Add click listener to withdraw on click
+            item.addEventListener('click', (event) => {
+                const target = event.target;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.eventBus.emit('WithdrawFromStash', { uniqueId: itemData.uniqueId });
+            });
+
+            // Add mouseover listener to show tooltip
+            item.addEventListener('mouseover', (event) => {
+                const target = event.target;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.showItemTooltip(itemData, event);
+            });
+
+            // Add mouseout listener to hide tooltip
+            item.addEventListener('mouseout', (event) => {
+                const target = event.target;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.hideItemTooltip(itemData);
+            });
+        });
+
+        // Add dragover and drop handlers for stash deposit
+        stashItemsDiv.addEventListener('dragover', (event) => {
+            event.preventDefault(); // Allow drop
+        });
+
+        stashItemsDiv.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+            if (data.source === 'inventory') {
+                this.eventBus.emit('DepositToStash', { uniqueId: data.item.uniqueId });
+            }
+        });
+    }
+
     toggleOverlay({ tab = null, fromShop = false, npcId = null }) {
         //console.log('MenuUiSystem: ToggleOverlay called with:', { tab, fromShop, npcId });
         const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
@@ -637,6 +805,11 @@ export class MenuUiSystem extends System {
             if (!player.hasComponent('ShopInteraction')) {
                 player.addComponent(new ShopInteractionComponent());
                 //console.log('MenuUiSystem: Added ShopInteractionComponent to player');
+            }
+
+            // Auto-unlock stash on first shopkeeper interaction
+            if (!player.hasComponent('Stash')) {
+                this.eventBus.emit('UnlockStash', { maxCapacity: 100, message: true });
             }
         } else if (!overlayState.isOpen) {
             overlayState.activeShopNpcId = null;
@@ -752,6 +925,7 @@ export class MenuUiSystem extends System {
         this.characterContent.style.display = tab === 'character' ? 'flex' : 'none';
         this.journeyContent.style.display = tab === 'journey' ? 'block' : 'none';
         this.shopContent.style.display = tab === 'shop' ? 'flex' : 'none';
+        this.stashContent.style.display = tab === 'stash' ? 'flex' : 'none';
 
         if (tab === 'log') {
             this.updateLog(overlayState.logMessages);
@@ -764,6 +938,8 @@ export class MenuUiSystem extends System {
             this.updateJourney();
         } else if (tab === 'shop') {
             this.updateShop(stats, inventory);
+        } else if (tab === 'stash') {
+            this.updateStash(stats, inventory);
         }
     }
 
@@ -780,6 +956,7 @@ export class MenuUiSystem extends System {
 
         // Check if player has a ShopInteraction component
         const showShopButton = player.hasComponent('ShopInteraction');
+        const showStashButton = player.hasComponent('ShopInteraction') && player.hasComponent('Stash');
 
         tabMenuDiv.innerHTML = `
             <button id="menu-tab" class="tabs-button" style="background: ${activeTab === 'menu' ? '#0f0' : '#2c672c'};">Menu</button>
@@ -787,6 +964,7 @@ export class MenuUiSystem extends System {
             <button id="log-tab" ${tabIsDisabled} class="tabs-button" style="background: ${activeTab === 'log' ? '#0f0' : '#2c672c'};">Log</button>
             <button id="journey-tab" ${tabIsDisabled} class="tabs-button" style="background: ${activeTab === 'journey' ? '#0f0' : '#2c672c'};">Journey</button>
             ${showShopButton ? `<button id="shop-tab" ${tabIsDisabled} class="tabs-button" style="background: ${activeTab === 'shop' ? '#0f0' : '#2c672c'};">Shop</button>` : ''}
+            ${showStashButton ? `<button id="stash-tab" ${tabIsDisabled} class="tabs-button" style="background: ${activeTab === 'stash' ? '#0f0' : '#2c672c'};">Stash</button>` : ''}
             <button id="close-tabs">X</button>
         `;
     }
@@ -1125,6 +1303,44 @@ export class MenuUiSystem extends System {
         }
 
         this.renderInventory('shop-inventory-wrapper-inner', inventory.items, this.activeInventoryTab);
+    }
+
+    updateStash(stats, inventory) {
+        const player = this.entityManager.getEntity('player');
+        const stash = player.getComponent('Stash');
+
+        if (!stash) {
+            console.error('MenuUiSystem: Stash component not found');
+            return;
+        }
+
+        const stashItems = stash.items || [];
+        const capacityElement = document.querySelector('.stash-capacity');
+        if (capacityElement) {
+            capacityElement.textContent = `${stashItems.length} / ${stash.maxCapacity}`;
+        }
+
+        // Render stash items with active filter
+        this.renderStashItems(stashItems, this.activeStashTab);
+
+        // Render inventory on the right side
+        this.renderInventory('stash-inventory-wrapper-inner', inventory.items, this.activeInventoryTab);
+
+        // Add dragover and drop handlers for stash withdrawal
+        const stashInventoryDiv = document.getElementById('stash-inventory-wrapper-inner');
+        if (stashInventoryDiv) {
+            stashInventoryDiv.addEventListener('dragover', (event) => {
+                event.preventDefault(); // Allow drop
+            });
+
+            stashInventoryDiv.addEventListener('drop', (event) => {
+                event.preventDefault();
+                const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+                if (data.source === 'stash') {
+                    this.eventBus.emit('WithdrawFromStash', { uniqueId: data.item.uniqueId });
+                }
+            });
+        }
     }
 
     addLogMessage({ message }) {

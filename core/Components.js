@@ -20,6 +20,7 @@ import {
 import {
     StatsComponent,
     InventoryComponent,
+    StashComponent,
     ResourceComponent,
     PlayerStateComponent,
     InputStateComponent,
@@ -111,6 +112,7 @@ export {
     // Player-related components
     StatsComponent,
     InventoryComponent,
+    StashComponent,
     ResourceComponent,
     PlayerStateComponent,
     InputStateComponent,

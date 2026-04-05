@@ -1,5 +1,5 @@
 ﻿// systems/LevelTransitionSystem.js - Updated
-import { PortalBindingComponent, PortalInteractionComponent } from '../core/Components.js';
+import { PortalBindingComponent, PortalInteractionComponent, StashComponent } from '../core/Components.js';
 import { System } from '../core/Systems.js';
 
 export class LevelTransitionSystem extends System {
@@ -318,6 +318,19 @@ export class LevelTransitionSystem extends System {
             this.entityManager.addComponentToEntity('player', new PortalBindingComponent(data.player.PortalBinding));
         } else {
             console.warn('LevelTransitionSystem: No PortalBindingComponent found in saved data');
+        }
+
+        // Restore StashComponent if it exists in saved data (backward compatibility)
+        if (data.player.Stash) {
+            console.log('LevelTransitionSystem: Restoring StashComponent:', data.player.Stash);
+            this.entityManager.addComponentToEntity('player', new StashComponent({
+                items: data.player.Stash.items || [],
+                maxCapacity: data.player.Stash.maxCapacity || 100,
+                accessCost: data.player.Stash.accessCost || 0,
+                requiresNearby: data.player.Stash.requiresNearby || false
+            }));
+        } else {
+            console.log('LevelTransitionSystem: No StashComponent found in saved data (backward compatibility)');
         }
 
         // Update overlay

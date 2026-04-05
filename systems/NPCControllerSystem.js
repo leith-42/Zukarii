@@ -113,7 +113,11 @@ export class NPCControllerSystem extends System {
 
 
                 console.log(`NPCControllerSystem: Generating shop items for NPC ${npc.id} at tier ${tier}`);
-                let merchantBaseItemTier = Math.round(tier / 10);
+                const gameState = gameStateEntity.getComponent('GameState');
+                // Tier 0 shopkeeper scales with player progression, dungeon shopkeepers use their tier
+                const shopTier = tier === 0 ? (gameState.highestTier || 0) : tier;
+                console.log(`NPCControllerSystem: Using shop tier ${shopTier} (tier: ${tier}, highestTier: ${gameState.highestTier}, isTier0: ${tier === 0})`);
+                let merchantBaseItemTier = Math.round(shopTier / 10);
                 if (merchantBaseItemTier < 1) merchantBaseItemTier = 0;
                 if (merchantBaseItemTier > 6) merchantBaseItemTier = 6;
 
@@ -165,11 +169,21 @@ export class NPCControllerSystem extends System {
                     //console.log('NPCControllerSystem: Skipped adding "Golden Buniyar Band" to shop items for NPC:', npc.id, 'Reason: Player name does not contain "bunny"');
                 }
 
-                shopComponent.items = filteredItems.map(item => ({
-                    ...item,
-                    uniqueId: item.uniqueId || this.utilities.generateUniqueId(),
-                    purchasePrice: Math.round((item.goldValue || 0) * shopComponent.sellMultiplier)
-                }));
+                shopComponent.items = filteredItems.map(item => {
+                    // Base price multiplier
+                    let priceMultiplier = shopComponent.sellMultiplier;
+
+                    // Double the price for high-tier items (mastercraft, legendary, relic, artifact)
+                    if (item.tierIndex >= 4) {
+                        priceMultiplier += item.tierIndex;
+                    }
+
+                    return {
+                        ...item,
+                        uniqueId: item.uniqueId || this.utilities.generateUniqueId(),
+                        purchasePrice: Math.round((item.goldValue || 0) * priceMultiplier)
+                    };
+                });
                 //console.log(`NPCControllerSystem: Generated ${shopComponent.items.length} shop items for NPC ${npc.id}`);
             }
         } catch (err) {

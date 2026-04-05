@@ -121,7 +121,8 @@ export class GameDataIOSystem extends System {
                 JourneyState: player.getComponent('JourneyState'), 
                 JourneyPath: player.getComponent('JourneyPath') ,   
                 PlayerAchievements: player.getComponent('PlayerAchievements'),
-                PortalBinding: player.hasComponent('PortalBinding') ? player.getComponent('PortalBinding') : null // Add PortalBinding conditionally
+                PortalBinding: player.hasComponent('PortalBinding') ? player.getComponent('PortalBinding') : null, // Add PortalBinding conditionally
+                Stash: player.hasComponent('Stash') ? player.getComponent('Stash') : null // Add Stash conditionally for backward compatibility
             } : null,
             gameState: gameState ? {
                 GameState: gameStateComp,

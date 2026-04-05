@@ -161,6 +161,8 @@ export class EffectsSystem extends System {
         const healPercentage = Math.random() * (MAX_DAMAGE_HEALED_PERCENTAGE - MIN_DAMAGE_HEALED_PERCENTAGE) + MIN_DAMAGE_HEALED_PERCENTAGE;
         const healAmount = Math.round(damageDealt * healPercentage);
 
+        this.healthUpdates.push({ entityId, amount: healAmount });
+
         this.utilities.logMessage({ channel: 'combat', classNames: 'player', message: `Life Steal heals you for ${healAmount} HP from damage dealt! (${health.hp}/${health.maxHp})`});
         //console.log(`EffectsSystem: ${entity.id} stole ${healAmount} HP from ${targetId}. Now: ${health.hp}/${health.maxHp}`);
     }

@@ -2077,4 +2077,183 @@ tooltip-description {
 
 /* added in bugfix */
 
+/* Stash Tab Styles - Mirror Shop Layout */
+#stash-content {
+    height: 28rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#stash-left {
+    display: flex;
+    flex-direction: column;
+    height: 24rem;
+    width: 49%;
+    margin-top: 0.625rem;
+}
+
+#stash-info {
+    padding-bottom: 0.625rem;
+}
+
+    #stash-info h2 {
+        margin-bottom: 0.3125rem;
+    }
+
+    #stash-info p {
+        font-size: .625rem;
+        width: 100%;
+        text-align: center;
+        color: #0f0;
+        margin: 0.125rem 0;
+    }
+
+    #stash-info .stash-capacity {
+        font-size: .875rem;
+        font-weight: bold;
+        color: #0f0;
+    }
+
+    #stash-info #sort-stash {
+        width: 100%;
+        padding: 0.3125rem;
+        margin-top: 0.3125rem;
+        background: #2c672c;
+        color: #000;
+        border: 0.125rem solid #0f0;
+        border-radius: 0.3125rem;
+        cursor: pointer;
+    }
+
+        #stash-info #sort-stash:hover {
+            background: #0f0;
+        }
+
+#stash-items {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+    gap: 0.625rem;
+    width: 100%;
+    height: 100%;
+    padding: 0.625rem;
+    border: 0.125rem solid #0f0;
+    border-radius: 0px 0px .625rem .625rem;
+    overflow-y: auto;
+    scrollbar-color: #0f0 #111;
+    scrollbar-width: thin;
+    background: rgba(20, 30, 20, 0.7);
+}
+
+#stash-window-wrapper {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: .625rem;
+    background: rgba(20, 30, 20, 0.7);
+}
+
+#stash-tabs {
+    padding: 0;
+    margin: 0;
+    border-radius: inherit;
+    width: 100%;
+    height: 1.75rem;
+    display: flex;
+    align-content: flex-start;
+    gap: .325rem;
+}
+
+    #stash-tabs button {
+        padding: 0.125rem 0.625rem;
+        cursor: pointer;
+        margin: 0;
+        background: #2c672c;
+        color: #000;
+        border-bottom: none;
+        border-radius: .325rem .325rem 0px 0px;
+    }
+
+        #stash-tabs button.tab {
+            flex: 12;
+        }
+
+        #stash-tabs button.sort {
+            flex: 2;
+        }
+
+        #stash-tabs button.active {
+            background: #0f0;
+        }
+
+#stash-inventory-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 28rem;
+    width: 49%;
+    margin-top: 0.625rem;
+}
+
+    #stash-inventory-wrapper div.inventory-item {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 4.1rem;
+        width: 4.1rem;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+#stash-inventory-tabs {
+    padding: 0;
+    margin: 0;
+    border-radius: inherit;
+    width: 100%;
+    height: 1.75rem;
+    display: flex;
+    align-content: flex-start;
+    gap: .325rem;
+}
+
+    #stash-inventory-tabs button {
+        padding: 0.125rem 0.625rem;
+        cursor: pointer;
+        margin: 0;
+        background: #2c672c;
+        color: #000;
+        border-bottom: none;
+        border-radius: .325rem .325rem 0px 0px;
+    }
+
+        #stash-inventory-tabs button.tab {
+            flex: 12;
+        }
+
+        #stash-inventory-tabs button.sort {
+            flex: 2;
+        }
+
+        #stash-inventory-tabs button.active {
+            background: #0f0;
+        }
+
+#tabs #stash-inventory-wrapper-inner {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+    gap: 0.625rem;
+    width: 100%;
+    height: 24rem;
+    padding: 0.625rem;
+    border: 0.125rem solid #0f0;
+    border-radius: 0px 0px .625rem .625rem;
+    overflow-y: auto;
+    scrollbar-color: #0f0 #111;
+    scrollbar-width: thin;
+    background: rgba(20, 30, 20, 0.7);
+}
 
