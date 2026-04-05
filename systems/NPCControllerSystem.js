@@ -251,10 +251,11 @@ export class NPCControllerSystem extends System {
                 // Add stash upgrade item
                 const player = this.entityManager.getEntity('player');
                 const stash = player?.getComponent('Stash');
+                const isFirstPurchase = !stash;
                 const upgradeLevel = stash?.upgradeLevel || 0;
                 const basePrice = 500;
-                const upgradePrice = basePrice * Math.pow(2, upgradeLevel);
-                const isFirstPurchase = !stash;
+                // First purchase is 500, subsequent upgrades use 2^(level+1)
+                const upgradePrice = isFirstPurchase ? basePrice : basePrice * Math.pow(2, upgradeLevel + 1);
 
                 const stashUpgradeItem = {
                     uniqueId: 'stash_upgrade_item',
