@@ -85,7 +85,8 @@ export class MapRenderSystem extends System {
 
     loadSprites() {
         const spritePaths = {
-            floor: 'img/map/floor-gray-brick-1.png',
+            //floor: 'img/map/floor-gray-brick-1.png',
+            floor: 'img/map/floor.png',
             wall: 'img/map/wall.png',
             player: 'img/avatars/player.png',
             stairsup: 'img/avatars/stairsup.png',
@@ -189,7 +190,7 @@ export class MapRenderSystem extends System {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         // --- Optimized Floor Rendering ---
-        const floorSprite = this.sprites.get('img/map/floor-gray-brick-1.png');
+        const floorSprite = this.sprites.get('img/map/floor.png');
         const floorNeedsRedraw =
             this.lastFloorStartX !== startX ||
             this.lastFloorStartY !== startY ||
