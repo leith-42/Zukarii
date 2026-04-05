@@ -19,6 +19,9 @@ export class MenuUiSystem extends System {
         this.activeStashTab = 'all';
         this.playerEntity = this.entityManager.getEntity('player');
         this.lastInventoryHash = '';
+        this.currentHoveredItem = null;
+        this.currentComparisonSlotIndex = 0;
+        this.currentHoveredEvent = null;
     }
 
     init() {
@@ -103,6 +106,7 @@ export class MenuUiSystem extends System {
         });
 
         this.setupEventListeners();
+        this.setupTooltipHotkeys();
         //console.log('MenuUiSystem: Event listeners set up');
 
         // Setup inventory tabs for shop
@@ -115,6 +119,42 @@ export class MenuUiSystem extends System {
 
     update() {
         // No HUD-related updates needed
+    }
+
+    setupTooltipHotkeys() {
+        document.addEventListener('keydown', (event) => {
+            // Tab key to cycle between ring/weapon slots during tooltip hover
+            if (event.key === 'Tab' && this.currentHoveredItem && this.currentHoveredEvent) {
+                event.preventDefault(); // Prevent default Tab behavior
+
+                const equipSlots = this.getEquipmentSlotsForItem(this.currentHoveredItem);
+                // Only cycle if item has multiple possible slots (rings and weapons)
+                if (equipSlots.length > 1) {
+                    this.currentComparisonSlotIndex = (this.currentComparisonSlotIndex + 1) % equipSlots.length;
+
+                    // Hide current comparison tooltips
+                    if (this.activeComparisonTooltips) {
+                        this.activeComparisonTooltips.forEach(comparisonId => {
+                            const comparisonTooltip = this.tooltipCache.get(comparisonId);
+                            if (comparisonTooltip) {
+                                comparisonTooltip.style.display = 'none';
+                            }
+                        });
+                        this.activeComparisonTooltips.clear();
+                    }
+
+                    // Re-show comparison tooltip with new slot
+                    const tooltip = this.tooltipCache.get(this.currentHoveredItem.uniqueId);
+                    if (tooltip) {
+                        const target = this.currentHoveredEvent.target.closest('.item-icon');
+                        if (target) {
+                            const rect = target.getBoundingClientRect();
+                            this.showComparisonTooltip(this.currentHoveredItem, tooltip, rect, this.currentComparisonSlotIndex);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     setupInventoryTabs(containerId, inventoryContainerId) {
@@ -1379,6 +1419,19 @@ export class MenuUiSystem extends System {
         return validSlots?.includes(slot) || false;
     }
 
+    getEquipmentSlotsForItem(item) {
+        const slotMap = {
+            amulet: ["amulet"],
+            armor: ["armor"],
+            head: ["head"],
+            gloves: ["gloves"],
+            boots: ["boots"],
+            ring: ["leftring", "rightring"],
+            weapon: ["mainhand", "offhand"]
+        };
+        return slotMap[item.type] || [];
+    }
+
     gameOver(dataObj) {
         const gameOverDiv = document.getElementById('game-over');
         gameOverDiv.style.display = 'block';
@@ -1400,6 +1453,11 @@ export class MenuUiSystem extends System {
             this.tooltipCache = new Map();
         }
 
+        // Track current hovered item and event for hotkey support
+        this.currentHoveredItem = itemData;
+        this.currentHoveredEvent = event;
+        this.currentComparisonSlotIndex = 0; // Reset to first slot
+
         // Clear any existing timeout to prevent multiple triggers
         if (this.tooltipTimeout) {
             clearTimeout(this.tooltipTimeout);
@@ -1409,137 +1467,7 @@ export class MenuUiSystem extends System {
         this.tooltipTimeout = setTimeout(() => {
             let tooltip = this.tooltipCache.get(itemData.uniqueId);
             if (!tooltip) {
-                tooltip = document.createElement('div');
-                tooltip.id = `item-tooltip-${itemData.uniqueId}`;
-                tooltip.className = `item-tooltip-class ${itemData.itemTier}`;
-                tooltip.style.position = 'absolute';
-                tooltip.style.whiteSpace = 'pre-wrap';
-
-                const content = document.createElement('div');
-
-                const name = document.createElement('div');
-                name.className = 'item-tooltip-name';
-                name.textContent = this.utilities.encodeHTMLEntities(itemData.name);
-                content.appendChild(name);
-
-                const iconContainerParagraph = document.createElement('p');
-                iconContainerParagraph.className = `item-tooltip-icon-wrap ${itemData.itemTier}`;
-                content.appendChild(iconContainerParagraph);
-
-                const icon = document.createElement('img');
-                icon.className = `item-tooltip-icon ${itemData.itemTier}`;
-                icon.src = `img/icons/items/${itemData.icon}`;
-                icon.alt = itemData.name;
-                iconContainerParagraph.appendChild(icon);
-
-                const typeTier = document.createElement('div');
-                typeTier.className = 'item-tooltip-type-tier';
-                typeTier.textContent = `${itemData.itemTier} ${itemData.type}`;
-                content.appendChild(typeTier);
-
-                if (itemData.type === "weapon") {
-                    const damage = document.createElement('div');
-                    damage.className = 'item-tooltip-damage';
-                    damage.textContent = `Damage: ${itemData.baseDamageMin}-${itemData.baseDamageMax}`;
-                    content.appendChild(damage);
-                    switch (itemData.attackType) {
-                        case "melee":
-                            const baseBlock = document.createElement('div');
-                            baseBlock.className = 'item-tooltip-base-block';
-                            baseBlock.textContent = `Block: ${itemData.baseBlock || 0}`;
-                            content.appendChild(baseBlock);
-                            break;
-                        case "ranged":
-                            const baseRange = document.createElement('div');
-                            baseRange.className = 'item-tooltip-base-range';
-                            baseRange.textContent = `Range: ${itemData.baseRange || 0}`;
-                            content.appendChild(baseRange);
-                            break;
-                    }
-                } else if (itemData.type === "armor") {
-                    const armor = document.createElement('div');
-                    armor.className = 'item-tooltip-armor';
-                    armor.textContent = `Armor: ${itemData.armor || 0}`;
-                    content.appendChild(armor);
-                } else if (itemData.type === "head") {
-                    const armor = document.createElement('div');
-                    armor.className = 'item-tooltip-armor';
-                    armor.textContent = `Armor: ${itemData.armor || 0}`;
-                    content.appendChild(armor);
-                } else if (itemData.type === "gloves") {
-                    const armor = document.createElement('div');
-                    armor.className = 'item-tooltip-armor';
-                    armor.textContent = `Armor: ${itemData.armor || 0}`;
-                    content.appendChild(armor);
-                } else if (itemData.type === "boots") {
-                    const movementSpeed = document.createElement('div');
-                    movementSpeed.className = 'item-tooltip-movementSpeed';
-                    movementSpeed.textContent = `Move Speed: ${itemData.baseMovementSpeed || 0}%`;
-                    content.appendChild(movementSpeed);
-                }
-
-                if ('stats' in itemData && itemData.stats) {
-                    const divider = document.createElement('hr');
-                    divider.className = 'tooltip-divider';
-                    content.appendChild(divider);
-
-                    const propCount = Object.keys(itemData.stats).length;
-                    if (propCount > 0) {
-                        const statsContainer = document.createElement('div');
-                        statsContainer.className = 'tooltip-stats';
-                        Object.entries(itemData.stats).forEach(([stat, value]) => {
-                            let critChar = '';
-                            const statLine = document.createElement('div');
-                            statLine.className = 'tooltip-stat';
-                            const critStats = itemData.critStats || [];
-                            if (critStats.includes(stat)) {
-                                statLine.className += ' crit-stat';
-                                critChar = '!';
-                            }
-                            statLine.textContent = `${value > 0 ? '+' : ''}${value} : ${this.utilities.encodeHTMLEntities(stat)} ${this.utilities.encodeHTMLEntities(critChar)}`;
-                            statsContainer.appendChild(statLine);
-                        });
-                        content.appendChild(statsContainer);
-                    }
-                }
-
-                if (itemData.affixes && itemData.affixes.length > 0) {
-                    const affixDivider = document.createElement('hr');
-                    affixDivider.className = 'tooltip-divider';
-                    content.appendChild(affixDivider);
-                    itemData.affixes.forEach(affix => {
-                        const affixElement = document.createElement('div');
-                        affixElement.className = 'tooltip-affix';
-                        const affixName = affix.name ? affix.name.charAt(0).toUpperCase() + affix.name.slice(1) : 'Unnamed';
-                        affixElement.textContent = `${affixName}: ${affix.description || 'No description'}`;
-                        content.appendChild(affixElement);
-                    });
-                }
-
-                const descriptionDivider = document.createElement('hr');
-                descriptionDivider.className = 'tooltip-divider';
-                content.appendChild(descriptionDivider);
-
-                const description = document.createElement('div');
-                description.className = 'tooltip-description';
-                description.textContent = `${itemData.description}`;
-                content.appendChild(description);
-
-                const sellInfoDivider = document.createElement('hr');
-                sellInfoDivider.className = 'tooltip-divider';
-                content.appendChild(sellInfoDivider);
-
-                const sellInfo = document.createElement('div');
-                sellInfo.className = 'tooltip-sellInfo';
-                sellInfo.textContent = 'Item Cannot Be Sold';
-
-                if (itemData.isSellable) {
-                    sellInfo.textContent = `Sellable | Value: ${itemData.goldValue}`;
-                }
-                content.appendChild(sellInfo);
-
-                tooltip.appendChild(content);
-                document.body.appendChild(tooltip);
+                tooltip = this.createItemTooltip(itemData);
                 this.tooltipCache.set(itemData.uniqueId, tooltip);
             }
 
@@ -1553,7 +1481,6 @@ export class MenuUiSystem extends System {
                 const tooltipHeight = tooltip.offsetHeight;
 
                 // Calculate position relative to the item
-                // const x = rect.left + window.scrollX + rect.width + 10; // Position to the right of the item
                 const x = rect.left + window.scrollX - tooltipWidth - 10; // Position to the left of the item
                 const y = rect.top + window.scrollY + (rect.height / 2) - (tooltipHeight / 2); // Center vertically
 
@@ -1561,17 +1488,231 @@ export class MenuUiSystem extends System {
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
 
-                //tooltip.style.left = `${Math.min(x, viewportWidth - tooltipWidth - 10)}px`; // Position to the right of the item
-                tooltip.style.left = `${Math.max(10, Math.min(x, viewportWidth - tooltipWidth - 10))}px`;// Position to the left of the item
+                tooltip.style.left = `${Math.max(10, Math.min(x, viewportWidth - tooltipWidth - 10))}px`;
                 tooltip.style.top = `${Math.max(10, Math.min(y, viewportHeight - tooltipHeight - 10))}px`;
+
+                // Show comparison tooltip for equipped item if applicable
+                this.showComparisonTooltip(itemData, tooltip, rect, this.currentComparisonSlotIndex);
             }
         }, 300);
+    }
+
+    createItemTooltip(itemData) {
+        const tooltip = document.createElement('div');
+        tooltip.id = `item-tooltip-${itemData.uniqueId}`;
+        tooltip.className = `item-tooltip-class ${itemData.itemTier}`;
+        tooltip.style.position = 'absolute';
+        tooltip.style.whiteSpace = 'pre-wrap';
+
+        const content = document.createElement('div');
+
+        const name = document.createElement('div');
+        name.className = 'item-tooltip-name';
+        name.textContent = this.utilities.encodeHTMLEntities(itemData.name);
+        content.appendChild(name);
+
+        const iconContainerParagraph = document.createElement('p');
+        iconContainerParagraph.className = `item-tooltip-icon-wrap ${itemData.itemTier}`;
+        content.appendChild(iconContainerParagraph);
+
+        const icon = document.createElement('img');
+        icon.className = `item-tooltip-icon ${itemData.itemTier}`;
+        icon.src = `img/icons/items/${itemData.icon}`;
+        icon.alt = itemData.name;
+        iconContainerParagraph.appendChild(icon);
+
+        const typeTier = document.createElement('div');
+        typeTier.className = 'item-tooltip-type-tier';
+        typeTier.textContent = `${itemData.itemTier} ${itemData.type}`;
+        content.appendChild(typeTier);
+
+        if (itemData.type === "weapon") {
+            const damage = document.createElement('div');
+            damage.className = 'item-tooltip-damage';
+            damage.textContent = `Damage: ${itemData.baseDamageMin}-${itemData.baseDamageMax}`;
+            content.appendChild(damage);
+            switch (itemData.attackType) {
+                case "melee":
+                    const baseBlock = document.createElement('div');
+                    baseBlock.className = 'item-tooltip-base-block';
+                    baseBlock.textContent = `Block: ${itemData.baseBlock || 0}`;
+                    content.appendChild(baseBlock);
+                    break;
+                case "ranged":
+                    const baseRange = document.createElement('div');
+                    baseRange.className = 'item-tooltip-base-range';
+                    baseRange.textContent = `Range: ${itemData.baseRange || 0}`;
+                    content.appendChild(baseRange);
+                    break;
+            }
+        } else if (itemData.type === "armor") {
+            const armor = document.createElement('div');
+            armor.className = 'item-tooltip-armor';
+            armor.textContent = `Armor: ${itemData.armor || 0}`;
+            content.appendChild(armor);
+        } else if (itemData.type === "head") {
+            const armor = document.createElement('div');
+            armor.className = 'item-tooltip-armor';
+            armor.textContent = `Armor: ${itemData.armor || 0}`;
+            content.appendChild(armor);
+        } else if (itemData.type === "gloves") {
+            const armor = document.createElement('div');
+            armor.className = 'item-tooltip-armor';
+            armor.textContent = `Armor: ${itemData.armor || 0}`;
+            content.appendChild(armor);
+        } else if (itemData.type === "boots") {
+            const movementSpeed = document.createElement('div');
+            movementSpeed.className = 'item-tooltip-movementSpeed';
+            movementSpeed.textContent = `Move Speed: ${itemData.baseMovementSpeed || 0}%`;
+            content.appendChild(movementSpeed);
+        }
+
+        if ('stats' in itemData && itemData.stats) {
+            const divider = document.createElement('hr');
+            divider.className = 'tooltip-divider';
+            content.appendChild(divider);
+
+            const propCount = Object.keys(itemData.stats).length;
+            if (propCount > 0) {
+                const statsContainer = document.createElement('div');
+                statsContainer.className = 'tooltip-stats';
+                Object.entries(itemData.stats).forEach(([stat, value]) => {
+                    let critChar = '';
+                    const statLine = document.createElement('div');
+                    statLine.className = 'tooltip-stat';
+                    const critStats = itemData.critStats || [];
+                    if (critStats.includes(stat)) {
+                        statLine.className += ' crit-stat';
+                        critChar = '!';
+                    }
+                    statLine.textContent = `${value > 0 ? '+' : ''}${value} : ${this.utilities.encodeHTMLEntities(stat)} ${this.utilities.encodeHTMLEntities(critChar)}`;
+                    statsContainer.appendChild(statLine);
+                });
+                content.appendChild(statsContainer);
+            }
+        }
+
+        if (itemData.affixes && itemData.affixes.length > 0) {
+            const affixDivider = document.createElement('hr');
+            affixDivider.className = 'tooltip-divider';
+            content.appendChild(affixDivider);
+            itemData.affixes.forEach(affix => {
+                const affixElement = document.createElement('div');
+                affixElement.className = 'tooltip-affix';
+                const affixName = affix.name ? affix.name.charAt(0).toUpperCase() + affix.name.slice(1) : 'Unnamed';
+                affixElement.textContent = `${affixName}: ${affix.description || 'No description'}`;
+                content.appendChild(affixElement);
+            });
+        }
+
+        const descriptionDivider = document.createElement('hr');
+        descriptionDivider.className = 'tooltip-divider';
+        content.appendChild(descriptionDivider);
+
+        const description = document.createElement('div');
+        description.className = 'tooltip-description';
+        description.textContent = `${itemData.description}`;
+        content.appendChild(description);
+
+        const sellInfoDivider = document.createElement('hr');
+        sellInfoDivider.className = 'tooltip-divider';
+        content.appendChild(sellInfoDivider);
+
+        const sellInfo = document.createElement('div');
+        sellInfo.className = 'tooltip-sellInfo';
+        sellInfo.textContent = 'Item Cannot Be Sold';
+
+        if (itemData.isSellable) {
+            sellInfo.textContent = `Sellable | Value: ${itemData.goldValue}`;
+        }
+        content.appendChild(sellInfo);
+
+        tooltip.appendChild(content);
+        document.body.appendChild(tooltip);
+        return tooltip;
+    }
+
+    showComparisonTooltip(hoveredItem, hoveredTooltip, hoveredRect, slotIndex = 0) {
+        // Check if this item can be equipped
+        const equipSlots = this.getEquipmentSlotsForItem(hoveredItem);
+        if (equipSlots.length === 0) {
+            return; // Not an equippable item
+        }
+
+        const player = this.entityManager.getEntity('player');
+        if (!player) return;
+
+        const inventory = player.getComponent('Inventory');
+        if (!inventory || !inventory.equipped) return;
+
+        // Use the specified slot index (for Tab cycling)
+        const slot = equipSlots[slotIndex % equipSlots.length];
+        const equippedItem = inventory.equipped[slot];
+        const equippedSlot = slot;
+
+        if (!equippedItem) {
+            return; // No item equipped in this slot
+        }
+
+        // Create or retrieve comparison tooltip
+        const comparisonId = `${hoveredItem.uniqueId}-comparison-${equippedSlot}`;
+        let comparisonTooltip = this.tooltipCache.get(comparisonId);
+
+        if (!comparisonTooltip) {
+            comparisonTooltip = this.createItemTooltip(equippedItem);
+            comparisonTooltip.id = `item-tooltip-comparison-${comparisonId}`;
+
+            // Add "EQUIPPED" label to comparison tooltip
+            const equippedLabel = document.createElement('div');
+            equippedLabel.className = 'tooltip-equipped-label';
+            equippedLabel.textContent = `EQUIPPED (${equippedSlot})`;
+            equippedLabel.style.fontWeight = 'bold';
+            equippedLabel.style.color = '#0f0';
+            equippedLabel.style.marginBottom = '5px';
+            comparisonTooltip.insertBefore(equippedLabel, comparisonTooltip.firstChild);
+
+            this.tooltipCache.set(comparisonId, comparisonTooltip);
+        } else {
+            // Update the label if it already exists
+            const label = comparisonTooltip.querySelector('.tooltip-equipped-label');
+            if (label) {
+                label.textContent = `EQUIPPED (${equippedSlot})`;
+            }
+        }
+
+        comparisonTooltip.style.display = 'block';
+
+        // Position comparison tooltip to the left of the hovered tooltip
+        const comparisonWidth = comparisonTooltip.offsetWidth;
+        const comparisonHeight = comparisonTooltip.offsetHeight;
+
+        // Get the position of the hovered tooltip
+        const hoveredTooltipRect = hoveredTooltip.getBoundingClientRect();
+        const x = hoveredTooltipRect.left + window.scrollX - comparisonWidth - 10; // Position to the left of the hovered tooltip
+        const y = hoveredRect.top + window.scrollY + (hoveredRect.height / 2) - (comparisonHeight / 2); // Center vertically with item
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        comparisonTooltip.style.left = `${Math.max(10, Math.min(x, viewportWidth - comparisonWidth - 10))}px`;
+        comparisonTooltip.style.top = `${Math.max(10, Math.min(y, viewportHeight - comparisonHeight - 10))}px`;
+
+        // Store reference to comparison tooltip for cleanup
+        if (!this.activeComparisonTooltips) {
+            this.activeComparisonTooltips = new Set();
+        }
+        this.activeComparisonTooltips.add(comparisonId);
     }
 
     hideItemTooltip(itemData) {
         if (!itemData || !itemData.uniqueId) {
             return;
         }
+
+        // Clear hover tracking
+        this.currentHoveredItem = null;
+        this.currentHoveredEvent = null;
+        this.currentComparisonSlotIndex = 0;
 
         // Clear the timeout to prevent the tooltip from showing if the mouse leaves quickly
         if (this.tooltipTimeout) {
@@ -1583,9 +1724,22 @@ export class MenuUiSystem extends System {
             console.error("Tooltip cache not initialized");
             this.tooltipCache = new Map();
         }
+
+        // Hide main tooltip
         const tooltip = this.tooltipCache.get(itemData.uniqueId);
         if (tooltip) {
             tooltip.style.display = 'none';
+        }
+
+        // Hide comparison tooltip if it exists
+        if (this.activeComparisonTooltips) {
+            this.activeComparisonTooltips.forEach(comparisonId => {
+                const comparisonTooltip = this.tooltipCache.get(comparisonId);
+                if (comparisonTooltip) {
+                    comparisonTooltip.style.display = 'none';
+                }
+            });
+            this.activeComparisonTooltips.clear();
         }
     }
 }
