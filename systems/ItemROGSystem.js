@@ -67,6 +67,7 @@ export class ItemROGSystem extends System {
                 maxLuck: 5,
                 range: 5,
                 block: 5,
+                didge: 5,
                 armor: 5,
                 defense: 5,
                 baseBlock: 5,
@@ -222,7 +223,7 @@ export class ItemROGSystem extends System {
                     item.critStats = bonusStats.crit;
                 }
             }
-
+            
             // Check for affix
             let randomAffix = false;
             if (item.tierIndex > 4 && (!item.affixes || item.affixes.length === 0)) { // Add affix to Legendary and above if template has no affix
@@ -443,6 +444,7 @@ export class ItemROGSystem extends System {
                     break;
                 case 'range':
                 case 'block':
+                case 'dodge':
                 case 'defense':
                 case'movementSpeed':
                     if (isCrit) {

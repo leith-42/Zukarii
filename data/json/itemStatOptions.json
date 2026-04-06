@@ -36,10 +36,12 @@
       "range",
       "resistMagic",
       "block",
+      "dodge",
       "defense",
       "meleeBonus",
       "rangedBonus",
-      "damageBonus"
+      "damageBonus",
+      "movementSpeed"
     ]
   },
   "ring": {
@@ -53,10 +55,12 @@
       "range",
       "resistMagic",
       "block",
+      "dodge",
       "defense",
       "meleeBonus",
       "rangedBonus",
-      "damageBonus"
+      "damageBonus",
+      "movementSpeed"
     ]
   }
 }

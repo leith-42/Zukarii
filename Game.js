@@ -1,6 +1,6 @@
 ﻿// Game.js - Updated
 import { State } from './State.js';
-import { PLAYER_ANIMATION_CONFIG } from './data/cfg/PlayerAnimations.js';
+import { PlayerFactory } from './factories/PlayerFactory.js';
 
 import { ActionSystem } from './systems/ActionSystem.js';
 import { CombatSystem } from './systems/CombatSystem.js';
@@ -59,13 +59,20 @@ import { StashSystem } from './systems/StashSystem.js';
 
 
 import {
-    PositionComponent, VisualsComponent, HealthComponent, ManaComponent, StatsComponent, InventoryComponent, ResourceComponent,
-    PlayerStateComponent, LightingState, LightSourceDefinitions, OverlayStateComponent, InputStateComponent, LogComponent, LightSourceComponent,
-    AttackSpeedComponent, MovementSpeedComponent, AffixComponent, DataProcessQueues, NeedsRenderComponent, AudioQueueComponent,
-    LevelTransitionComponent, HitboxComponent, LastPositionComponent, RenderStateComponent, GameStateComponent, RenderControlComponent,
-    AnimationComponent, AnimationStateComponent, JourneyStateComponent, JourneyPathComponent, DialogueComponent, JourneyPathsComponent,
-    OfferedJourneysComponent, PlayerActionQueueComponent, PlayerAchievementsComponent, JourneyUpdateQueueComponent, JourneyRewardComponent,
-    AchievementUpdateQueueComponent, PortalInteractionComponent, PortalBindingComponent, NPCDataComponent, ShopInteractionComponent
+    LightingState,
+    LightSourceDefinitions,
+    OverlayStateComponent,
+    DialogueComponent,
+    RenderStateComponent,
+    RenderControlComponent,
+    DataProcessQueues,
+    AudioQueueComponent,
+    LevelTransitionComponent,
+    JourneyPathsComponent,
+    OfferedJourneysComponent,
+    JourneyUpdateQueueComponent,
+    AchievementUpdateQueueComponent,
+    GameStateComponent
 } from './core/Components.js';
 
 export class Game {
@@ -86,59 +93,8 @@ export class Game {
         this.isLoadingFromSave = false; // Add flag to track if loading from a save
         this.hudLayer = document.getElementById('hud-layer');
 
-        // Initialize player
-        let player = this.entityManager.getEntity('player');
-        if (player) {
-            this.entityManager.removeEntity('player');
-        }
-        player = this.entityManager.createEntity('player', true);
-        //window.player = player; // Expose player globally for debugging
-        this.entityManager.addComponentToEntity('player', new LightSourceComponent({
-            definitionKey: 'unlit',
-            visibilityEnabled: true,
-            visibilityRadius: 2,
-            visibilityOpacitySteps: [0.75, 0.15, 0],
-            visibilityTintColor: 'rgba(255,255,255,.5)',
-            glowEnabled: true,
-            glowType: 'outline',
-            glowColor: 'rgba(255,255,255,0)',
-            glowIntensity: .5,
-            glowSize: 2, 
-            proximityFactor: 1.0,
-            pulse: null
-        }));
-        this.entityManager.addComponentToEntity('player', new LogComponent());
-        this.entityManager.addComponentToEntity('player', new PositionComponent(704, 704));
-        this.entityManager.addComponentToEntity('player', new LastPositionComponent(0, 0));
-        this.entityManager.addComponentToEntity('player', new VisualsComponent(32, 32));
-        const visuals = this.entityManager.getEntity('player').getComponent('Visuals');
-        visuals.avatar = 'img/avatars/player.png';
-        this.entityManager.addComponentToEntity('player', new HealthComponent(0, 0));
-        this.entityManager.addComponentToEntity('player', new ManaComponent(0, 0));
-        this.entityManager.addComponentToEntity('player', new StatsComponent());
-        this.entityManager.addComponentToEntity('player', new InventoryComponent({
-            equipped: { mainhand: null, offhand: null, armor: null, amulet: null, leftring: null, rightring: null },
-            items: []
-        }));
-        this.entityManager.addComponentToEntity('player', new JourneyRewardComponent());
-        this.entityManager.addComponentToEntity('player', new ResourceComponent(0, 0, 0, 0, 0, 0, {}));
-        this.entityManager.addComponentToEntity('player', new PlayerStateComponent(0, 1, 0, false, false, ''));
-        this.entityManager.addComponentToEntity('player', new JourneyStateComponent());
-        this.entityManager.addComponentToEntity('player', new JourneyPathComponent());
-        this.entityManager.addComponentToEntity('player', new InputStateComponent());
-        this.entityManager.addComponentToEntity('player', new AttackSpeedComponent(500));
-        this.entityManager.addComponentToEntity('player', new MovementSpeedComponent());
-        const movementSpeedComp = this.entityManager.getEntity('player').getComponent('MovementSpeed');
-        movementSpeedComp.combatSpeedMultiplier = 0.9; 
-        this.entityManager.addComponentToEntity('player', new AffixComponent());
-        this.entityManager.addComponentToEntity('player', new NeedsRenderComponent(32, 32));
-        this.entityManager.addComponentToEntity('player', new HitboxComponent(28,28,2,4));
-        this.entityManager.addComponentToEntity('player', new PlayerActionQueueComponent());
-        this.entityManager.addComponentToEntity('player', new PlayerAchievementsComponent());
-        this.entityManager.addComponentToEntity('player', new AnimationStateComponent());
-        this.entityManager.addComponentToEntity('player', new AnimationComponent());
-        const animation = player.getComponent('Animation');
-        Object.assign(animation, PLAYER_ANIMATION_CONFIG);
+        // Initialize player using factory
+        const player = PlayerFactory.create(this.entityManager);
 
         // Initialize overlayState
         let overlayState = this.entityManager.getEntity('overlayState');

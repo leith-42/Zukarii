@@ -188,7 +188,7 @@ export class MonsterSpawnSystem extends System {
             console.error('MonsterSpawnSystem: Failed to fetch monster data:', err);
         });
     }
-
+    
     createMonsterEntity(template, tier, roomIds, playerX, playerY) {
         if (!roomIds || roomIds.length === 0) {
             console.error(`MonsterSpawnSystem.js: No rooms provided for spawning monsters on tier ${tier}`);

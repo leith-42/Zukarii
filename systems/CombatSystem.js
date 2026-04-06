@@ -81,7 +81,7 @@ export class CombatSystem extends System {
 
         this.combatFlagging({ attacker:monster, target:player })
 
-        const dodgeRoll = Math.round((Math.random() * 100) + (playerStats.agility / 2) );
+        const dodgeRoll = Math.round((Math.random() * 100) + (playerStats.dodge / 2) );
         if (dodgeRoll >= 85) {
            // this.eventBus.emit('LogMessage', { message: `You dodged the ${monsterData.name}'s attack!` });
             this.utilities.logMessage({  channel: 'combat', message: `You dodged the ${monsterData.name}'s attack!` }); 
@@ -101,7 +101,8 @@ export class CombatSystem extends System {
         //eventBus.emit('PlayerWasHit', { entityId: 'player', attackerId: entityId });
         this.eventBus.emit('CalculateDamage', {
             attacker: monster,
-            target: player
+            target: player,
+            weapon: 'melee' 
         });
 
          
@@ -142,7 +143,7 @@ export class CombatSystem extends System {
             }
 
             const dodgeRoll = Math.random() * 100;
-            if (dodgeRoll >= 99) {
+            if (dodgeRoll >= 95) {
                // this.eventBus.emit('LogMessage', { message: `${targetMonsterData.name} dodged your ${weapon.name} attack!` });
                 this.utilities.logMessage({ channel: 'combat', message: `${targetMonsterData.name} dodged your ${weapon.name} attack!` });
                 this.combatSfx('miss');
@@ -150,7 +151,7 @@ export class CombatSystem extends System {
             }
 
             const blockRoll = Math.random() * 100;
-            if (blockRoll >= 99) {
+            if (blockRoll >= 95) {
                // this.eventBus.emit('LogMessage', { message: `${targetMonsterData.name} blocked your ${weapon.name} attack!` });
                 this.utilities.logMessage({ channel: 'combat', message: `${targetMonsterData.name} blocked your ${weapon.name} attack!` });
                 this.combatSfx('block');

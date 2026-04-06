@@ -179,7 +179,15 @@ export class ShopInteractionComponent {
         this.active = true; // Flag to indicate an active shop interaction
         // Future expansion: Add properties like transactionHistory, activeShopNpc, etc.
     }
-    
+
+}
+
+export class StashInteractionComponent {
+    constructor() {
+        this.type = 'StashInteraction';
+        this.active = true; // Flag to indicate an active stash interaction
+        // Future expansion: Add properties like lastAccessTime, accessCount, etc.
+    }
 }
 
 export class HotBarIntentComponent {

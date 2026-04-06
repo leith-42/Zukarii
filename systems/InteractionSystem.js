@@ -1,5 +1,5 @@
 ﻿import { System } from '../core/Systems.js';
-import { JourneyPathComponent, DialogueComponent, InteractionIntentComponent, ShopInteractionComponent, JourneyPathsComponent, OfferedJourneysComponent, JourneyStateComponent } from '../core/Components.js';
+import { JourneyPathComponent, DialogueComponent, InteractionIntentComponent, ShopInteractionComponent, StashInteractionComponent, JourneyPathsComponent, OfferedJourneysComponent, JourneyStateComponent } from '../core/Components.js';
 
 export class InteractionSystem extends System {
     constructor(entityManager, eventBus, utilities) {
@@ -32,6 +32,8 @@ export class InteractionSystem extends System {
                     this.handleAcceptJourney(params);
                 } else if (action === 'openShop') {
                     this.handleOpenShop(params);
+                } else if (action === 'openStash') {
+                    this.handleOpenStash(params);
                 } else if (action === 'turnIn') {
                     this.handleTurnIn(params);
                 } else if (action === 'acknowledgeCompletion') {
@@ -193,6 +195,30 @@ export class InteractionSystem extends System {
         this.eventBus.emit('ToggleOverlay', { tab: 'shop', fromShop: true, npcId });
         this.utilities.logMessage({ channel: "system", message: `Opened shop for ${npc.getComponent('NPCData').name}` });
         console.log(`InteractionSystem: Emitted ToggleOverlay for shop with NPC ${npcId}`);
+    }
+
+    handleOpenStash() {
+        const player = this.entityManager.getEntity('player');
+        if (!player) {
+            console.error('InteractionSystem: Player entity not found');
+            return;
+        }
+
+        // Check if stash is unlocked
+        if (!player.hasComponent('Stash')) {
+            this.utilities.logMessage({ channel: "system", message: 'Stash is locked. Purchase access from the shopkeeper.' });
+            return;
+        }
+
+        // Add StashInteraction component if not present
+        if (!player.hasComponent('StashInteraction')) {
+            player.addComponent(new StashInteractionComponent());
+            console.log('InteractionSystem: Added StashInteractionComponent to player');
+        }
+
+        this.eventBus.emit('ToggleOverlay', { tab: 'stash', fromStash: true });
+        this.utilities.logMessage({ channel: "system", message: 'Opened stash' });
+        console.log('InteractionSystem: Emitted ToggleOverlay for stash');
     }
 
     handleTurnIn({ taskId, resourceType, itemId, quantity, npcId }) {

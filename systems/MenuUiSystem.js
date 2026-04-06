@@ -1,6 +1,6 @@
 ﻿// systems/MenuUiSystem.js
 import { System } from '../core/Systems.js';
-import { ShopInteractionComponent } from '../core/Components.js';
+import { ShopInteractionComponent, StashInteractionComponent } from '../core/Components.js';
 
 export class MenuUiSystem extends System {
     constructor(entityManager, eventBus, utilities) {
@@ -497,7 +497,22 @@ export class MenuUiSystem extends System {
                 const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
                 const index = parseInt(parent.dataset.index, 10);
                 event.dataTransfer.setData('text/plain', JSON.stringify({ item: itemData, index, source: 'shop' }));
+                this.hideItemTooltip(itemData);
                 //console.log('MenuUiSystem: Dragstart from shop-items:', { itemData, index });
+            }, { capture: true });
+
+            shopItems.addEventListener('mouseover', (event) => {
+                const target = event.target.closest('.item-icon');
+                if (!target) return;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.showItemTooltip(itemData, event);
+            }, { capture: true });
+
+            shopItems.addEventListener('mouseout', (event) => {
+                const target = event.target.closest('.item-icon');
+                if (!target) return;
+                const itemData = JSON.parse(target.getAttribute('data-item') || '{}');
+                this.hideItemTooltip(itemData);
             }, { capture: true });
 
             shopItems.addEventListener('dragover', (event) => {
@@ -834,8 +849,8 @@ export class MenuUiSystem extends System {
         });
     }
 
-    toggleOverlay({ tab = null, fromShop = false, npcId = null }) {
-        //console.log('MenuUiSystem: ToggleOverlay called with:', { tab, fromShop, npcId });
+    toggleOverlay({ tab = null, fromShop = false, fromStash = false, npcId = null }) {
+        //console.log('MenuUiSystem: ToggleOverlay called with:', { tab, fromShop, fromStash, npcId });
         const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
         const player = this.entityManager.getEntity('player');
 
@@ -855,13 +870,20 @@ export class MenuUiSystem extends System {
                 player.addComponent(new ShopInteractionComponent());
                 //console.log('MenuUiSystem: Added ShopInteractionComponent to player');
             }
-
-            // Stash must now be purchased from the shop
+        } else if (overlayState.isOpen && fromStash && tab === 'stash') {
+            if (!player.hasComponent('StashInteraction')) {
+                player.addComponent(new StashInteractionComponent());
+                //console.log('MenuUiSystem: Added StashInteractionComponent to player');
+            }
         } else if (!overlayState.isOpen) {
             overlayState.activeShopNpcId = null;
             if (player.hasComponent('ShopInteraction')) {
                 player.removeComponent('ShopInteraction');
                 //console.log('MenuUiSystem: Removed ShopInteractionComponent from player');
+            }
+            if (player.hasComponent('StashInteraction')) {
+                player.removeComponent('StashInteraction');
+                //console.log('MenuUiSystem: Removed StashInteractionComponent from player');
             }
         }
 
@@ -1002,8 +1024,8 @@ export class MenuUiSystem extends System {
 
         // Check if player has a ShopInteraction component
         const showShopButton = player.hasComponent('ShopInteraction');
-        // Show stash button if player has Stash component (unlocked) OR if actively viewing stash tab
-        const showStashButton = player.hasComponent('Stash') || activeTab === 'stash';
+        // Show stash button when at shop (ShopInteraction), at stash chest (StashInteraction), OR actively viewing stash tab
+        const showStashButton = player.hasComponent('ShopInteraction') || player.hasComponent('StashInteraction') || activeTab === 'stash';
 
         tabMenuDiv.innerHTML = `
             <button id="menu-tab" class="tabs-button" style="background: ${activeTab === 'menu' ? '#0f0' : '#2c672c'};">Menu</button>
@@ -1424,6 +1446,11 @@ export class MenuUiSystem extends System {
         const inventory = player.getComponent('Inventory');
         const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
 
+        // Clear tooltip cache when equipment changes to prevent stale comparisons
+        if (this.tooltipCache) {
+            this.tooltipCache.clear();
+        }
+
         if (overlayState.isOpen && (overlayState.activeTab === 'character' || overlayState.activeTab === 'shop')) {
             this.renderOverlay(overlayState.activeTab);
         }
@@ -1503,15 +1530,33 @@ export class MenuUiSystem extends System {
                 const rect = target.getBoundingClientRect();
                 const tooltipWidth = tooltip.offsetWidth;
                 const tooltipHeight = tooltip.offsetHeight;
-
-                // Calculate position relative to the item
-                const x = rect.left + window.scrollX - tooltipWidth - 10; // Position to the left of the item
-                const y = rect.top + window.scrollY + (rect.height / 2) - (tooltipHeight / 2); // Center vertically
-
-                // Ensure the tooltip stays within the viewport
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
 
+                let x, y;
+
+                // Check if there's enough space on the left side
+                const spaceOnLeft = rect.left;
+                const spaceOnRight = viewportWidth - rect.right;
+                const neededSpace = tooltipWidth + 20; // tooltip width + padding
+
+                if (spaceOnLeft >= neededSpace) {
+                    // Position to the left of the item
+                    x = rect.left + window.scrollX - tooltipWidth - 10;
+                } else if (spaceOnRight >= neededSpace) {
+                    // Position to the right of the item
+                    x = rect.right + window.scrollX + 10;
+                } else {
+                    // Not enough space on either side, use best available
+                    x = spaceOnLeft > spaceOnRight 
+                        ? rect.left + window.scrollX - tooltipWidth - 10
+                        : rect.right + window.scrollX + 10;
+                }
+
+                // Center vertically relative to item
+                y = rect.top + window.scrollY + (rect.height / 2) - (tooltipHeight / 2);
+
+                // Ensure the tooltip stays within the viewport
                 tooltip.style.left = `${Math.max(10, Math.min(x, viewportWidth - tooltipWidth - 10))}px`;
                 tooltip.style.top = `${Math.max(10, Math.min(y, viewportHeight - tooltipHeight - 10))}px`;
 
@@ -1678,6 +1723,11 @@ export class MenuUiSystem extends System {
             return; // No item equipped in this slot
         }
 
+        // Don't show comparison if hovering the equipped item itself
+        if (hoveredItem.uniqueId === equippedItem.uniqueId) {
+            return;
+        }
+
         // Create or retrieve comparison tooltip
         const comparisonId = `${hoveredItem.uniqueId}-comparison-${equippedSlot}`;
         let comparisonTooltip = this.tooltipCache.get(comparisonId);
@@ -1706,17 +1756,37 @@ export class MenuUiSystem extends System {
 
         comparisonTooltip.style.display = 'block';
 
-        // Position comparison tooltip to the left of the hovered tooltip
+        // Position comparison tooltip intelligently based on available space
         const comparisonWidth = comparisonTooltip.offsetWidth;
         const comparisonHeight = comparisonTooltip.offsetHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
         // Get the position of the hovered tooltip
         const hoveredTooltipRect = hoveredTooltip.getBoundingClientRect();
-        const x = hoveredTooltipRect.left + window.scrollX - comparisonWidth - 10; // Position to the left of the hovered tooltip
-        const y = hoveredRect.top + window.scrollY + (hoveredRect.height / 2) - (comparisonHeight / 2); // Center vertically with item
 
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
+        let x, y;
+
+        // Check available space on left side of main tooltip
+        const spaceLeftOfMainTooltip = hoveredTooltipRect.left;
+        const spaceRightOfItem = viewportWidth - hoveredRect.right;
+        const neededSpace = comparisonWidth + 20;
+
+        if (spaceLeftOfMainTooltip >= neededSpace) {
+            // Position to the left of the main tooltip
+            x = hoveredTooltipRect.left + window.scrollX - comparisonWidth - 10;
+        } else if (spaceRightOfItem >= neededSpace) {
+            // Position to the right of the item
+            x = hoveredRect.right + window.scrollX + 10;
+        } else {
+            // Not enough space, use best available position
+            x = spaceLeftOfMainTooltip > spaceRightOfItem
+                ? hoveredTooltipRect.left + window.scrollX - comparisonWidth - 10
+                : hoveredRect.right + window.scrollX + 10;
+        }
+
+        // Center vertically with the item (not the tooltip)
+        y = hoveredRect.top + window.scrollY + (hoveredRect.height / 2) - (comparisonHeight / 2);
 
         comparisonTooltip.style.left = `${Math.max(10, Math.min(x, viewportWidth - comparisonWidth - 10))}px`;
         comparisonTooltip.style.top = `${Math.max(10, Math.min(y, viewportHeight - comparisonHeight - 10))}px`;

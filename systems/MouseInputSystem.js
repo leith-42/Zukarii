@@ -376,12 +376,15 @@ export class MouseInputSystem {
                 // Always open the stash UI - it will show locked message if not unlocked
                 this.entityManager.removeComponentFromEntity('player', 'MouseTarget');
                 this.eventBus.emit('StopMovement', { entityId: 'player' });
-                this.eventBus.emit('ToggleOverlay', { tab: 'stash' });
+
+                // Use InteractionIntent to trigger proper stash interaction (adds StashInteraction component)
+                const intent = player.getComponent('InteractionIntent') || new InteractionIntentComponent();
+                intent.intents.push({ action: 'openStash', params: {} });
+                player.addComponent(intent);
 
                 // Log message for locked stash
                 if (!player.hasComponent('Stash')) {
-                    this.eventBus.emit('LogMessage', { message: 'Speak to the Shopkeeper about storage space' });
-                    console.log(`MouseInputSystem: Stash chest locked - showing locked UI`);
+                    console.log(`MouseInputSystem: Stash chest clicked but locked - will show locked UI`);
                 } else {
                     console.log(`MouseInputSystem: Opening stash UI from chest ${clickedEntity.id}`);
                 }

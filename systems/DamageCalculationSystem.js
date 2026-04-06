@@ -81,7 +81,7 @@ export class DamageCalculationSystem extends System {
         return { damage: totalDamage };
     }
 
-    calculateMonsterToPlayerDamage({ attacker, target }) {
+    calculateMonsterToPlayerDamage({ attacker, target, weapon }) {
         const monsterData = attacker.getComponent('MonsterData');
         const targetStats = target.getComponent('Stats');
         const tier = this.entityManager.getEntity('gameState').getComponent('GameState').tier;
@@ -105,11 +105,19 @@ export class DamageCalculationSystem extends System {
         const defenseReduction = Math.round(preReductionDamage * (defenseReductionFactor * (targetStats.defense || 0)));
         const totalDamage = Math.round(Math.max(0, preReductionDamage - armorReduction - defenseReduction));
 
+        let magicResistMessage = '';
+        if (weapon.attackType === 'ranged') {
+            const magicResist = targetStats.resistMagic || 0;
+            const magicResistReduction = Math.round(totalDamage * (magicResist * 0.01));
+            magicResistMessage = `, magic resist absorbs: ${magicResistReduction}`;
+            totalDamage = Math.max(0, totalDamage - magicResistReduction);
+        }
+
         this.healthUpdates.push({ entityId: target.id, amount: -totalDamage, attackerId: attacker });
 
         this.utilities.logMessage({
             channel: 'combat',
-            message: `${isCritical ? '(CRIT): ' : ''}${monsterData.name} hits for ${preReductionDamage}, armor protects you from: ${armorReduction}, defense skill mitigates: ${defenseReduction} resulting in ${totalDamage} damage dealt to you`
+            message: `${isCritical ? '(CRIT): ' : ''}${monsterData.name} hits for ${preReductionDamage}, armor protects you from: ${armorReduction}, defense skill mitigates: ${defenseReduction} ${magicResistMessage} resulting in ${totalDamage} damage dealt to you`
         });
         return { damage: totalDamage };
     }

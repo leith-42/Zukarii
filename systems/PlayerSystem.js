@@ -222,10 +222,13 @@ export class PlayerSystem extends System {
         stats.prowess = stats._internal.base.prowess + (stats._internal.incremented.prowess || 0)
             + (stats._internal.gear.prowess || 0) + (stats._internal.temp.prowess || 0);
         stats.agility = stats._internal.base.agility + (stats._internal.incremented.agility || 0)
-            + (stats._internal.gear.agility || 0) + (stats._internal.temp.agility || 0);
+            + (stats._internal.gear.agility || 0) + (stats._internal.temp.agility || 0)
 
         const combinedProwess = stats._internal.base.prowess + (stats._internal.incremented.prowess || 0);
         const combinedIntellect = stats._internal.base.intellect + (stats._internal.incremented.intellect || 0);
+        const combinedAgility = stats._internal.base.agility + (stats._internal.incremented.agility || 0);
+
+        const agilityDefensiveModifier = combinedAgility > 0 ? Math.floor(combinedAgility / 5) : 0; // +1 block/dodge per 5 agility
 
         const levelCount = Math.max(0, playerState.level - 1); // Number of increases (e.g., level 10 -> 9 increases)
         const levelHpIncrease = levelCount > 0 ? (levelCount / 2) * ((6 + 2) + (6 + playerState.level)) : 0; // Sum of 8 to (6 + level)
@@ -254,8 +257,8 @@ export class PlayerSystem extends System {
 
         stats.armor = (stats._internal.gear.armor || 0) + (stats._internal.temp.armor || 0);
         stats.defense = (stats._internal.gear.defense || 0) + (stats._internal.temp.defense || 0);
-        stats.block = (stats._internal.gear.block || 0) + (stats._internal.temp.block || 0);
-        stats.dodge = (stats._internal.gear.dodge || 0) + (stats._internal.temp.dodge || 0);
+        stats.block = (stats._internal.gear.block || 0) + (stats._internal.temp.block || 0) + (agilityDefensiveModifier || 0);
+        stats.dodge = (stats._internal.gear.dodge || 0) + (stats._internal.temp.dodge || 0) + (agilityDefensiveModifier || 0);
         stats.range = (stats._internal.gear.range || 0) + (stats._internal.temp.range || 0);
         stats.resistMagic = (stats._internal.gear.resistMagic || 0) + (stats._internal.temp.resistMagic || 0);
         stats.baseRange = (stats._internal.gear.baseRange || 0) + (stats._internal.temp.baseRange || 0);

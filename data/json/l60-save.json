@@ -1,0 +1,3222 @@
+{
+  "timestamp": "4/6/2026, 2:59:14 AM",
+  "characterName": "Leith42",
+  "tier": 0,
+  "isDead": false,
+  "player": {
+    "Position": {
+      "type": "Position",
+      "x": 764.3047730594734,
+      "y": 749.4899013504364
+    },
+    "Health": {
+      "type": "Health",
+      "hp": 1241,
+      "maxHp": 1241,
+      "healthRegen": 0,
+      "updated": false
+    },
+    "Mana": {
+      "type": "Mana",
+      "mana": 454,
+      "maxMana": 454,
+      "manaRegen": 4,
+      "updated": false
+    },
+    "Stats": {
+      "type": "Stats",
+      "unallocated": 0,
+      "intellect": 28,
+      "prowess": 31,
+      "agility": 30,
+      "maxHp": 1241,
+      "maxMana": 454,
+      "armor": 22,
+      "defense": 8,
+      "block": 13,
+      "dodge": 2,
+      "range": 11,
+      "resistMagic": 6,
+      "baseRange": 0,
+      "damageBonus": 21,
+      "meleeBonus": 8,
+      "rangedBonus": 9,
+      "luck": 0,
+      "maxLuck": 0,
+      "movementSpeed": 112,
+      "baseMovementSpeed": 0,
+      "isLocked": true,
+      "_internal": {
+        "base": {
+          "intellect": 10,
+          "prowess": 9,
+          "agility": 9,
+          "maxHp": 85,
+          "maxMana": 10,
+          "armor": 0,
+          "defense": 0,
+          "block": 0,
+          "dodge": 0,
+          "range": 0,
+          "resistMagic": 0,
+          "baseRange": 0,
+          "damageBonus": 0,
+          "meleeBonus": 0,
+          "rangedBonus": 0,
+          "luck": 0,
+          "maxLuck": 0,
+          "movementSpeed": 100
+        },
+        "gear": {
+          "intellect": 8,
+          "prowess": 15,
+          "agility": 20,
+          "maxHp": 177,
+          "maxMana": 25,
+          "armor": 22,
+          "defense": 8,
+          "block": 11,
+          "dodge": 0,
+          "range": 11,
+          "resistMagic": 6,
+          "baseRange": 0,
+          "damageBonus": 21,
+          "meleeBonus": 8,
+          "rangedBonus": 9,
+          "luck": 0,
+          "maxLuck": 0,
+          "movementSpeed": 12
+        },
+        "temp": {
+          "intellect": 0,
+          "prowess": 0,
+          "agility": 0,
+          "luck": 0,
+          "maxHp": 0,
+          "maxMana": 0,
+          "movementSpeed": 0,
+          "armor": 0,
+          "defense": 0,
+          "block": 0,
+          "dodge": 0,
+          "range": 0,
+          "resistMagic": 0,
+          "baseRange": 0,
+          "damageBonus": 0,
+          "meleeBonus": 0,
+          "rangedBonus": 0,
+          "maxLuck": 0
+        },
+        "incremented": {
+          "intellect": 10,
+          "prowess": 7,
+          "agility": 1
+        }
+      }
+    },
+    "Inventory": {
+      "type": "Inventory",
+      "equipped": {
+        "mainhand": {
+          "name": "Mbphu Greater iLvl Annihilation Staff",
+          "type": "weapon",
+          "attackType": "ranged",
+          "baseRange": 9,
+          "slots": [
+            "mainhand",
+            "offhand"
+          ],
+          "baseDamageMin": 10,
+          "baseDamageMax": 15,
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "goldValue": 500000,
+          "stats": {
+            "intellect": 5,
+            "maxMana": 5,
+            "agility": 5,
+            "damageBonus": 5,
+            "rangedBonus": 5
+          },
+          "description": "Crafted in acnient times by the finest Zukarath artificers and inspired by the works of the legendary Zu Mage Mbphu, this staff is singualr in purpose. To seek out and destroy dark magic used by inferior arcane artificers.",
+          "uniqueId": "mnmkq8r5-4cogss-hlafd8",
+          "journeyItemId": "mbphuStaff",
+          "icon": "mbphu-staff.png",
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "equippedSlot": "mainhand"
+        },
+        "offhand": {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "weapon",
+          "attackType": "melee",
+          "baseDamageMin": 7,
+          "baseDamageMax": 14,
+          "icon": "dagger.svg",
+          "baseBlock": 6,
+          "stats": {
+            "damageBonus": 6,
+            "prowess": 3,
+            "block": 2,
+            "meleeBonus": 6
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary weapon",
+          "uniqueId": "mnlqtud6-l27eum-1ti3jd",
+          "description": "legendary weapon",
+          "goldValue": 14870,
+          "isSellable": true,
+          "equippedSlot": "offhand"
+        },
+        "armor": {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "armor",
+          "armor": 8,
+          "icon": "armor.svg",
+          "stats": {
+            "agility": 3,
+            "prowess": 3,
+            "block": 3,
+            "maxHp": 43
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "relic armor",
+          "uniqueId": "mnlt89k8-omdlh2-7mpk3f",
+          "description": "relic armor",
+          "goldValue": 11533,
+          "isSellable": true,
+          "purchasePrice": 103797,
+          "equippedSlot": "armor"
+        },
+        "amulet": {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "amulet",
+          "maxLuck": 5,
+          "icon": "amulet.svg",
+          "stats": {
+            "prowess": 3,
+            "agility": 3,
+            "meleeBonus": 2,
+            "damageBonus": 7
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "relic amulet",
+          "uniqueId": "mnlj827s-qbjyi3-nz8jtl",
+          "description": "relic amulet",
+          "goldValue": 20598,
+          "isSellable": true,
+          "purchasePrice": 61794,
+          "equippedSlot": "amulet"
+        },
+        "leftring": {
+          "tierIndex": 5,
+          "itemTierIndexBonus": 1,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 5,
+          "icon": "ring.svg",
+          "stats": {
+            "rangedBonus": 2,
+            "defense": 2,
+            "resistMagic": 6,
+            "maxHp": 39
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnlj1w21-sgk2wa-r1iwv4",
+          "description": "legendary ring",
+          "goldValue": 15170,
+          "isSellable": true,
+          "equippedSlot": "leftring"
+        },
+        "rightring": {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "ring",
+          "maxLuck": 5,
+          "icon": "ring.svg",
+          "stats": {
+            "maxMana": 20,
+            "agility": 3,
+            "range": 2,
+            "rangedBonus": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "relic ring",
+          "uniqueId": "mnmj2a8z-pq1s15-b4r3wv",
+          "description": "relic ring",
+          "goldValue": 23048,
+          "isSellable": true,
+          "equippedSlot": "rightring"
+        },
+        "boots": {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 9,
+          "icon": "boots.svg",
+          "stats": {
+            "movementSpeed": 3,
+            "defense": 3,
+            "agility": 3,
+            "dodge": 6
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmkox4n-mt3w26-nclzya",
+          "description": "legendary boots",
+          "goldValue": 12700,
+          "isSellable": true,
+          "equippedSlot": "boots"
+        },
+        "gloves": {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "gloves",
+          "armor": 7,
+          "icon": "gloves.svg",
+          "stats": {
+            "damageBonus": 3,
+            "maxHp": 35,
+            "prowess": 3,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "relic gloves",
+          "uniqueId": "mnlt8ayu-j7ng05-m0yxyj",
+          "description": "relic gloves",
+          "goldValue": 9958,
+          "isSellable": true,
+          "purchasePrice": 89622,
+          "equippedSlot": "gloves"
+        },
+        "head": {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "head",
+          "armor": 7,
+          "icon": "head.svg",
+          "stats": {
+            "intellect": 3,
+            "defense": 3,
+            "maxHp": 60,
+            "prowess": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "relic head",
+          "uniqueId": "mnmlc5n7-o19r5d-a95ud3",
+          "description": "relic head",
+          "goldValue": 34283,
+          "isSellable": true,
+          "equippedSlot": "head"
+        }
+      },
+      "items": [
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "maxHp": 44,
+            "rangedBonus": 5,
+            "intellect": 3,
+            "resistMagic": 5
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary amulet",
+          "uniqueId": "mnmki9bb-6o7nhz-np98sf",
+          "description": "legendary amulet",
+          "goldValue": 17500,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "defense": 1,
+            "meleeBonus": 3,
+            "damageBonus": 4,
+            "intellect": 2
+          },
+          "critStats": [],
+          "name": "mastercraft amulet",
+          "uniqueId": "mnmkk1jo-5q1u31-16tmb2",
+          "description": "mastercraft amulet",
+          "goldValue": 9600,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "amulet",
+          "maxLuck": -2,
+          "icon": "amulet.svg",
+          "stats": {
+            "maxMana": 11,
+            "block": 1,
+            "resistMagic": 2,
+            "range": 2
+          },
+          "critStats": [],
+          "name": "mastercraft amulet",
+          "uniqueId": "mnmkms4l-sgj0rw-p3kb2f",
+          "description": "mastercraft amulet",
+          "goldValue": 9900,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "intellect": 2,
+            "maxMana": 9,
+            "maxHp": 36,
+            "resistMagic": 4
+          },
+          "critStats": [],
+          "name": "mastercraft amulet",
+          "uniqueId": "mnmkmqyc-820fii-jsh592",
+          "description": "mastercraft amulet",
+          "goldValue": 12675,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "rangedBonus": 1,
+            "meleeBonus": 2,
+            "maxHp": 27,
+            "block": 2
+          },
+          "critStats": [],
+          "name": "mastercraft amulet",
+          "uniqueId": "mnmknyzn-ru8lny-9xpnrt",
+          "description": "mastercraft amulet",
+          "goldValue": 11250,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "rangedBonus": 4,
+            "block": 1,
+            "maxHp": 29,
+            "intellect": 2
+          },
+          "critStats": [],
+          "name": "mastercraft amulet",
+          "uniqueId": "mnmkojbq-gf5eho-jc7uuj",
+          "description": "mastercraft amulet",
+          "goldValue": 11550,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "prowess": 3,
+            "maxHp": 33,
+            "block": 2,
+            "defense": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "relic armor",
+          "uniqueId": "mnmkjq9y-mhyss1-2q8w6t",
+          "description": "relic armor",
+          "goldValue": 28875,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 6,
+          "icon": "armor.svg",
+          "stats": {
+            "agility": 3,
+            "maxHp": 36,
+            "prowess": 3,
+            "defense": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnmkqz95-hdbhll-2yily1",
+          "description": "legendary armor",
+          "goldValue": 16990,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "armor",
+          "armor": 6,
+          "icon": "armor.svg",
+          "stats": {
+            "agility": 2,
+            "maxHp": 31,
+            "prowess": 2,
+            "block": 2
+          },
+          "critStats": [],
+          "name": "mastercraft armor",
+          "uniqueId": "mnmkns4x-5ivapw-r5o93x",
+          "description": "mastercraft armor",
+          "goldValue": 12075,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "armor",
+          "armor": 6,
+          "icon": "armor.svg",
+          "stats": {
+            "block": 1,
+            "agility": 2,
+            "defense": 1,
+            "maxHp": 25
+          },
+          "critStats": [],
+          "name": "mastercraft armor",
+          "uniqueId": "mnmkof5s-oqoid7-v1zf4o",
+          "description": "mastercraft armor",
+          "goldValue": 11475,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 9,
+          "icon": "boots.svg",
+          "stats": {
+            "defense": 1,
+            "movementSpeed": 1,
+            "agility": 3,
+            "dodge": 0
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmkq8r5-1oqq75-cw53da",
+          "description": "legendary boots",
+          "goldValue": 12300,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "boots",
+          "baseMovementSpeed": 9,
+          "icon": "boots.svg",
+          "stats": {
+            "dodge": 0,
+            "movementSpeed": 1,
+            "agility": 2,
+            "defense": 1
+          },
+          "critStats": [],
+          "name": "mastercraft boots",
+          "uniqueId": "mnmkkbfr-w6rla8-efqtrx",
+          "description": "mastercraft boots",
+          "goldValue": 9150,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "boots",
+          "baseMovementSpeed": 8,
+          "icon": "boots.svg",
+          "stats": {
+            "movementSpeed": 2,
+            "agility": 2,
+            "dodge": 0,
+            "defense": 2
+          },
+          "critStats": [],
+          "name": "mastercraft boots",
+          "uniqueId": "mnmkn4ls-x6yf6e-gcu2ia",
+          "description": "mastercraft boots",
+          "goldValue": 9300,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "boots",
+          "baseMovementSpeed": 9,
+          "icon": "boots.svg",
+          "stats": {
+            "dodge": 4,
+            "agility": 2,
+            "movementSpeed": 2,
+            "defense": 2
+          },
+          "critStats": [],
+          "name": "mastercraft boots",
+          "uniqueId": "mlc39b9q-0ldlpv-ao6i57",
+          "description": "mastercraft boots",
+          "goldValue": 5453,
+          "isSellable": true
+        },
+        {
+          "itemId": "mkqugiqx-fwjuq3-dmuy9q",
+          "journeyItemId": "stoneOfVeilPiercing",
+          "name": "Stone of Veil Piercing",
+          "type": "consumable",
+          "itemTier": "rare",
+          "goldValue": 0,
+          "useItem": true,
+          "useEffect": "teleportToTier",
+          "params": {
+            "tier": 7
+          },
+          "description": "A mystical stone that Will teleport you to the 7th tier of Zurath.",
+          "icon": "stone_of_veil_peirce.png",
+          "isSellable": false,
+          "uniqueId": "mkqugiqx-kqgweo-uj2xvw"
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "gloves",
+          "armor": 5,
+          "icon": "gloves.svg",
+          "stats": {
+            "maxHp": 20,
+            "damageBonus": 4,
+            "prowess": 2,
+            "block": 2
+          },
+          "critStats": [],
+          "name": "mastercraft gloves",
+          "uniqueId": "mnmkovn6-ctqzwr-ekqsnp",
+          "description": "mastercraft gloves",
+          "goldValue": 11325,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 7,
+          "icon": "head.svg",
+          "stats": {
+            "intellect": 3,
+            "agility": 3,
+            "defense": 3,
+            "prowess": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnmkn2fi-jqirtq-gf5jli",
+          "description": "legendary head",
+          "goldValue": 13700,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 7,
+          "icon": "head.svg",
+          "stats": {
+            "prowess": 3,
+            "agility": 3,
+            "maxHp": 27,
+            "defense": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnmkpn7z-gg3dks-3edzol",
+          "description": "legendary head",
+          "goldValue": 16100,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 7,
+          "icon": "head.svg",
+          "stats": {
+            "prowess": 3,
+            "intellect": 3,
+            "defense": 3,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnlpai8w-r1yuij-a7szp1",
+          "description": "legendary head",
+          "goldValue": 12370,
+          "isSellable": true,
+          "purchasePrice": 37110
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "head",
+          "armor": 5,
+          "icon": "head.svg",
+          "stats": {
+            "defense": 2,
+            "agility": 2,
+            "maxHp": 31,
+            "intellect": 2
+          },
+          "critStats": [],
+          "name": "mastercraft head",
+          "uniqueId": "mnmkjj1h-u2bakh-3dl3ks",
+          "description": "mastercraft head",
+          "goldValue": 12000,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "head",
+          "armor": 6,
+          "icon": "head.svg",
+          "stats": {
+            "defense": 2,
+            "agility": 2,
+            "intellect": 2,
+            "maxHp": 36
+          },
+          "critStats": [],
+          "name": "mastercraft head",
+          "uniqueId": "mnmkk88r-mq8prs-zi1osl",
+          "description": "mastercraft head",
+          "goldValue": 12450,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "head",
+          "armor": 5,
+          "icon": "head.svg",
+          "stats": {
+            "agility": 2,
+            "intellect": 2,
+            "defense": 1,
+            "maxHp": 37
+          },
+          "critStats": [],
+          "name": "mastercraft head",
+          "uniqueId": "mnmkkpqy-nkvfvb-37uolk",
+          "description": "mastercraft head",
+          "goldValue": 12375,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "head",
+          "armor": 6,
+          "icon": "head.svg",
+          "stats": {
+            "agility": 2,
+            "intellect": 2,
+            "defense": 2,
+            "maxHp": 35
+          },
+          "critStats": [],
+          "name": "mastercraft head",
+          "uniqueId": "mnmknpk9-jdtap2-6pbb26",
+          "description": "mastercraft head",
+          "goldValue": 12375,
+          "isSellable": true
+        },
+        {
+          "itemId": "mkquociq-6muk8s-yqc4m0",
+          "journeyItemId": "spectralWyrmKey",
+          "name": "Spectral Wyrm Key",
+          "type": "journey",
+          "itemTier": "magic",
+          "goldValue": 0,
+          "collectItem": true,
+          "isJourneyItem": true,
+          "description": "Posessing this Key allows passage to Ashangal.",
+          "icon": "spectral_wyrm_key.png",
+          "isSellable": false,
+          "uniqueId": "mkquociq-9aklyy-awnxdb"
+        },
+        {
+          "itemId": "mkqup83v-zd2kph-vefxh9",
+          "journeyItemId": "shardOfEchoes",
+          "name": "Shard of Echoes",
+          "type": "journey",
+          "itemTier": "magic",
+          "goldValue": 0,
+          "isJourneyItem": true,
+          "description": "A fragment pulsing with ancient whispers, guiding you to the Echoes.",
+          "icon": "shard_of_echoes.png",
+          "isSellable": false,
+          "uniqueId": "mkqup83v-0zr8or-xn2rbi"
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "agility": 3,
+            "rangedBonus": 2,
+            "range": 2,
+            "resistMagic": 4
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnmkjtpe-uky7ju-tmuhuq",
+          "description": "legendary ring",
+          "goldValue": 12900,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "rangedBonus": 1,
+            "resistMagic": 2,
+            "meleeBonus": 5,
+            "maxHp": 40
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnmknlgo-wy74jz-6p6l8h",
+          "description": "legendary ring",
+          "goldValue": 16600,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "maxHp": 20,
+            "defense": 2,
+            "meleeBonus": 5,
+            "block": 2
+          },
+          "critStats": [],
+          "name": "mastercraft ring",
+          "uniqueId": "mnmlbmu7-d1jfi6-tdo8y0",
+          "description": "mastercraft ring",
+          "goldValue": 11168,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTierIndexBonus": 1,
+          "itemTier": "mastercraft",
+          "type": "weapon",
+          "attackType": "melee",
+          "baseDamageMin": 7,
+          "baseDamageMax": 14,
+          "icon": "dagger.svg",
+          "baseBlock": 5,
+          "stats": {
+            "agility": 2,
+            "meleeBonus": 4,
+            "block": 1,
+            "prowess": 2
+          },
+          "critStats": [],
+          "name": "mastercraft weapon",
+          "uniqueId": "mnmkk5dv-6dcb8r-3usj1t",
+          "description": "mastercraft weapon",
+          "goldValue": 11475,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "weapon",
+          "attackType": "melee",
+          "baseDamageMin": 7,
+          "baseDamageMax": 15,
+          "icon": "dagger.svg",
+          "baseBlock": 6,
+          "stats": {
+            "block": 1,
+            "agility": 2,
+            "meleeBonus": 2,
+            "prowess": 2
+          },
+          "critStats": [],
+          "name": "mastercraft weapon",
+          "uniqueId": "mnmkk5dv-zdadk3-q3u808",
+          "description": "mastercraft weapon",
+          "goldValue": 11475,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "weapon",
+          "attackType": "melee",
+          "baseDamageMin": 7,
+          "baseDamageMax": 14,
+          "icon": "dagger.svg",
+          "baseBlock": 5,
+          "stats": {
+            "prowess": 2,
+            "agility": 2,
+            "meleeBonus": 4,
+            "block": 2
+          },
+          "critStats": [],
+          "name": "mastercraft weapon",
+          "uniqueId": "mnmkn9fq-u9fnna-zked5x",
+          "description": "mastercraft weapon",
+          "goldValue": 11550,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "weapon",
+          "attackType": "melee",
+          "baseDamageMin": 6,
+          "baseDamageMax": 10,
+          "icon": "dagger.svg",
+          "baseBlock": 5,
+          "stats": {
+            "damageBonus": 3,
+            "prowess": 2,
+            "block": 2,
+            "agility": 2
+          },
+          "critStats": [],
+          "name": "mastercraft weapon",
+          "uniqueId": "mnmkndlm-12c0q5-vbmlsx",
+          "description": "mastercraft weapon",
+          "goldValue": 11100,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 3,
+          "itemTier": "magic",
+          "type": "weapon",
+          "attackType": "melee",
+          "baseDamageMin": 5,
+          "baseDamageMax": 11,
+          "icon": "dagger.svg",
+          "baseBlock": 4,
+          "stats": {
+            "agility": 2,
+            "damageBonus": 1,
+            "meleeBonus": 4
+          },
+          "critStats": [],
+          "name": "magic weapon",
+          "uniqueId": "mnmlc15u-hgwqri-46h5vm",
+          "description": "magic weapon",
+          "goldValue": 2938,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "type": "weapon",
+          "attackType": "ranged",
+          "name": "Wyrm Staff",
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.35,
+                "chanceToStealLife": 0.1
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "itemTier": "legendary",
+          "baseDamageMin": 8,
+          "baseDamageMax": 15,
+          "icon": "orb-wand.svg",
+          "baseRange": 10,
+          "stats": {
+            "rangedBonus": 3,
+            "damageBonus": 2,
+            "agility": 3,
+            "intellect": 3
+          },
+          "critStats": [],
+          "uniqueId": "mlaxbt26-dfrfux-21lpsd",
+          "description": "legendary weapon",
+          "goldValue": 10120,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 4,
+          "itemTier": "mastercraft",
+          "type": "weapon",
+          "attackType": "ranged",
+          "baseDamageMin": 6,
+          "baseDamageMax": 9,
+          "icon": "orb-wand.svg",
+          "baseRange": 8,
+          "stats": {
+            "agility": 2,
+            "damageBonus": 3,
+            "intellect": 2,
+            "range": 2
+          },
+          "critStats": [],
+          "name": "mastercraft weapon",
+          "uniqueId": "mnmlbvro-c1zpcj-ou2xat",
+          "description": "mastercraft weapon",
+          "goldValue": 11393,
+          "isSellable": true
+        }
+      ]
+    },
+    "Resource": {
+      "type": "Resource",
+      "torches": 8,
+      "healPotions": 3,
+      "gold": 1191898,
+      "potionDropFail": 0,
+      "torchDropFail": 0,
+      "portalBinding": 0,
+      "craftResources": {
+        "ashenShard": 8,
+        "ashenCrystal": 327,
+        "ashenGem": 276,
+        "sylduranShard": 0,
+        "sylduranCrystal": 0,
+        "sylduranGem": 0
+      }
+    },
+    "AttackSpeed": {
+      "type": "AttackSpeed",
+      "attackSpeed": 500,
+      "elapsedSinceLastAttack": 11937380.599999582
+    },
+    "Affix": {
+      "type": "Affix",
+      "affixes": [
+        {
+          "name": "lifeSteal",
+          "type": "combat",
+          "trigger": "attackHitTarget",
+          "effect": "lifeSteal",
+          "params": {
+            "minDmageHealedPercentage": 0.25,
+            "maxDamageHealedPercentage": 0.5,
+            "chanceToStealLife": 0.15
+          },
+          "sourceId": "mnlj1w21-sgk2wa-r1iwv4"
+        },
+        {
+          "name": "arcaneMirror",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "reflectDamage",
+          "params": {
+            "minReflectPercentage": 1,
+            "maxReflectPercentage": 0.5,
+            "chanceToReflect": 0.1
+          },
+          "sourceId": "mnlt8ayu-j7ng05-m0yxyj"
+        },
+        {
+          "name": "arcaneMirror",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "reflectDamage",
+          "params": {
+            "minReflectPercentage": 1,
+            "maxReflectPercentage": 0.5,
+            "chanceToReflect": 0.1
+          },
+          "sourceId": "mnlj827s-qbjyi3-nz8jtl"
+        },
+        {
+          "name": "resilience",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "instantHeal",
+          "params": {
+            "minHealPercentage": 0.05,
+            "maxHealPercentage": 0.1,
+            "chanceToHeal": 0.05
+          },
+          "sourceId": "mnlqtud6-l27eum-1ti3jd"
+        },
+        {
+          "name": "arcaneMirror",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "reflectDamage",
+          "params": {
+            "minReflectPercentage": 1,
+            "maxReflectPercentage": 0.5,
+            "chanceToReflect": 0.1
+          },
+          "sourceId": "mnmj2a8z-pq1s15-b4r3wv"
+        },
+        {
+          "name": "resilience",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "instantHeal",
+          "params": {
+            "minHealPercentage": 0.05,
+            "maxHealPercentage": 0.1,
+            "chanceToHeal": 0.05
+          },
+          "sourceId": "mnlt89k8-omdlh2-7mpk3f"
+        },
+        {
+          "name": "lifeSteal",
+          "type": "combat",
+          "trigger": "attackHitTarget",
+          "effect": "lifeSteal",
+          "params": {
+            "minDmageHealedPercentage": 0.25,
+            "maxDamageHealedPercentage": 0.5,
+            "chanceToStealLife": 0.15
+          },
+          "sourceId": "mnmkq8r5-4cogss-hlafd8"
+        },
+        {
+          "name": "resilience",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "instantHeal",
+          "params": {
+            "minHealPercentage": 0.05,
+            "maxHealPercentage": 0.1,
+            "chanceToHeal": 0.05
+          },
+          "sourceId": "mnmlc5n7-o19r5d-a95ud3"
+        },
+        {
+          "name": "arcaneMirror",
+          "type": "combat",
+          "trigger": "hitByAttack",
+          "effect": "reflectDamage",
+          "params": {
+            "minReflectPercentage": 1,
+            "maxReflectPercentage": 0.5,
+            "chanceToReflect": 0.1
+          },
+          "sourceId": "mnmkox4n-mt3w26-nclzya"
+        }
+      ]
+    },
+    "PlayerState": {
+      "type": "PlayerState",
+      "name": "Leith42",
+      "level": 31,
+      "xp": 201345,
+      "nextLevelXp": 224380,
+      "dead": false,
+      "lampLit": false,
+      "discoveredTileCount": 147993,
+      "isInCombat": false,
+      "isCasting": false
+    },
+    "JourneyState": {
+      "type": "JourneyState",
+      "completedPaths": [],
+      "pathTree": {}
+    },
+    "JourneyPath": {
+      "type": "JourneyPath",
+      "paths": [
+        {
+          "id": "master_whispers",
+          "parentId": "master_whispers",
+          "nextPathId": "",
+          "offered": true,
+          "accepted": true,
+          "completed": false,
+          "title": "Whispers of Zukarath",
+          "description": "Follow the guidance of the Zukran Masters to prove your worth.",
+          "offerText": "Begin your journey with the Zukran Masters.",
+          "acceptedText": "You have accepted the Journey of Whispers.",
+          "activeText": "Continue your trials with the Zukran Masters to prove your worth.",
+          "completionText": "You have completed the Journey of Whispers, you are now a full member of the Zukaran Order of Magi!",
+          "logCompletion": false,
+          "tasks": [],
+          "rewards": []
+        },
+        {
+          "id": "master_echoes",
+          "parentId": "master_echoes",
+          "nextPathId": "",
+          "offered": false,
+          "accepted": false,
+          "completed": false,
+          "title": "Echoes of Zurath",
+          "description": "Uncover the hidden Echoes within Zurath.",
+          "offerText": "Begin your journey to uncover the Echoes of Zurath.",
+          "acceptedText": "You have accepted the journey to uncover the Echoes.",
+          "activeText": "Continue your journey to uncover the Echoes.",
+          "completionText": "You have uncovered all Echoes within Zurath.",
+          "logCompletion": false,
+          "tasks": [],
+          "rewards": []
+        },
+        {
+          "id": "master_whispers",
+          "parentId": "master_whispers",
+          "nextPathId": "",
+          "offered": true,
+          "accepted": true,
+          "completed": false,
+          "title": "Whispers of Zukarath",
+          "description": "Follow the guidance of the Zukran Masters to prove your worth.",
+          "offerText": "Begin your journey with the Zukran Masters.",
+          "acceptedText": "You have accepted the Journey of Whispers.",
+          "activeText": "Continue your trials with the Zukran Masters to prove your worth.",
+          "completionText": "You have completed the Journey of Whispers, you are now a full member of the Zukaran Order of Magi!",
+          "logCompletion": false,
+          "tasks": [],
+          "rewards": []
+        }
+      ]
+    },
+    "PlayerAchievements": {
+      "type": "PlayerAchievements",
+      "stats": {
+        "monstersKilled": 0,
+        "bossesKilled": 0,
+        "itemsUsed": 0,
+        "potionsUsed": 0,
+        "resourcesCollected": {
+          "ashenShard": 0,
+          "sylduranShard": 0
+        },
+        "itemsCollected": 0,
+        "interactions": 0,
+        "tiersReached": 0,
+        "uniqueItemDrops": [
+          {
+            "journeyItemId": "wyrmTooth",
+            "name": "Wyrm Tooth"
+          },
+          {
+            "journeyItemId": "bandOfKarn",
+            "name": "Band of Karn"
+          },
+          {
+            "journeyItemId": "bandOfZu",
+            "name": "Band of Zu"
+          }
+        ],
+        "unlockedPortals": [
+          0
+        ]
+      },
+      "history": []
+    },
+    "PortalBinding": {
+      "type": "PortalBinding",
+      "bindings": [
+        0,
+        11,
+        20,
+        22,
+        34,
+        35,
+        38,
+        39,
+        43,
+        45,
+        47,
+        48,
+        52,
+        51,
+        56,
+        60
+      ],
+      "cleansed": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        20,
+        22,
+        34,
+        35,
+        11,
+        38,
+        39,
+        43,
+        45,
+        47,
+        48,
+        52,
+        51,
+        56,
+        60
+      ]
+    },
+    "Stash": {
+      "type": "Stash",
+      "items": [
+        {
+          "tierIndex": 5,
+          "itemTierIndexBonus": 1,
+          "itemTier": "legendary",
+          "type": "amulet",
+          "maxLuck": -3,
+          "icon": "amulet.svg",
+          "stats": {
+            "resistMagic": 4,
+            "maxMana": 14,
+            "rangedBonus": 1,
+            "range": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary amulet",
+          "uniqueId": "mnlquzkk-8iyqqo-nwwqav",
+          "description": "legendary amulet",
+          "goldValue": 12270,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "maxMana": 12,
+            "range": 2,
+            "intellect": 3,
+            "prowess": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary amulet",
+          "uniqueId": "mnlj3eot-yeg1sa-sb62pq",
+          "description": "legendary amulet",
+          "goldValue": 12470,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "amulet",
+          "maxLuck": -3,
+          "icon": "amulet.svg",
+          "stats": {
+            "rangedBonus": 4,
+            "maxHp": 45,
+            "agility": 3,
+            "resistMagic": 6
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary amulet",
+          "uniqueId": "mnlj1t3o-9mtvbc-4f9ok7",
+          "description": "legendary amulet",
+          "goldValue": 15970,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "range": 1,
+            "intellect": 3,
+            "defense": 1,
+            "block": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary amulet",
+          "uniqueId": "mnmj97bj-s5i2he-1b4z2m",
+          "description": "legendary amulet",
+          "goldValue": 11830,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTierIndexBonus": 1,
+          "itemTier": "legendary",
+          "type": "amulet",
+          "maxLuck": 0,
+          "icon": "amulet.svg",
+          "stats": {
+            "range": 2,
+            "defense": 2,
+            "damageBonus": 3,
+            "rangedBonus": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary amulet",
+          "uniqueId": "mnmj4ul4-kwqse9-7uf66s",
+          "description": "legendary amulet",
+          "goldValue": 11270,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 2,
+          "type": "amulet",
+          "name": "Sigil of Zukarath",
+          "journeyItemId": "sigilOfZukarath",
+          "itemTier": "rare",
+          "maxLuck": 5,
+          "icon": "amulet.svg",
+          "stats": {
+            "meleeBonus": 3,
+            "maxMana": 7
+          },
+          "critStats": [],
+          "uniqueId": "mjhhli1p-eyiq5k-c8m7ku",
+          "description": "rare amulet",
+          "goldValue": 323,
+          "isSellable": true
+        },
+        {
+          "name": "Golden Skin of Avarice",
+          "type": "armor",
+          "slot": "armor",
+          "armor": -6,
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "goldValue": 500000,
+          "stats": {
+            "prowess": 0,
+            "agility": 0,
+            "maxHp": 0,
+            "defense": 0,
+            "block": 0,
+            "maxLuck": -66
+          },
+          "description": "Shiny golden armor with fancy magic swirlies, Its beauty is the envy of all, but it does not seem to do anything. The thought of wearing it leaves you feeling like you just broke a mirror while trying to avoid stepping on a black cat as you walked under a ladder!",
+          "uniqueId": "mnmkq8r5-hbgltd-0nki8d",
+          "journeyItemId": "goldenSkinOfAvarice",
+          "icon": "golden-skin.png",
+          "affixes": []
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 6,
+          "icon": "armor.svg",
+          "stats": {
+            "prowess": 3,
+            "defense": 3,
+            "agility": 3,
+            "maxHp": 45
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnlj6mef-zq7eai-5h57i4",
+          "description": "legendary armor",
+          "goldValue": 16470,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "block": 2,
+            "prowess": 3,
+            "maxHp": 37,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mng0lxe6-rkh4up-996s9l",
+          "description": "legendary armor",
+          "goldValue": 12440,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "defense": 2,
+            "prowess": 3,
+            "agility": 3,
+            "block": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnlj3r8p-31837p-9gsub6",
+          "description": "legendary armor",
+          "goldValue": 12170,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "block": 2,
+            "prowess": 3,
+            "defense": 1,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnlizuxz-tq7vkn-ovnbfu",
+          "description": "legendary armor",
+          "goldValue": 12070,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "agility": 3,
+            "prowess": 3,
+            "defense": 1,
+            "block": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnmj4ul4-xvoeln-0lp1s7",
+          "description": "legendary armor",
+          "goldValue": 12170,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "defense": 1,
+            "prowess": 3,
+            "agility": 3,
+            "maxHp": 30
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnmjhhif-qi5dyj-pbm3ez",
+          "description": "legendary armor",
+          "goldValue": 15630,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "armor",
+          "armor": 7,
+          "icon": "armor.svg",
+          "stats": {
+            "prowess": 3,
+            "agility": 3,
+            "maxHp": 48,
+            "block": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary armor",
+          "uniqueId": "mnmjkkhq-y94xoi-1gc9sd",
+          "description": "legendary armor",
+          "goldValue": 17430,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 2,
+          "type": "armor",
+          "name": "Vestment of Zukarath",
+          "journeyItemId": "vestmentOfZukarath",
+          "itemTier": "rare",
+          "armor": 4,
+          "icon": "armor.svg",
+          "stats": {
+            "agility": 1,
+            "prowess": 1
+          },
+          "critStats": [],
+          "uniqueId": "mjh7cna3-zntxkd-sa8dof",
+          "description": "rare armor",
+          "goldValue": 176,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 9,
+          "icon": "boots.svg",
+          "stats": {
+            "movementSpeed": 3,
+            "defense": 1,
+            "agility": 3,
+            "dodge": 0
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnlj0ctl-g49lm4-yem1vj",
+          "description": "legendary boots",
+          "goldValue": 11170,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 10,
+          "icon": "boots.svg",
+          "stats": {
+            "agility": 3,
+            "defense": 1,
+            "dodge": 0,
+            "movementSpeed": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmjdz5o-mck4uv-0q7o3o",
+          "description": "legendary boots",
+          "goldValue": 11930,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 10,
+          "icon": "boots.svg",
+          "stats": {
+            "dodge": 0,
+            "agility": 3,
+            "movementSpeed": 3,
+            "defense": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmjenmb-uhmhwi-cq491u",
+          "description": "legendary boots",
+          "goldValue": 12030,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 10,
+          "icon": "boots.svg",
+          "stats": {
+            "defense": 1,
+            "movementSpeed": 2,
+            "dodge": 0,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmji4lu-3ouhpo-15rkf3",
+          "description": "legendary boots",
+          "goldValue": 11830,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 9,
+          "icon": "boots.svg",
+          "stats": {
+            "dodge": 0,
+            "defense": 2,
+            "movementSpeed": 2,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmjjln2-gsybt8-g5qxte",
+          "description": "legendary boots",
+          "goldValue": 11930,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 10,
+          "icon": "boots.svg",
+          "stats": {
+            "dodge": 0,
+            "defense": 1,
+            "agility": 3,
+            "movementSpeed": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnmjkopp-5zwxi9-iodhqn",
+          "description": "legendary boots",
+          "goldValue": 11930,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "boots",
+          "baseMovementSpeed": 10,
+          "icon": "boots.svg",
+          "stats": {
+            "movementSpeed": 2,
+            "dodge": 0,
+            "defense": 1,
+            "agility": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary boots",
+          "uniqueId": "mnlupon4-1tr15l-f241jd",
+          "description": "legendary boots",
+          "goldValue": 1190,
+          "isSellable": true,
+          "purchasePrice": 9520
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "gloves",
+          "armor": 7,
+          "icon": "gloves.svg",
+          "stats": {
+            "damageBonus": 5,
+            "prowess": 3,
+            "agility": 3,
+            "block": 2
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary gloves",
+          "uniqueId": "mnlj6q6t-f0ic4s-0ytfp6",
+          "description": "legendary gloves",
+          "goldValue": 12470,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "gloves",
+          "armor": 6,
+          "icon": "gloves.svg",
+          "stats": {
+            "damageBonus": 5,
+            "agility": 3,
+            "block": 2,
+            "maxHp": 35
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary gloves",
+          "uniqueId": "mnliu9nt-7lpmjn-yw8xfr",
+          "description": "legendary gloves",
+          "goldValue": 14620,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "gloves",
+          "armor": 6,
+          "icon": "gloves.svg",
+          "stats": {
+            "block": 2,
+            "prowess": 3,
+            "agility": 3,
+            "damageBonus": 4
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary gloves",
+          "uniqueId": "mnlj0wke-4e0kwb-aor32b",
+          "description": "legendary gloves",
+          "goldValue": 12270,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "gloves",
+          "armor": 7,
+          "icon": "gloves.svg",
+          "stats": {
+            "maxHp": 38,
+            "block": 2,
+            "agility": 3,
+            "prowess": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary gloves",
+          "uniqueId": "mnlj65x2-bn6grq-0ywga0",
+          "description": "legendary gloves",
+          "goldValue": 15770,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "gloves",
+          "armor": 6,
+          "icon": "gloves.svg",
+          "stats": {
+            "agility": 3,
+            "prowess": 3,
+            "block": 2,
+            "maxHp": 30
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary gloves",
+          "uniqueId": "mnmj7ni7-zsi9ct-y2ukg8",
+          "description": "legendary gloves",
+          "goldValue": 14870,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 6,
+          "icon": "head.svg",
+          "stats": {
+            "prowess": 3,
+            "maxHp": 47,
+            "agility": 3,
+            "defense": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnmjfata-t1og09-lr7o0w",
+          "description": "legendary head",
+          "goldValue": 17230,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 6,
+          "icon": "head.svg",
+          "stats": {
+            "agility": 3,
+            "prowess": 3,
+            "defense": 3,
+            "maxHp": 43
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnmjhs44-9wbj1n-l0v270",
+          "description": "legendary head",
+          "goldValue": 17030,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 7,
+          "icon": "head.svg",
+          "stats": {
+            "prowess": 3,
+            "maxHp": 44,
+            "intellect": 3,
+            "defense": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnlquzkk-3g7pe8-ss7l5u",
+          "description": "legendary head",
+          "goldValue": 16470,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 6,
+          "icon": "head.svg",
+          "stats": {
+            "agility": 3,
+            "prowess": 3,
+            "intellect": 3,
+            "maxHp": 48
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnmj2rco-fzav2r-tovl82",
+          "description": "legendary head",
+          "goldValue": 16770,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTierIndexBonus": 1,
+          "itemTier": "legendary",
+          "type": "head",
+          "armor": 6,
+          "icon": "head.svg",
+          "stats": {
+            "agility": 3,
+            "prowess": 3,
+            "defense": 3,
+            "maxHp": 46
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary head",
+          "uniqueId": "mnmjeeaj-odyuta-80kajp",
+          "description": "legendary head",
+          "goldValue": 17330,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 6,
+          "itemTier": "relic",
+          "type": "ring",
+          "maxLuck": -4,
+          "icon": "ring.svg",
+          "stats": {
+            "defense": 1,
+            "maxHp": 55,
+            "meleeBonus": 5,
+            "range": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "relic ring",
+          "uniqueId": "mnmjh7u1-tijcan-zj2cwa",
+          "description": "relic ring",
+          "goldValue": 29803,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "maxMana": 16,
+            "range": 2,
+            "agility": 3,
+            "meleeBonus": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnlixpfa-8qjmnu-h26v50",
+          "description": "legendary ring",
+          "goldValue": 12670,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "resistMagic": 3,
+            "block": 3,
+            "meleeBonus": 3,
+            "maxMana": 18
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnmj9hyv-kakv5m-lfe9nk",
+          "description": "legendary ring",
+          "goldValue": 13930,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "block": 3,
+            "defense": 2,
+            "meleeBonus": 6,
+            "prowess": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnmjbi6s-z01m8u-tgjpd5",
+          "description": "legendary ring",
+          "goldValue": 12630,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "maxMana": 16,
+            "block": 3,
+            "meleeBonus": 1,
+            "resistMagic": 1
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnmjeeaj-d00f8v-sw84kk",
+          "description": "legendary ring",
+          "goldValue": 13330,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "defense": 2,
+            "resistMagic": 5,
+            "maxMana": 15,
+            "meleeBonus": 6
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnmjk958-xph2r8-igd3b3",
+          "description": "legendary ring",
+          "goldValue": 14030,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "ring",
+          "maxLuck": 0,
+          "icon": "ring.svg",
+          "stats": {
+            "block": 3,
+            "resistMagic": 1,
+            "defense": 2,
+            "maxMana": 18
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary ring",
+          "uniqueId": "mnlhrsf3-da9th4-fvs48e",
+          "description": "legendary ring",
+          "goldValue": 10210,
+          "isSellable": true
+        },
+        {
+          "name": "Band of Karn",
+          "type": "ring",
+          "slot": "ring",
+          "luck": 10,
+          "tierIndex": 2,
+          "itemTier": "rare",
+          "collectItem": true,
+          "goldValue": 0,
+          "isSellable": false,
+          "stats": {
+            "prowess": 2,
+            "maxHp": 50
+          },
+          "description": "The Power of the Khetar flows through this steel band.",
+          "uniqueId": "mkquiu25-6robwv-qxec07",
+          "journeyItemId": "bandOfKarn",
+          "icon": "ring.svg",
+          "affixes": []
+        },
+        {
+          "name": "Band of Zu",
+          "type": "ring",
+          "slot": "ring",
+          "luck": 10,
+          "tierIndex": 2,
+          "itemTier": "rare",
+          "collectItem": true,
+          "goldValue": 0,
+          "isSellable": false,
+          "stats": {
+            "intellect": 2,
+            "agility": 2
+          },
+          "description": "The Power of the Zarath flows through this mithril band.",
+          "uniqueId": "mkqukje6-yzxxg3-vy8kq0",
+          "journeyItemId": "bandOfZu",
+          "icon": "ring.svg",
+          "affixes": []
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "weapon",
+          "attackType": "ranged",
+          "baseDamageMin": 7,
+          "baseDamageMax": 11,
+          "icon": "orb-wand.svg",
+          "baseRange": 9,
+          "stats": {
+            "agility": 3,
+            "intellect": 3,
+            "damageBonus": 3,
+            "rangedBonus": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary weapon",
+          "uniqueId": "mnlj1p8n-90dpvo-8yt5gy",
+          "description": "legendary weapon",
+          "goldValue": 14370,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "weapon",
+          "attackType": "ranged",
+          "baseDamageMin": 7,
+          "baseDamageMax": 12,
+          "icon": "orb-wand.svg",
+          "baseRange": 10,
+          "stats": {
+            "intellect": 3,
+            "range": 1,
+            "agility": 3,
+            "damageBonus": 4
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "lifeSteal",
+              "type": "combat",
+              "trigger": "attackHitTarget",
+              "effect": "lifeSteal",
+              "params": {
+                "minDmageHealedPercentage": 0.25,
+                "maxDamageHealedPercentage": 0.5,
+                "chanceToStealLife": 0.15
+              },
+              "description": "Chance to heal for a portion of damage dealt when hitting an enemy."
+            }
+          ],
+          "name": "legendary weapon",
+          "uniqueId": "mnlitse8-jdhfpk-y2t9zn",
+          "description": "legendary weapon",
+          "goldValue": 13520,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "weapon",
+          "attackType": "ranged",
+          "baseDamageMin": 7,
+          "baseDamageMax": 15,
+          "icon": "orb-wand.svg",
+          "baseRange": 10,
+          "stats": {
+            "rangedBonus": 2,
+            "range": 2,
+            "damageBonus": 5,
+            "intellect": 3
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "resilience",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "instantHeal",
+              "params": {
+                "minHealPercentage": 0.05,
+                "maxHealPercentage": 0.1,
+                "chanceToHeal": 0.05
+              },
+              "description": "Chance to recover a percentage of missing health on being hit."
+            }
+          ],
+          "name": "legendary weapon",
+          "uniqueId": "mnmj949w-7kn3ak-tqvbqk",
+          "description": "legendary weapon",
+          "goldValue": 15630,
+          "isSellable": true
+        },
+        {
+          "tierIndex": 5,
+          "itemTier": "legendary",
+          "type": "weapon",
+          "attackType": "ranged",
+          "baseDamageMin": 7,
+          "baseDamageMax": 13,
+          "icon": "orb-wand.svg",
+          "baseRange": 9,
+          "stats": {
+            "range": 2,
+            "intellect": 3,
+            "damageBonus": 1,
+            "rangedBonus": 6
+          },
+          "critStats": [],
+          "affixes": [
+            {
+              "name": "arcaneMirror",
+              "type": "combat",
+              "trigger": "hitByAttack",
+              "effect": "reflectDamage",
+              "params": {
+                "minReflectPercentage": 1,
+                "maxReflectPercentage": 0.5,
+                "chanceToReflect": 0.1
+              },
+              "description": "Chance to trigger an arcane mirror reflecting damage to your attacker on being hit."
+            }
+          ],
+          "name": "legendary weapon",
+          "uniqueId": "mnmjga7y-6txv40-j6sfr6",
+          "description": "legendary weapon",
+          "goldValue": 15330,
+          "isSellable": true
+        }
+      ],
+      "maxCapacity": 120,
+      "stashType": "character"
+    }
+  },
+  "gameState": {
+    "GameState": {
+      "type": "GameState",
+      "tier": 0,
+      "highestTier": 60,
+      "gameStarted": true,
+      "gameOver": false,
+      "isVictory": false,
+      "isRangedMode": false,
+      "transitionLock": false,
+      "needsRender": true,
+      "needsInitialRender": false
+    },
+    "OfferedJourneys": {
+      "type": "OfferedJourneys",
+      "journeys": []
+    }
+  },
+  "overlayState": {
+    "OverlayState": {
+      "type": "OverlayState",
+      "isOpen": true,
+      "activeTab": "menu",
+      "logMessages": [
+        "You are no longer in combat.",
+        "Your shot hit a wall.",
+        "Gained 1637 XP (201345/224380)",
+        "Orc Chieftan defeated!",
+        "You are no longer in combat.",
+        "Gained 1632 XP (199708/224380)",
+        "Orc Chieftan defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Gained 1271 XP (198076/224380)",
+        "Imp defeated!",
+        "Gained 1273 XP (196805/224380)",
+        "Imp defeated!",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Gained 1273 XP (195532/224380)",
+        "Imp defeated!",
+        "Gained 1273 XP (194259/224380)",
+        "Imp defeated!",
+        "Exploration milestone reached! Gained 3100 XP for discovering 147000 tiles.",
+        "Gained 3100 XP (192986/224380)",
+        "Gained 1273 XP (189886/224380)",
+        "Imp defeated!",
+        "You are no longer in combat.",
+        "Gained 1273 XP (188613/224380)",
+        "Imp defeated!",
+        "Gained 1273 XP (187340/224380)",
+        "Imp defeated!",
+        "The darkness is at bay... for now!",
+        "You Reached Tier 60",
+        "Gained 300 XP (186067/224380)",
+        "The fountain restores 1096 HP. Current HP: 1045/1181",
+        "You are no longer in combat.",
+        "Gained 7621 XP (185767/224380)",
+        "T`Kore-Tickrob defeated!",
+        "Gained 1764 XP (178146/224380)",
+        "Beholder defeated!",
+        "You are no longer in combat.",
+        "Gained 1457 XP (176382/224380)",
+        "Banshee defeated!",
+        "You are no longer in combat.",
+        "The darkness is at bay... for now!",
+        "Gained 1307 XP (174925/224380)",
+        "Wraith defeated!",
+        "Gained 1530 XP (173618/224380)",
+        "Troll defeated!",
+        "Gained 1202 XP (172088/224380)",
+        "Zombie defeated!",
+        "Gained 1185 XP (170886/224380)",
+        "Skeleton defeated!",
+        "Gained 1204 XP (169701/224380)",
+        "Zombie defeated!",
+        "Gained 1200 XP (168497/224380)",
+        "Zombie defeated!",
+        "Gained 1176 XP (167297/224380)",
+        "Giant Rat defeated!",
+        "You are no longer in combat.",
+        "Gained 1482 XP (166121/224380)",
+        "Ghoul defeated!",
+        "Gained 1479 XP (164639/224380)",
+        "Ghoul defeated!",
+        "Exploration milestone reached! Gained 3100 XP for discovering 146000 tiles.",
+        "Gained 3100 XP (163160/224380)",
+        "You are no longer in combat.",
+        "Gained 1183 XP (160060/224380)",
+        "Skeleton defeated!",
+        "You are no longer in combat.",
+        "Gained 1302 XP (158877/224380)",
+        "Wraith defeated!",
+        "Your shot hit a wall.",
+        "Gained 1767 XP (157575/224380)",
+        "Beholder defeated!",
+        "You are no longer in combat.",
+        "Your shot hit a wall.",
+        "Gained 1307 XP (155808/224380)",
+        "Wraith defeated!",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Gained 1302 XP (154501/224380)",
+        "Wraith defeated!",
+        "You are no longer in combat.",
+        "Gained 1484 XP (153199/224380)",
+        "Ghoul defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Gained 1302 XP (151715/224380)",
+        "Wraith defeated!",
+        "Gained 1455 XP (150413/224380)",
+        "Banshee defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Gained 1204 XP (148958/224380)",
+        "Zombie defeated!",
+        "Your shot hit a wall.",
+        "Gained 1452 XP (147754/224380)",
+        "Banshee defeated!",
+        "Gained 1176 XP (146302/224380)",
+        "Giant Rat defeated!",
+        "You are no longer in combat.",
+        "Gained 1302 XP (145126/224380)",
+        "Wraith defeated!",
+        "Gained 1202 XP (143824/224380)",
+        "Zombie defeated!",
+        "Gained 1457 XP (142622/224380)",
+        "Banshee defeated!",
+        "Gained 1580 XP (141165/224380)",
+        "Orc Chieftan defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Your shot hit a wall.",
+        "Gained 1305 XP (139585/224380)",
+        "Wraith defeated!",
+        "Gained 1455 XP (138280/224380)",
+        "Banshee defeated!",
+        "Exploration milestone reached! Gained 3100 XP for discovering 145000 tiles.",
+        "Gained 3100 XP (136825/224380)",
+        "Gained 1183 XP (133725/224380)",
+        "Skeleton defeated!",
+        "Your shot hit a wall.",
+        "The Heal Potion is of exceptional quality and fully heals you!",
+        "You are no longer in combat.",
+        "Gained 1764 XP (132542/224380)",
+        "Beholder defeated!",
+        "Gained 1183 XP (130778/224380)",
+        "Skeleton defeated!",
+        "Your shot hit a wall.",
+        "Gained 1457 XP (129595/224380)",
+        "Banshee defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Gained 1200 XP (128138/224380)",
+        "Zombie defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Gained 1202 XP (126938/224380)",
+        "Zombie defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Your shot hit a wall.",
+        "Gained 1185 XP (125736/224380)",
+        "Skeleton defeated!",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "Your shot hit a wall.",
+        "You are no longer in combat.",
+        "Gained 1769 XP (124551/224380)",
+        "Beholder defeated!",
+        "Your shot hit a wall.",
+        "Gained 1204 XP (122782/224380)",
+        "Zombie defeated!",
+        "Gained 1580 XP (121578/224380)",
+        "Orc Chieftan defeated!",
+        "Gained 1183 XP (119998/224380)",
+        "Skeleton defeated!",
+        "Gained 1452 XP (118815/224380)",
+        "Banshee defeated!",
+        "The Heal Potion is of exceptional quality and fully heals you!",
+        "You are no longer in combat.",
+        "Gained 1705 XP (117363/224380)",
+        "Wyrmling defeated!",
+        "Gained 1307 XP (115658/224380)",
+        "Wraith defeated!",
+        "Gained 1204 XP (114351/224380)",
+        "Zombie defeated!"
+      ],
+      "activeMenuSection": "controls-button",
+      "activeShopNpcId": null
+    }
+  },
+  "id": "mnmll1hq-qetf90-bkg5hz",
+  "notes": ""
+}
