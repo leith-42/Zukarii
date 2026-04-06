@@ -74,7 +74,7 @@ export class SplashSystem extends System {
         // Wait for audio to load
         this.eventBus.on('AudioLoaded', () => {
             console.log('SplashSystem: Audio loaded, playing sounds');
-            this.eventBus.emit('PlayTrackControl', { track: 'backgroundMusic', play: true, volume: 0.25 });
+            this.eventBus.emit('PlayTrackControl', { track: 'backgroundMusic', play: true, volume: .2 });
             this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.2 });
         });
 

@@ -112,7 +112,7 @@ export class LightingSystem extends System {
             }));
 
             //console.log(`LightingSystem: Activated ${type} for player - visibleRadius: ${this.lightingState.visibleRadius}, expires on turn: ${this.lightingState.expiresOnTurn}`);
-            this.trackControlQueue.push({ track: 'torchBurning', play: true, volume: 0.05 });
+            this.trackControlQueue.push({ track: 'torchBurning', play: true, volume: 0.25 });
         } else {
 
             const lightingStateEntity = this.entityManager.getEntity('lightingState');

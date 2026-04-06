@@ -404,8 +404,8 @@ export class Game {
         
         this.hudLayer.style.visibility = 'visible';
         gameState.needsRender = true;
-        const musicVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume  * .2;
-        this.trackControlQueue.push({ track: 'backgroundMusic', play: true, volume: musicVolume });
+        // Use full volume (1.0) as base - AudioSystem multipliers will control actual volume
+        this.trackControlQueue.push({ track: 'backgroundMusic', play: true, volume: 1.0 });
 
         const player = this.entityManager.getEntity('player');
 

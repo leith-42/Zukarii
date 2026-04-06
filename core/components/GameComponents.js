@@ -92,11 +92,19 @@ export class GameStateComponent {
 export class GameOptionsComponent {
     constructor({
         soundEnabled = true,
-        globalVolume = 1, // Global audio volume
+        globalVolume = 1.0,      // Master volume multiplier (default 100%)
+        musicVolume = 1.0,       // Background music (default 100%)
+        ambientVolume = 1.0,     // Ambient loops (default 100%)
+        sfxVolume = 1.0,         // Sound effects (default 100%)
+        dialogueVolume = 1.0     // Narration and dialogue (default 100%)
     } = {}) {
         this.type = 'GameOptions';
-        soundEnabled = soundEnabled; // Boolean: Whether sound is enabled
-        this.globalVolume = globalVolume; // Global audio volume
+        this.soundEnabled = soundEnabled; // Boolean: Whether sound is enabled
+        this.globalVolume = globalVolume; // Master volume multiplier
+        this.musicVolume = musicVolume; // Background music volume
+        this.ambientVolume = ambientVolume; // Ambient sounds volume
+        this.sfxVolume = sfxVolume; // Sound effects volume
+        this.dialogueVolume = dialogueVolume; // Dialogue/narration volume
     }
 }
 export class ProjectileComponent {

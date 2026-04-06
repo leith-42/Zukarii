@@ -205,9 +205,19 @@ export class MenuUiSystem extends System {
 
     setupEventListeners() {
 
-        // Sound-enabled checkbox and global volume slider
+        // Sound-enabled checkbox and volume sliders
         const soundEnabledCheckbox = document.getElementById('sound-enabled');
         const globalVolumeSlider = document.getElementById('global-volume');
+        const musicVolumeSlider = document.getElementById('music-volume');
+        const ambientVolumeSlider = document.getElementById('ambient-volume');
+        const sfxVolumeSlider = document.getElementById('sfx-volume');
+        const dialogueVolumeSlider = document.getElementById('dialogue-volume');
+
+        // Helper function to update volume display
+        const updateVolumeDisplay = (sliderId, value) => {
+            const display = document.getElementById(`${sliderId}-value`);
+            if (display) display.textContent = `${value}%`;
+        };
 
         if (soundEnabledCheckbox && globalVolumeSlider) {
             // Event listener for sound-enabled checkbox
@@ -218,18 +228,7 @@ export class MenuUiSystem extends System {
                     return;
                 }
 
-                if (soundEnabledCheckbox.checked) {
-                    // Restore volume from slider value
-                    const sliderValue = parseInt(globalVolumeSlider.value, 10) / 100;
-                    gameOptions.soundEnabled = true;
-                    gameOptions.globalVolume = sliderValue;
-                    this.eventBus.emit('AudioEnabled', gameOptions.soundEnabled);
-                } else {
-                    // Mute sound
-                    gameOptions.soundEnabled = false;
-                    gameOptions.globalVolume = 0;
-                    //globalVolumeSlider.value = 0; // Update slider to reflect muted state
-                }
+                gameOptions.soundEnabled = soundEnabledCheckbox.checked;
                 this.eventBus.emit('AudioEnabled', gameOptions.soundEnabled);
             });
 
@@ -241,14 +240,69 @@ export class MenuUiSystem extends System {
                     return;
                 }
 
-                const sliderValue = parseInt(globalVolumeSlider.value, 10) / 100;
-                gameOptions.globalVolume = sliderValue;
+                const value = parseInt(globalVolumeSlider.value, 10);
+                gameOptions.globalVolume = value / 100;
+                updateVolumeDisplay('global-volume', value);
+            });
+        }
 
-                // If sound is disabled, re-enable it when the slider is adjusted
-                if (!soundEnabledCheckbox.checked) {
-                    //soundEnabledCheckbox.checked = true;
-                    //gameOptions.soundEnabled = true;
+        // Music Volume
+        if (musicVolumeSlider) {
+            musicVolumeSlider.addEventListener('input', () => {
+                const gameOptions = this.entityManager.getEntity('gameState').getComponent('GameOptions');
+                if (!gameOptions) {
+                    console.error('MenuUiSystem: GameOptionsComponent not found on gameState entity');
+                    return;
                 }
+
+                const value = parseInt(musicVolumeSlider.value, 10);
+                gameOptions.musicVolume = value / 100;
+                updateVolumeDisplay('music-volume', value);
+            });
+        }
+
+        // Ambient Volume
+        if (ambientVolumeSlider) {
+            ambientVolumeSlider.addEventListener('input', () => {
+                const gameOptions = this.entityManager.getEntity('gameState').getComponent('GameOptions');
+                if (!gameOptions) {
+                    console.error('MenuUiSystem: GameOptionsComponent not found on gameState entity');
+                    return;
+                }
+
+                const value = parseInt(ambientVolumeSlider.value, 10);
+                gameOptions.ambientVolume = value / 100;
+                updateVolumeDisplay('ambient-volume', value);
+            });
+        }
+
+        // SFX Volume
+        if (sfxVolumeSlider) {
+            sfxVolumeSlider.addEventListener('input', () => {
+                const gameOptions = this.entityManager.getEntity('gameState').getComponent('GameOptions');
+                if (!gameOptions) {
+                    console.error('MenuUiSystem: GameOptionsComponent not found on gameState entity');
+                    return;
+                }
+
+                const value = parseInt(sfxVolumeSlider.value, 10);
+                gameOptions.sfxVolume = value / 100;
+                updateVolumeDisplay('sfx-volume', value);
+            });
+        }
+
+        // Dialogue Volume
+        if (dialogueVolumeSlider) {
+            dialogueVolumeSlider.addEventListener('input', () => {
+                const gameOptions = this.entityManager.getEntity('gameState').getComponent('GameOptions');
+                if (!gameOptions) {
+                    console.error('MenuUiSystem: GameOptionsComponent not found on gameState entity');
+                    return;
+                }
+
+                const value = parseInt(dialogueVolumeSlider.value, 10);
+                gameOptions.dialogueVolume = value / 100;
+                updateVolumeDisplay('dialogue-volume', value);
             });
         }
 
@@ -1002,6 +1056,7 @@ export class MenuUiSystem extends System {
         } else if (tab === 'menu') {
             this.activeMenuSection = 'controls-button';
             this.updateMenu();
+            this.loadVolumeSettingsIntoSliders(); // Load volume settings when menu opens
         } else if (tab === 'journey') {
             this.updateJourney();
         } else if (tab === 'shop') {
@@ -1056,6 +1111,11 @@ export class MenuUiSystem extends System {
         document.getElementById('load-games-button').toggleAttribute("hidden", gameStarted);
         document.getElementById('exit-button').toggleAttribute("hidden", !gameStarted);
         document.getElementById('save-games-button').toggleAttribute("hidden", !gameStarted);
+
+        // Load volume settings into sliders when options menu is displayed
+        if (this.activeMenuSection === 'options-button') {
+            this.loadVolumeSettingsIntoSliders();
+        }
 
         const menuDataWrapper = document.getElementById('menu-data-wrapper');
         if (menuDataWrapper) {
@@ -1436,6 +1496,30 @@ export class MenuUiSystem extends System {
         if (overlayState.isOpen && overlayState.activeTab === 'log') {
             this.renderOverlay('log');
         }
+    }
+
+    loadVolumeSettingsIntoSliders() {
+        const gameOptions = this.entityManager.getEntity('gameState')?.getComponent('GameOptions');
+        if (!gameOptions) return;
+
+        const soundEnabledCheckbox = document.getElementById('sound-enabled');
+        if (soundEnabledCheckbox) {
+            soundEnabledCheckbox.checked = gameOptions.soundEnabled ?? true;
+        }
+
+        const setSliderValue = (id, value) => {
+            const slider = document.getElementById(id);
+            const display = document.getElementById(`${id}-value`);
+            const percentValue = Math.round(value * 100);
+            if (slider) slider.value = percentValue;
+            if (display) display.textContent = `${percentValue}%`;
+        };
+
+        setSliderValue('global-volume', gameOptions.globalVolume ?? 1);
+        setSliderValue('music-volume', gameOptions.musicVolume ?? 0.5);
+        setSliderValue('ambient-volume', gameOptions.ambientVolume ?? 0.3);
+        setSliderValue('sfx-volume', gameOptions.sfxVolume ?? 1);
+        setSliderValue('dialogue-volume', gameOptions.dialogueVolume ?? 0.8);
     }
 
     updateCharacterUI({ entityId }) {

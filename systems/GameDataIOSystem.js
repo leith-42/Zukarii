@@ -101,6 +101,7 @@ export class GameDataIOSystem extends System {
         const player = this.entityManager.getEntity('player');
         const gameState = this.entityManager.getEntity('gameState');
         const gameStateComp = gameState.getComponent('GameState');
+        const gameOptions = gameState.getComponent('GameOptions');
         const overlayState = this.entityManager.getEntity('overlayState').getComponent('OverlayState');
 
         return {
@@ -126,8 +127,8 @@ export class GameDataIOSystem extends System {
             } : null,
             gameState: gameState ? {
                 GameState: gameStateComp,
-                //JourneyPaths: gameState.getComponent('JourneyPaths'), // Add JourneyPaths
-                OfferedJourneys: gameState.getComponent('OfferedJourneys') // Add OfferedJourneys
+                GameOptions: gameOptions,
+                OfferedJourneys: gameState.getComponent('OfferedJourneys')
             } : null,
             overlayState: overlayState ? {
                 OverlayState: overlayState

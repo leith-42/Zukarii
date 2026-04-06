@@ -271,7 +271,19 @@ export class LevelTransitionSystem extends System {
         const gameStateComp = gameState.getComponent('GameState');
         Object.assign(gameStateComp, data.gameState.GameState);
         gameStateComp.tier = tier;
- 
+
+        // Restore GameOptions if they exist in save data
+        if (data.gameState.GameOptions) {
+            const gameOptions = gameState.getComponent('GameOptions');
+            gameOptions.soundEnabled = data.gameState.GameOptions.soundEnabled ?? true;
+            gameOptions.globalVolume = data.gameState.GameOptions.globalVolume ?? 1;
+            gameOptions.musicVolume = data.gameState.GameOptions.musicVolume ?? 0.5;
+            gameOptions.ambientVolume = data.gameState.GameOptions.ambientVolume ?? 0.3;
+            gameOptions.sfxVolume = data.gameState.GameOptions.sfxVolume ?? 1;
+            gameOptions.dialogueVolume = data.gameState.GameOptions.dialogueVolume ?? 0.8;
+            console.log('LevelTransitionSystem: Restored GameOptions:', gameOptions);
+        }
+
         // Restore journey-related components for gameState
         if (data.gameState.JourneyPaths) {
             /*
