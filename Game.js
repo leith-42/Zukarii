@@ -1,5 +1,6 @@
 ﻿// Game.js - Updated
 import { State } from './State.js';
+import { PLAYER_ANIMATION_CONFIG } from './data/cfg/PlayerAnimations.js';
 
 import { ActionSystem } from './systems/ActionSystem.js';
 import { CombatSystem } from './systems/CombatSystem.js';
@@ -81,8 +82,9 @@ export class Game {
         this.lastMouseEventTime = 0;
         this.gameLoopId = null;
         this.RENDER_RADIUS_MODIFIER = 2;
-        this.GameLoopRunning = false;
+        this.gameLoopRunning = false;
         this.isLoadingFromSave = false; // Add flag to track if loading from a save
+        this.hudLayer = document.getElementById('hud-layer');
 
         // Initialize player
         let player = this.entityManager.getEntity('player');
@@ -136,45 +138,7 @@ export class Game {
         this.entityManager.addComponentToEntity('player', new AnimationStateComponent());
         this.entityManager.addComponentToEntity('player', new AnimationComponent());
         const animation = player.getComponent('Animation');
-
-        animation.spriteSheets = {
-            idle: { src: 'img/anim/Player/Idle.png'},
-            walk: { src: 'img/anim/Player/Walk.png' },  
-            walk_up: { src: 'img/anim/Player/Walk_Up.png' },
-            walk_down: { src: 'img/anim/Player/Walk_Down.png' },
-            attack: { src: 'img/anim/Player/Attack_Fire_2.png' }
-        };
-
-        animation.animations = {
-            'idle': {
-                frames: [
-                    { x: 0 }, { x: 128 }, { x: 256 }, { x: 384 },
-                    { x: 512 }, { x: 640 }, { x: 768 }, { x: 896 }
-                ],
-                frameWidth: 128,
-                frameHeight: 128,
-                frameTime: 100
-            },
-            'walk': {
-                frames: [
-                    { x: 0 }, { x: 128 }, { x: 256 }, { x: 384 },
-                    { x: 512 }, { x: 640 }, { x: 768 }
-                ],
-                frameWidth: 128,
-                frameHeight: 128,
-                frameTime: 100
-            },
-            'attack': {
-                frames: [
-                    { x: 0 }, { x: 128 }, { x: 256 }, { x: 384 },
-                    { x: 512 }, { x: 640 }, { x: 768 }, { x: 896 },
-                    { x: 1024 }
-                ],
-                frameWidth: 128,
-                frameHeight: 128,
-                frameTime: 56
-            }
-        };
+        Object.assign(animation, PLAYER_ANIMATION_CONFIG);
 
         // Initialize overlayState
         let overlayState = this.entityManager.getEntity('overlayState');
@@ -313,7 +277,7 @@ export class Game {
         await Promise.all(Object.values(this.systems).map(system => system.init()));
     }
 
-    iniitalizeActiveGameSystems() {
+    initializeActiveGameSystems() {
         let activeGameSystems = {}
         // activeGameSystems.level = new LevelSystem(this.entityManager, this.state.eventBus, this.state, this.systems.entityGeneration, this.utilities);
 
@@ -369,7 +333,7 @@ export class Game {
     }
 
     startGameLoop() {
-        this.GameLoopRunning = true;
+        this.gameLoopRunning = true;
         let lastTime = window.performance.now();
         let frameCount = 0;
         let fps = 0;
@@ -429,34 +393,33 @@ export class Game {
             const deltaTime = (currentTime - lastTime) / 1000;
             lastTime = currentTime;
 
-            //environment check
-        
-
             // FPS calculation
             frameCount++;
             if (currentTime - lastFpsUpdate > 1000) {
-
-                const currentDate = new Date();
-                const year = currentDate.getFullYear(); const month = String(currentDate.getMonth() + 1).padStart(2, '0'); const day = String(currentDate.getDate()).padStart(2, '0');
-                const hours = String(currentDate.getHours()).padStart(2, '0'); const minutes = String(currentDate.getMinutes()).padStart(2, '0'); const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-                const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds} `;
-                const canvasRenderSize = `${window.canvasSize.w} x ${window.canvasSize.h}`
-
                 fps = frameCount;
                 frameCount = 0;
                 lastFpsUpdate = currentTime;
+
                 if (fpsCounter) {
-                    fpsCounter.textContent = ` - Host: ${perfLabel.host} | Env: ${perfLabel.env} | CanvasRender: ${canvasRenderSize} | Now: ${formattedDate} | FPS: ${fps}`;
+                    const canvasRenderSize = `${window.canvasSize.w} x ${window.canvasSize.h}`;
+                    const timestamp = new Date().toLocaleString('en-CA', { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit',
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        second: '2-digit',
+                        hour12: false 
+                    });
+
+                    fpsCounter.textContent = ` - Host: ${perfLabel.host} | Env: ${perfLabel.env} | CanvasRender: ${canvasRenderSize} | Now: ${timestamp} | FPS: ${fps}`;
                 }
             }
 
             this.updateSystems(updateSystems, deltaTime);
 
             const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
-            if (!gameState?.gameOver) {
-                // Continue the loop
-            }
-            gameState.transitionLock = false;
+            if (gameState?.transitionLock) { gameState.transitionLock = false; }
         };
         this.gameLoopId = requestAnimationFrame(gameLoop);
     }
@@ -476,13 +439,14 @@ export class Game {
             if (!gameStateComp.gameStarted) gameStateComp.gameStarted = true;
         }
 
-        this.iniitalizeActiveGameSystems();
+        this.initializeActiveGameSystems();
 
         this.splashScreen.style.display = 'none';
         if (this.systems.splash) {
             this.systems.splash.destroy();
         }
-        document.getElementById('hud-layer').style.visibility = 'visible';
+        
+        this.hudLayer.style.visibility = 'visible';
         gameState.needsRender = true;
         const musicVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume  * .2;
         this.trackControlQueue.push({ track: 'backgroundMusic', play: true, volume: musicVolume });
@@ -495,11 +459,12 @@ export class Game {
             this.state.eventBus.emit('RequestSaveGame', { saveId });
             player.removeComponent('NewCharacter');
             const introVolume = this.entityManager.getEntity('gameState')?.getComponent('GameOptions')?.globalVolume * 0.45;
-            setTimeout(() => { this.state.eventBus.emit('PlaySfxImmediate', { sfx: 'intro', volume: introVolume }); }, 2000);
+            // commented out for now as the intro is outdated and needs to be redone - will add back in once we have a new one
+            //setTimeout(() => { this.state.eventBus.emit('PlaySfxImmediate', { sfx: 'intro', volume: introVolume }); }, 2000);
         }
         this.state.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.2 });
 
-        if (!this.GameLoopRunning) {
+        if (!this.gameLoopRunning) {
             this.startGameLoop();
         }
         console.log('Game.js: Game started');
