@@ -11,15 +11,15 @@
   },
   "armor": {
     "base": [ "armor" ],
-    "bonus": [ "maxHp", "prowess", "agility", "block", "defense" ]
+    "bonus": [ "maxHp", "prowess", "agility", "block", "resistMagic", "defense" ]
   },
   "head": {
     "base": [ "armor" ],
-    "bonus": [ "maxHp", "prowess", "intellect", "agility", "defense" ]
+    "bonus": [ "maxHp", "prowess", "intellect", "agility", "resistMagic", "defense" ]
   },
   "gloves": {
     "base": [ "armor" ],
-    "bonus": [ "maxHp", "prowess", "agility", "block", "damageBonus" ]
+    "bonus": [ "maxHp", "prowess", "agility", "block", "damageBonus", "meleeBonus", "rangedBonus", "range" ]
   },
   "boots": {
     "base": [ "baseMovementSpeed" ],

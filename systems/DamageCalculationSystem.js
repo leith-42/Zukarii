@@ -15,7 +15,7 @@ export class DamageCalculationSystem extends System {
         this.eventBus.on('CalculateDamage', ({ attacker, target, weapon }) => {
             const result = attacker.hasComponent('PlayerState')
                 ? this.calculatePlayerToMonsterDamage({ attacker, target, weapon })
-                : this.calculateMonsterToPlayerDamage({ attacker, target });
+                : this.calculateMonsterToPlayerDamage({ attacker, target, weapon });
 
             // NEW: Emit WasHit + set isAggro
             if (target.hasComponent('MonsterData')) {
@@ -37,7 +37,7 @@ export class DamageCalculationSystem extends System {
     }
 
     update(deltaTime) {
-        // NEW: Empty—pure ECS, no per-frame logic needed
+        // no per-frame logic needed
     }
 
     calculatePlayerToMonsterDamage({ attacker, target, weapon }) {
@@ -84,9 +84,10 @@ export class DamageCalculationSystem extends System {
     calculateMonsterToPlayerDamage({ attacker, target, weapon }) {
         const monsterData = attacker.getComponent('MonsterData');
         const targetStats = target.getComponent('Stats');
+        const targetLevel = target.getComponent('PlayerState').level;
         const tier = this.entityManager.getEntity('gameState').getComponent('GameState').tier;
         const tierDamageMultiplier = 0.20;
-        const armorReductionFactor = 0.02 + (.001 * tier/10);
+        const armorReductionFactor = 0.01 + (.001 * (targetLevel/10));
         const defenseReductionFactor = 0.025;
 
         const baseDamageMin = monsterData.minBaseDamage || 2;
@@ -103,15 +104,16 @@ export class DamageCalculationSystem extends System {
         const armor = targetStats.armor || 0;
         const armorReduction = armor > 0 ? Math.max(1, Math.floor(preReductionDamage * armorReductionFactor * armor)) : 0;
         const defenseReduction = Math.round(preReductionDamage * (defenseReductionFactor * (targetStats.defense || 0)));
-        const totalDamage = Math.round(Math.max(0, preReductionDamage - armorReduction - defenseReduction));
 
         let magicResistMessage = '';
-        if (weapon.attackType === 'ranged') {
+        let magicResistReduction = 0
+        if (weapon?.attackType === 'ranged') {
             const magicResist = targetStats.resistMagic || 0;
-            const magicResistReduction = Math.round(totalDamage * (magicResist * 0.01));
+            magicResistReduction = Math.round(preReductionDamage * (magicResist * 0.01));
             magicResistMessage = `, magic resist absorbs: ${magicResistReduction}`;
-            totalDamage = Math.max(0, totalDamage - magicResistReduction);
         }
+
+        const totalDamage = Math.round(Math.max(0, preReductionDamage - armorReduction - defenseReduction - magicResistReduction));
 
         this.healthUpdates.push({ entityId: target.id, amount: -totalDamage, attackerId: attacker });
 
