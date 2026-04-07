@@ -1,6 +1,6 @@
 ﻿// systems/MonsterControllerSystem.js
 import { System } from '../core/Systems.js';
-import { LootSourceData, MovementIntentComponent, RemoveEntityComponent } from '../core/Components.js';
+import { LootSourceData, MovementIntentComponent, AvoidanceWaypointComponent, RemoveEntityComponent } from '../core/Components.js';
 
 export class MonsterControllerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
@@ -75,7 +75,37 @@ export class MonsterControllerSystem extends System {
 
             if (distance <= this.AGGRO_RANGE) { monsterData.isAggro = true; }
 
-            if (distance > this.AGGRO_RANGE * 2 && !isInCombat) { monsterData.isAggro = false; }
+            // Double de-aggro range for waypointing monsters to allow them to complete pathfinding
+            const deAggroMultiplier = monster.hasComponent('AvoidanceWaypoint') ? 4 : 2;
+            if (distance > this.AGGRO_RANGE * deAggroMultiplier && !isInCombat) { monsterData.isAggro = false; }
+
+            // Handle retreat to spawn behavior
+            if (monsterData.isRetreating) {
+                // Check if monster has reached spawn point
+                const distanceToSpawn = Math.sqrt((monsterData.spawnX - pos.x) ** 2 + (monsterData.spawnY - pos.y) ** 2);
+
+                if (distanceToSpawn < 16) { // Within half a tile of spawn
+                    console.log(`[RETREAT-COMPLETE] ${monsterData.name} reached spawn at (${monsterData.spawnX.toFixed(1)}, ${monsterData.spawnY.toFixed(1)}), resetting stuck counter and ending retreat`);
+                    monsterData.isRetreating = false;
+                    monsterData.totalStuckEvents = 0;
+                    if (monster.hasComponent('MovementIntent')) {
+                        monster.removeComponent('MovementIntent');
+                    }
+                    return;
+                }
+
+                // Continue moving to spawn
+                if (!monster.hasComponent('MovementIntent')) {
+                    console.log(`[RETREAT-MOVING] ${monsterData.name} moving to spawn (${monsterData.spawnX.toFixed(1)}, ${monsterData.spawnY.toFixed(1)}), distance: ${distanceToSpawn.toFixed(1)}px`);
+                    this.entityManager.addComponentToEntity(monster.id, new MovementIntentComponent(monsterData.spawnX, monsterData.spawnY));
+                }
+
+                // Set facing direction toward spawn
+                const spawnDx = monsterData.spawnX - pos.x;
+                monster.getComponent('Visuals').faceLeft = spawnDx < 0 ? true : spawnDx > 0 ? false : monster.getComponent('Visuals').faceLeft;
+
+                return; // Skip normal behavior while retreating
+            }
 
             monsterData.nearbyMonsters = [];
             if (monsterData.isAggro) {
@@ -88,11 +118,16 @@ export class MonsterControllerSystem extends System {
                     if (entityId === monster.id) return; // Skip self
                     const nearbyMonster = this.entityManager.getEntity(entityId);
                     const nearbyMonsterData = nearbyMonster.getComponent('MonsterData');
+
+                    if (nearbyMonsterData.isAggro) return; // Skip if already aggro
+
                     nearbyMonsterData.isAggro = true;
+
                     if (monsterData.isInCombat) {
                         nearbyMonster.addComponent(new InCombatComponent(3000)); // Set inCombat if the monster is already in combat
-                    }
+                     }
                     console.log(`MonsterControllerSystem: Nearby monster ${nearbyMonsterData.name} is now aggro at distance ${distance} from Aggro monster ${monsterData.name}`);
+                                        
                 });
 
                 if (monster.hasComponent('RangedAttack')) {
@@ -107,6 +142,10 @@ export class MonsterControllerSystem extends System {
                             attackSpeed.elapsedSinceLastAttack = 0;
                             //////console.log(`MonsterControllerSystem: ${monsterData.name} ranged attacked player at distance ${distance.toFixed(2)} pixels`);
                         }
+                        // Remove waypoint when in ranged attack range - prioritize combat
+                        if (monster.hasComponent('AvoidanceWaypoint')) {
+                            monster.removeComponent('AvoidanceWaypoint');
+                        }
                         return; // Stop moving if in ranged attack range
                     }
                 }
@@ -118,17 +157,202 @@ export class MonsterControllerSystem extends System {
                         attackSpeed.elapsedSinceLastAttack = 0;
                         //////console.log(`MonsterControllerSystem: ${monsterData.name} attacked player at distance ${distance.toFixed(2)} pixels`);
                     }
+                    // Remove waypoint when in melee range - prioritize combat
+                    if (monster.hasComponent('AvoidanceWaypoint')) {
+                        monster.removeComponent('AvoidanceWaypoint');
+                    }
+                    // Reset stuck counter on successful combat engagement
+                    if (monsterData.totalStuckEvents > 0) {
+                        console.log(`[STUCK-RESET] ${monsterData.name} reached melee range, resetting stuck counter from ${monsterData.totalStuckEvents} to 0`);
+                        monsterData.totalStuckEvents = 0;
+                    }
                     return; // Stop moving if in melee range
-                }  
+                }
+
+                // Check if monster has active avoidance waypoint
+                if (monster.hasComponent('AvoidanceWaypoint')) {
+                    const waypoint = monster.getComponent('AvoidanceWaypoint');
+
+                    // Set origin position on FIRST encounter with waypoint (not when reached!)
+                    if (waypoint.originX === null) {
+                        waypoint.originX = pos.x;
+                        waypoint.originY = pos.y;
+                        console.log(`[WAYPOINT-ORIGIN] ${monsterData.name} starting waypoint journey from (${waypoint.originX.toFixed(1)}, ${waypoint.originY.toFixed(1)}) to (${waypoint.targetX.toFixed(1)}, ${waypoint.targetY.toFixed(1)})`);
+                    }
+
+                    const waypointDist = Math.sqrt((waypoint.targetX - pos.x) ** 2 + (waypoint.targetY - pos.y) ** 2);
+
+                    // Stuck detection: only run if monster has MovementIntent (actively trying to move)
+                    if (monster.hasComponent('MovementIntent')) {
+                        if (waypoint.lastPosX !== null && waypoint.lastPosY !== null) {
+                            const movedDist = Math.sqrt((pos.x - waypoint.lastPosX) ** 2 + (pos.y - waypoint.lastPosY) ** 2);
+                            if (movedDist < 0.5) { // Less than 0.5 pixels moved = stuck
+                                waypoint.stuckFrames++;
+                                // Log stuck progress every 5 frames
+                                if (waypoint.stuckFrames % 5 === 0) {
+                                    console.log(`[STUCK] ${monsterData.name} at (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}) stuck for ${waypoint.stuckFrames} frames, waypoint: (${waypoint.targetX.toFixed(1)}, ${waypoint.targetY.toFixed(1)}), moved: ${movedDist.toFixed(3)}px`);
+                                }
+                            } else {
+                                waypoint.stuckFrames = 0; // Reset if moving
+                            }
+                        }
+                        waypoint.lastPosX = pos.x;
+                        waypoint.lastPosY = pos.y;
+                    }
+
+                    // If stuck for 10+ frames, remove waypoint and let pathChecking create a new one
+                    if (waypoint.stuckFrames >= 10) {
+                        // Increment total stuck events
+                        monsterData.totalStuckEvents = (monsterData.totalStuckEvents || 0) + 1;
+
+                        console.warn(`[STUCK-REMOVE] ${monsterData.name} stuck for ${waypoint.stuckFrames} frames at (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}), waypoint was (${waypoint.targetX.toFixed(1)}, ${waypoint.targetY.toFixed(1)}), distance to player: ${distance.toFixed(1)}px, total stuck events: ${monsterData.totalStuckEvents}`);
+
+                        // Log nearby obstacles
+                        const nearbyObstacles = this.entityManager.getEntitiesWith(['Position', 'Hitbox'])
+                            .filter(e => {
+                                if (e === monster || e.id === 'player') return false;
+                                if (e.hasComponent('TriggerArea')) return false;
+                                const ePos = e.getComponent('Position');
+                                const dist = Math.sqrt((ePos.x - pos.x) ** 2 + (ePos.y - pos.y) ** 2);
+                                return dist < 64; // Within 2 tiles
+                            })
+                            .map(e => {
+                                const ePos = e.getComponent('Position');
+                                const dist = Math.sqrt((ePos.x - pos.x) ** 2 + (ePos.y - pos.y) ** 2);
+                                let type = 'unknown';
+                                if (e.hasComponent('MonsterData')) type = 'monster';
+                                else if (e.hasComponent('Chest')) type = 'chest';
+                                else if (e.hasComponent('Portal')) type = 'portal';
+                                else if (e.hasComponent('Stair')) type = 'stair';
+                                else if (e.hasComponent('Fountain')) type = 'fountain';
+                                return { id: e.id, type, dist: dist.toFixed(1) };
+                            });
+                        console.warn(`[STUCK-OBSTACLES] Nearby obstacles (within 2 tiles):`, nearbyObstacles);
+
+                        // Check if exceeded max stuck attempts - if so, retreat to spawn
+                        const MAX_STUCK_ATTEMPTS = 3;
+                        if (monsterData.totalStuckEvents >= MAX_STUCK_ATTEMPTS) {
+                            console.warn(`[RETREAT-INITIATED] ${monsterData.name} exceeded ${MAX_STUCK_ATTEMPTS} stuck events, retreating to spawn (${monsterData.spawnX?.toFixed(1)}, ${monsterData.spawnY?.toFixed(1)})`);
+                            monsterData.isRetreating = true;
+                            monsterData.isAggro = false;
+                            monster.removeComponent('AvoidanceWaypoint');
+                            // Clear MovementIntent - retreat logic will handle movement below
+                            if (monster.hasComponent('MovementIntent')) {
+                                monster.removeComponent('MovementIntent');
+                            }
+                            return;
+                        }
+
+                        // Set stuck cooldown to prevent immediate re-creation of waypoints (500ms cooldown)
+                        const stuckCooldownUntil = Date.now() + 500;
+                        monster.removeComponent('AvoidanceWaypoint');
+
+                        // Add a MonsterData property to track stuck cooldown across component removal
+                        monsterData.stuckCooldownUntil = stuckCooldownUntil;
+
+                        console.log(`[STUCK-REMOVE] Waypoint removed, will be on cooldown until ${stuckCooldownUntil}, then attempt new path to player at (${playerPos.x.toFixed(1)}, ${playerPos.y.toFixed(1)})`);
+
+                        // Skip creating new MovementIntent - let cooldown expire first
+                        return;
+                    }
+                    // Early exit: Remove waypoint if expired (but not just because reached - must verify clearance)
+                    if (Date.now() > waypoint.expiresAt) {
+                        console.log(`[WAYPOINT-EXPIRED] ${monsterData.name} waypoint expired, removing and retrying direct path`);
+                        monster.removeComponent('AvoidanceWaypoint');
+                    } 
+                    // Waypoint reached - check if monster has sufficient clearance from original obstacle
+                    else if (waypointDist < 16) {
+                        const traveledDist = Math.sqrt((pos.x - waypoint.originX) ** 2 + (pos.y - waypoint.originY) ** 2);
+                        const MIN_CLEARANCE_DISTANCE = 96; // Must travel at least 3 tiles to ensure obstacle clearance
+
+                        if (traveledDist >= MIN_CLEARANCE_DISTANCE) {
+                            console.log(`[WAYPOINT-REACHED] ${monsterData.name} reached waypoint after traveling ${traveledDist.toFixed(1)}px (>= ${MIN_CLEARANCE_DISTANCE}), checking if path to player is clear`);
+
+                            // Now verify path to player is actually clear
+                            if (this.isPathClearToPlayer(monster, pos, playerPos)) {
+                                console.log(`[WAYPOINT-SUCCESS] ${monsterData.name} path to player confirmed clear, removing waypoint`);
+                                monster.removeComponent('AvoidanceWaypoint');
+                                // Reset stuck counter on successful waypoint completion
+                                if (monsterData.totalStuckEvents > 0) {
+                                    console.log(`[STUCK-RESET] ${monsterData.name} successfully completed waypoint, resetting stuck counter from ${monsterData.totalStuckEvents} to 0`);
+                                    monsterData.totalStuckEvents = 0;
+                                }
+                            } else {
+                                console.warn(`[WAYPOINT-INCOMPLETE] ${monsterData.name} reached waypoint but path still blocked, extending waypoint further`);
+                                // Extend waypoint further in same direction
+                                const waypointDx = waypoint.targetX - waypoint.originX;
+                                const waypointDy = waypoint.targetY - waypoint.originY;
+                                waypoint.targetX += waypointDx * 0.5; // Extend 50% further
+                                waypoint.targetY += waypointDy * 0.5;
+                                waypoint.expiresAt = Date.now() + 2000; // Extend expiry
+                                console.log(`[WAYPOINT-EXTENDED] ${monsterData.name} new waypoint: (${waypoint.targetX.toFixed(1)}, ${waypoint.targetY.toFixed(1)})`);
+                            }
+                        } else {
+                            console.log(`[WAYPOINT-TOO-CLOSE] ${monsterData.name} only traveled ${traveledDist.toFixed(1)}px (< ${MIN_CLEARANCE_DISTANCE}), continuing to waypoint`);
+                        }
+                    }
+                    // Periodic check if direct path to player is now clear (throttled to every 200ms)
+                    else if (Date.now() - waypoint.lastPathCheck >= 200) {
+                        waypoint.lastPathCheck = Date.now();
+                        const pathClear = this.isPathClearToPlayer(monster, pos, playerPos);
+                        if (pathClear) {
+                            waypoint.consecutiveClearChecks++;
+                            console.log(`[PATH-CLEAR] ${monsterData.name} path check ${waypoint.consecutiveClearChecks}/3: CLEAR (distance to player: ${distance.toFixed(1)}px)`);
+                            // Require 3 consecutive clears (~600ms total) before removing waypoint
+                            if (waypoint.consecutiveClearChecks >= 3) {
+                                console.log(`[PATH-CLEAR-SUCCESS] ${monsterData.name} path clear for ${waypoint.consecutiveClearChecks} consecutive checks, removing waypoint and going direct to player`);
+                                monster.removeComponent('AvoidanceWaypoint');
+                            }
+                        } else {
+                            // Path still blocked - reset counter
+                            if (waypoint.consecutiveClearChecks > 0) {
+                                console.log(`[PATH-BLOCKED] ${monsterData.name} path check FAILED after ${waypoint.consecutiveClearChecks} clear checks, resetting counter`);
+                            }
+                            waypoint.consecutiveClearChecks = 0;
+                        }
+                    }
+                    // Continue to waypoint
+                    else {
+                        // Keep moving toward waypoint - ensure MovementIntent points to waypoint
+                        if (!monster.hasComponent('MovementIntent')) {
+                            // MovementIntent was removed (destination reached) - reset stuck tracking
+                            waypoint.stuckFrames = 0;
+                            waypoint.lastPosX = null;
+                            waypoint.lastPosY = null;
+                            this.entityManager.addComponentToEntity(monster.id, 
+                                new MovementIntentComponent(waypoint.targetX, waypoint.targetY));
+                        }
+                        // Set facing direction toward waypoint
+                        const waypointDx = waypoint.targetX - pos.x;
+                        monster.getComponent('Visuals').faceLeft = waypointDx < 0 ? true : waypointDx > 0 ? false : monster.getComponent('Visuals').faceLeft;
+                        return; // Skip player targeting while avoiding
+                    }
+                }
 
                 // Set facing direction
                  monster.getComponent('Visuals').faceLeft = dx < 0 ? true : dx > 0 ? false : monster.getComponent('Visuals').faceLeft;
+
+                // Check if stuck cooldown is active
+                if (monsterData.stuckCooldownUntil && Date.now() < monsterData.stuckCooldownUntil) {
+                    // Still on cooldown - don't create MovementIntent yet
+                    return;
+                }
+
+                // Clear stuck cooldown if it has expired
+                if (monsterData.stuckCooldownUntil) {
+                    console.log(`[STUCK-COOLDOWN-EXPIRED] ${monsterData.name} stuck cooldown expired, resuming movement to player`);
+                    monsterData.stuckCooldownUntil = null;
+                }
 
                 // Set MovementIntent destimnation as the player's current position
                 this.entityManager.addComponentToEntity(monster.id, new MovementIntentComponent(playerPos.x, playerPos.y));
 
             } else {
-                
+                // Monster not aggro - clean up waypoint if it exists
+                if (monster.hasComponent('AvoidanceWaypoint')) {
+                    monster.removeComponent('AvoidanceWaypoint');
+                }
+
                 if (!monster.hasComponent('MovementIntent') && !monsterData.isAggro && !monsterData.isBoss && monsterData.isElite) {
 
                     const { tileX, tileY } = this.utilities.getTileFromPixel(pos.x, pos.y);
@@ -201,6 +425,62 @@ export class MonsterControllerSystem extends System {
             }
            
         });
+    }
+    
+    isPathClearToPlayer(monster, monsterPos, playerPos) {
+        // Simple raycast to check if path to player has obstacles
+        const dx = playerPos.x - monsterPos.x;
+        const dy = playerPos.y - monsterPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 1) return true; // Already at player
+
+        // Normalize direction
+        const dirX = dx / distance;
+        const dirY = dy / distance;
+
+        // Check every 8 pixels (quarter tile) for more accuracy
+        const stepSize = 8;
+        const numSteps = Math.floor(distance / stepSize);
+
+        const hitbox = monster.getComponent('Hitbox');
+        if (!hitbox) return false;
+
+        // Get all entities that could block
+        const allEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox']);
+
+        for (let step = 1; step <= numSteps; step++) {
+            const checkX = monsterPos.x + dirX * stepSize * step;
+            const checkY = monsterPos.y + dirY * stepSize * step;
+
+            // Check if this position would collide with anything
+            for (const other of allEntities) {
+                if (other === monster || other.id === 'player') continue;
+                if (other.hasComponent('TriggerArea')) continue;
+                // Ignore other monsters - they can pass through each other
+                if (other.hasComponent('MonsterData')) continue;
+
+                const otherPos = other.getComponent('Position');
+                const otherHitbox = other.getComponent('Hitbox');
+
+                const thisLeft = checkX + (hitbox.offsetX || 0);
+                const thisTop = checkY + (hitbox.offsetY || 0);
+                const thisRight = thisLeft + hitbox.width;
+                const thisBottom = thisTop + hitbox.height;
+
+                const otherLeft = otherPos.x + (otherHitbox.offsetX || 0);
+                const otherTop = otherPos.y + (otherHitbox.offsetY || 0);
+                const otherRight = otherLeft + otherHitbox.width;
+                const otherBottom = otherTop + otherHitbox.height;
+
+                if (thisLeft < otherRight && thisRight > otherLeft && 
+                    thisTop < otherBottom && thisBottom > otherTop) {
+                    return false; // Path is blocked
+                }
+            }
+        }
+
+        return true; // Path is clear
     }
 
     getNearbyMonsters(entity, range) {

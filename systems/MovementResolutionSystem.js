@@ -1,5 +1,7 @@
 ﻿
             import { System } from '../core/Systems.js';
+import { AvoidanceWaypointComponent } from '../core/Components.js';
+
 export class MovementResolutionSystem extends System {
     constructor(entityManager, eventBus) {
         super(entityManager, eventBus);
@@ -75,6 +77,31 @@ export class MovementResolutionSystem extends System {
                 // Path checking for monsters/NPCs
                 if (entity.hasComponent('MonsterData')) {
                     const pathResult = this.pathChecking(entity, pos, moveX, moveY, 2, hitboxEntities);
+
+                    // If pathChecking changed direction, set avoidance waypoint
+                    if ((pathResult.moveX !== moveX || pathResult.moveY !== moveY) && !entity.hasComponent('AvoidanceWaypoint')) {
+                        const monsterData = entity.getComponent('MonsterData');
+                        const originalDir = { x: moveX.toFixed(2), y: moveY.toFixed(2) };
+                        const avoidDir = { x: pathResult.moveX.toFixed(2), y: pathResult.moveY.toFixed(2) };
+
+                        // Calculate waypoint 7 tiles ahead in the avoidance direction
+                        const waypointDistance = 224; // 7 tiles * 32px (increased from 5 tiles)
+                        const magnitude = Math.sqrt(pathResult.moveX ** 2 + pathResult.moveY ** 2);
+                        if (magnitude > 0) {
+                            const waypointX = pos.x + (pathResult.moveX / magnitude) * waypointDistance;
+                            const waypointY = pos.y + (pathResult.moveY / magnitude) * waypointDistance;
+                            const expiresAt = Date.now() + 2500; // 2.5 second commitment (increased from 1.5s)
+
+                            console.log(`[WAYPOINT-CREATE] ${monsterData.name} at (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}) changed direction from (${originalDir.x}, ${originalDir.y}) to (${avoidDir.x}, ${avoidDir.y}), waypoint: (${waypointX.toFixed(1)}, ${waypointY.toFixed(1)})`);
+
+                            const waypoint = new AvoidanceWaypointComponent(waypointX, waypointY, expiresAt);
+                            waypoint.lastPathCheck = Date.now(); // Initialize to prevent immediate path check
+                            entity.addComponent(waypoint);
+                            intent.targetX = waypointX;
+                            intent.targetY = waypointY;
+                        }
+                    }
+
                     moveX = pathResult.moveX;
                     moveY = pathResult.moveY;
                 } else {

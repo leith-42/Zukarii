@@ -35,6 +35,23 @@ export class MovementIntentComponent {
     }
 }
 
+export class AvoidanceWaypointComponent {
+    constructor(targetX, targetY, expiresAt) {
+        this.type = 'AvoidanceWaypoint';
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.expiresAt = expiresAt; // Timestamp when this waypoint expires
+        this.lastPathCheck = 0; // Timestamp of last path-clear check (for throttling)
+        this.lastPosX = null; // Track position for stuck detection
+        this.lastPosY = null;
+        this.stuckFrames = 0; // Count frames without significant movement
+        this.consecutiveClearChecks = 0; // Track consecutive successful path clears (hysteresis)
+        this.stuckCooldownUntil = 0; // Timestamp until which stuck cooldown is active (prevents immediate retry)
+        this.originX = null; // Starting position when waypoint was created (for clearance checking)
+        this.originY = null;
+    }
+}
+
 export class WanderIntentComponent {
     constructor() {
         this.type = 'WanderIntent';

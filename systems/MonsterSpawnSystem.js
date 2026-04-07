@@ -379,7 +379,11 @@ export class MonsterSpawnSystem extends System {
             isElite: template.isElite || false,
             isBoss: template.isBoss || false,
             affixes: template.affixes || [],
-            uniqueItemsDropped: template.uniqueItemsDropped || []
+            uniqueItemsDropped: template.uniqueItemsDropped || [],
+            spawnX: pixelX,
+            spawnY: pixelY,
+            totalStuckEvents: 0,
+            isRetreating: false
         });
         const vHeight = template.h || this.TILE_SIZE;
         const vWidth = template.w || this.TILE_SIZE;
