@@ -120,6 +120,13 @@ export class HpBarComponent {
     }
 }
 
+export class HealthRegenComponent {
+    constructor() {
+        this.type = 'Regenerating';
+        this.accumulator = 0; // Tracks time elapsed for 1-second ticks
+    }
+}
+
 export class ManaComponent {
     constructor(mana = 0, maxMana = 0, manaRegen = 0.25) {
         this.type = 'Mana';

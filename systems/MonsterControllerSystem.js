@@ -1,6 +1,6 @@
 ﻿// systems/MonsterControllerSystem.js
 import { System } from '../core/Systems.js';
-import { LootSourceData, MovementIntentComponent, AvoidanceWaypointComponent, RemoveEntityComponent } from '../core/Components.js';
+import { LootSourceData, MovementIntentComponent, AvoidanceWaypointComponent, RemoveEntityComponent, HealthRegenComponent } from '../core/Components.js';
 
 export class MonsterControllerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
@@ -54,6 +54,24 @@ export class MonsterControllerSystem extends System {
             }
             const monsterData = monster.getComponent('MonsterData');
             monsterData.hpBarWidth = hpBarWidth;
+
+
+            // Flag monster for regeneration if conditions are met
+            if (health.hp < health.maxHp &&
+                !monsterData.isAggro &&
+                !monsterData.isRetreating &&
+                !monster.hasComponent('InCombat')) {
+
+                if (!monster.hasComponent('Regenerating')) {
+                    monster.addComponent(new HealthRegenComponent());
+                }
+            } else {
+                if (monster.hasComponent('Regenerating')) {
+                    monster.removeComponent('Regenerating');
+                }
+            }
+
+
 
             const dead = monster.getComponent('Dead');
             if (dead) {
@@ -142,6 +160,55 @@ export class MonsterControllerSystem extends System {
                     console.log(`[RETREAT-COMPLETE] ${monsterData.name} reached spawn at (${monsterData.spawnX.toFixed(1)}, ${monsterData.spawnY.toFixed(1)}), resetting stuck counter and ending retreat`);
                     monsterData.isRetreating = false;
                     monsterData.totalStuckEvents = 0;
+                    monsterData.retreatStartTime = null;
+                    monsterData.retreatLastPos = null;
+                    monsterData.retreatStuckFrames = 0;
+                    if (monster.hasComponent('MovementIntent')) {
+                        monster.removeComponent('MovementIntent');
+                    }
+                    return;
+                }
+
+                // Initialize retreat tracking on first frame
+                if (!monsterData.retreatStartTime) {
+                    monsterData.retreatStartTime = now;
+                    monsterData.retreatLastPos = { x: pos.x, y: pos.y };
+                    monsterData.retreatStuckFrames = 0;
+                    console.log(`[RETREAT-START] ${monsterData.name} starting retreat timer at distance ${distanceToSpawn.toFixed(1)}px from spawn`);
+                }
+
+                // Stuck detection: check if monster has moved since last frame
+                if (monster.hasComponent('MovementIntent')) {
+                    const movedDist = Math.sqrt((pos.x - monsterData.retreatLastPos.x) ** 2 + (pos.y - monsterData.retreatLastPos.y) ** 2);
+                    if (movedDist < 0.5) { // Less than 0.5 pixels = stuck
+                        monsterData.retreatStuckFrames++;
+                        if (monsterData.retreatStuckFrames % 30 === 0) { // Log every 30 frames (~0.5 seconds)
+                            console.warn(`[RETREAT-STUCK] ${monsterData.name} stuck during retreat for ${monsterData.retreatStuckFrames} frames at (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}), distance to spawn: ${distanceToSpawn.toFixed(1)}px`);
+                        }
+                    } else {
+                        monsterData.retreatStuckFrames = 0; // Reset if moving
+                    }
+                    monsterData.retreatLastPos = { x: pos.x, y: pos.y };
+                }
+
+                // Give up retreat after 10 seconds OR if stuck for 60+ frames (~1 second)
+                const retreatDuration = now - monsterData.retreatStartTime;
+                const RETREAT_TIMEOUT = 10000; // 10 seconds
+                const MAX_RETREAT_STUCK_FRAMES = 60; // ~1 second at 60fps
+
+                if (retreatDuration > RETREAT_TIMEOUT || monsterData.retreatStuckFrames >= MAX_RETREAT_STUCK_FRAMES) {
+                    const reason = retreatDuration > RETREAT_TIMEOUT ? 'timeout' : 'stuck';
+                    console.warn(`[RETREAT-ABANDONED] ${monsterData.name} giving up retreat due to ${reason} (duration: ${(retreatDuration/1000).toFixed(1)}s, stuck frames: ${monsterData.retreatStuckFrames}), teleporting to spawn`);
+
+                    // Teleport to spawn and end retreat
+                    pos.x = monsterData.spawnX;
+                    pos.y = monsterData.spawnY;
+                    monsterData.isRetreating = false;
+                    monsterData.totalStuckEvents = 0;
+                    monsterData.retreatStartTime = null;
+                    monsterData.retreatLastPos = null;
+                    monsterData.retreatStuckFrames = 0;
+
                     if (monster.hasComponent('MovementIntent')) {
                         monster.removeComponent('MovementIntent');
                     }
