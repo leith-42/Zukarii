@@ -152,7 +152,43 @@ export class Utilities {
         const dx = pos2.x - pos1.x;
         const dy = pos2.y - pos1.y;
         return Math.sqrt(dx * dx + dy * dy);
-    } 
+    }
+
+    safeRemoveComponent(entity, componentType) {
+        if (entity && entity.hasComponent(componentType)) {
+            entity.removeComponent(componentType);
+            return true;
+        }
+        return false;
+    }
+
+    safeAddComponent(entity, component) {
+        if (entity && component) {
+            const componentType = component.constructor.name;
+            if (!entity.hasComponent(componentType)) {
+                entity.addComponent(component);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    detectStuckMovement(pos, lastPos, stuckFrames, threshold = 0.5) {
+        if (lastPos.x !== null && lastPos.y !== null) {
+            const movedDist = this.getDistance(pos, lastPos);
+            if (movedDist < threshold) {
+                return stuckFrames + 1;
+            }
+        }
+        return 0;
+    }
+
+    setFacingDirection(entity, targetX, currentX) {
+        const dx = targetX - currentX;
+        if (dx !== 0) {
+            entity.getComponent('Visuals').faceLeft = dx < 0;
+        }
+    }
     getDirectionVector(fromPos, toPos) {
         const dx = toPos.x - fromPos.x;
         const dy = toPos.y - fromPos.y;

@@ -8,7 +8,7 @@ export class MonsterSpawnSystem extends System {
         this.dataSystem = dataSystem;
         this.MIN_SPAWN_DISTANCE = 6; // Minimum distance from player
         this.TILE_SIZE = 32; // Assuming each tile is 32x32 pixels
-        this.BASE_HEALTH_REGEN = 0.005; // Base health regeneration multiplier (0.5% of max HP per second)
+        this.BASE_HEALTH_REGEN = 0.0075; // Base health regeneration multiplier (0.5% of max HP per second)
 
         // Aggro range for monsters (set to your actual aggro range)
         this.DEFAULT_AGGRO_RANGE = 6;
