@@ -86,13 +86,51 @@ export class MonsterControllerSystem extends System {
 
             if (distance <= this.AGGRO_RANGE + (2 * this.TILE_SIZE)) { monsterData.isDetected = true; }
 
-            if (distance <= this.AGGRO_RANGE) { monsterData.isAggro = true; }
+            if (distance <= this.AGGRO_RANGE) { 
+                monsterData.isAggro = true;
+                // Cancel retreat if monster is re-aggroed
+                if (monsterData.isRetreating) {
+                    console.log(`[RETREAT-CANCELLED] ${monsterData.name} was retreating but player re-entered aggro range`);
+                    monsterData.isRetreating = false;
+                }
+            }
 
             // Double de-aggro range for waypointing monsters to allow them to complete pathfinding
             const deAggroMultiplier = monster.hasComponent('AvoidanceWaypoint') ? 4 : 2;
 
             if (distance > (this.AGGRO_RANGE * deAggroMultiplier * healthArgoMultipler) && monsterData.isAggro && !isInCombat) {
+                console.log(`[DE-AGGRO] ${monsterData.name} de-aggroing at distance ${distance.toFixed(1)}px (threshold: ${(this.AGGRO_RANGE * deAggroMultiplier * healthArgoMultipler).toFixed(1)}px)`);
+
+                // Clean up all aggro-related state
                 monsterData.isAggro = false;
+                monsterData.isDetected = false;
+                monsterData.nearbyMonsters = [];
+
+                // Remove movement components
+                if (monster.hasComponent('MovementIntent')) {
+                    monster.removeComponent('MovementIntent');
+                }
+                if (monster.hasComponent('AvoidanceWaypoint')) {
+                    monster.removeComponent('AvoidanceWaypoint');
+                }
+
+                // Reset stuck tracking
+                if (monsterData.totalStuckEvents > 0) {
+                    console.log(`[DE-AGGRO] ${monsterData.name} resetting stuck counter from ${monsterData.totalStuckEvents} to 0`);
+                    monsterData.totalStuckEvents = 0;
+                }
+                monsterData.stuckCooldownUntil = null;
+
+                // Initiate retreat to spawn - let retreat system handle movement
+                if (monsterData.spawnX !== undefined && monsterData.spawnY !== undefined) {
+                    const distanceToSpawn = Math.sqrt((monsterData.spawnX - pos.x) ** 2 + (monsterData.spawnY - pos.y) ** 2);
+                    if (distanceToSpawn > 32) { // More than 1 tile away from spawn
+                        console.log(`[DE-AGGRO] ${monsterData.name} initiating retreat to spawn, distance: ${distanceToSpawn.toFixed(1)}px`);
+                        monsterData.isRetreating = true;
+                    }
+                }
+
+                return; // Skip rest of aggro logic this frame
             }
 
             // Handle retreat to spawn behavior
@@ -136,6 +174,7 @@ export class MonsterControllerSystem extends System {
                     const nearbyMonsterData = nearbyMonster.getComponent('MonsterData');
 
                     if (nearbyMonsterData.isAggro) return; // Skip if already aggro
+                    if (nearbyMonsterData.isRetreating) return; // Skip if retreating to spawn
 
                     nearbyMonsterData.isAggro = true;
 
@@ -364,10 +403,8 @@ export class MonsterControllerSystem extends System {
                 this.entityManager.addComponentToEntity(monster.id, new MovementIntentComponent(playerPos.x, playerPos.y));
 
             } else {
-                // Monster not aggro - clean up waypoint if it exists
-                if (monster.hasComponent('AvoidanceWaypoint')) {
-                    monster.removeComponent('AvoidanceWaypoint');
-                }
+                // Monster not aggro - waypoint cleanup now handled by de-aggro logic above
+                // This else block handles wandering behavior for non-aggro monsters
 
                 if (!monster.hasComponent('MovementIntent') && !monsterData.isAggro && !monsterData.isBoss && monsterData.isElite) {
 
