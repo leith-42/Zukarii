@@ -67,8 +67,10 @@ export class StashComponent {
         items = [],
         maxCapacity = 180,
         stashType = 'character', // 'character', 'account', 'shared' 
+        name = "Stash"
     } = {}) {
         this.type = 'Stash';
+        this.name = name;
         this.items = items;
         this.maxCapacity = maxCapacity;
         this.stashType = stashType;

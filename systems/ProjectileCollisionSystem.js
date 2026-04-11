@@ -77,7 +77,7 @@ export class ProjectileCollisionSystem extends System {
                     if (!projectile.hasComponent('RemoveEntity')) {
                         projectile.addComponent(new RemoveEntityComponent());
                     }
-                    this.sfxQueue.push({ sfx: 'firehit0', volume: .1 });
+                    this.sfxQueue.push({ sfx: 'firehit0', volume: .15 });
                     this.eventBus.emit('LogMessage', { message: 'Your shot hit a wall.' });
                     break;
                 }
@@ -98,7 +98,7 @@ export class ProjectileCollisionSystem extends System {
                         target: target,
                     });
 
-                    this.sfxQueue.push({ sfx: 'firehit0', volume: .1 });
+                    this.sfxQueue.push({ sfx: 'firehit0', volume: .45 });
 
                     if (!projData.isPiercing && !projectile.hasComponent('RemoveEntity')) {
                         projectile.rangeLeft = 0;
@@ -126,7 +126,7 @@ export class ProjectileCollisionSystem extends System {
                         target: target,
                     });;
 
-                    this.sfxQueue.push({ sfx: 'firehit0', volume: .1 });
+                    this.sfxQueue.push({ sfx: 'firehit0', volume: .25 });
 
                     if (!projData.isPiercing && !projectile.hasComponent('RemoveEntity')) {
                         projectile.rangeLeft = 0;

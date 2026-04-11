@@ -1,5 +1,4 @@
 ﻿import { System } from '../core/Systems.js';
-
 export class ItemROGSystem extends System {
     constructor(entityManager, eventBus, utilities) {
         super(entityManager, eventBus, utilities);

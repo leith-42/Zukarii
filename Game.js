@@ -1,7 +1,5 @@
-﻿// Game.js - Updated
-import { State } from './State.js';
+﻿import { State } from './State.js';
 import { PlayerFactory } from './factories/PlayerFactory.js';
-
 import { ActionSystem } from './systems/ActionSystem.js';
 import { CombatSystem } from './systems/CombatSystem.js';
 import { SpatialBucketsSystem } from './systems/SpatialBucketsSystem.js';
@@ -405,7 +403,7 @@ export class Game {
         this.hudLayer.style.visibility = 'visible';
         gameState.needsRender = true;
         // Use full volume (1.0) as base - AudioSystem multipliers will control actual volume
-        this.trackControlQueue.push({ track: 'backgroundMusic', play: true, volume: 1.0 });
+        this.trackControlQueue.push({ track: 'backgroundMusic', play: true, volume: .50 });
 
         const player = this.entityManager.getEntity('player');
 

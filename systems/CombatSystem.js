@@ -201,8 +201,8 @@ export class CombatSystem extends System {
             isPiercing = true;
         }
         const sfx = 'firecast0';
-        
-        this.sfxQueue.push({ sfx, volume: .1 });
+
+        this.sfxQueue.push({ sfx, volume: .5 });
         this.manaUpdates.push({ entityId: 'player', amount: -manaCost });
         const CAST_TIME = 100;
         playerState.isCasting = true;
@@ -214,8 +214,8 @@ export class CombatSystem extends System {
             this.entityManager.addComponentToEntity(projectile.id, new LastPositionComponent(0, 0));
             this.entityManager.addComponentToEntity(projectile.id, new ProjectileComponent(direction, range, 'player', weapon, isPiercing));
             this.entityManager.addComponentToEntity(projectile.id, new MovementSpeedComponent(320)); // 320 pixels/second (was 32 pixels every 100 ms)
-            this.entityManager.addComponentToEntity(projectile.id, new HitboxComponent(32, 32));
-            this.entityManager.addComponentToEntity(projectile.id, new VisualsComponent(24, 24));
+            this.entityManager.addComponentToEntity(projectile.id, new HitboxComponent(24, 24));
+            this.entityManager.addComponentToEntity(projectile.id, new VisualsComponent(32, 32));
             const visuals = this.entityManager.getEntity(projectile.id).getComponent('Visuals');
             visuals.avatar = 'img/avatars/projectile.png';
             visuals.offsetX = 8; visuals.offsetY = 8;
@@ -264,7 +264,7 @@ export class CombatSystem extends System {
         const range = rangedAttack.range || 3;
         const isPiercing = rangedAttack.piercing || false;
 
-        this.sfxQueue.push({ sfx: rangedAttack.sfx || 'firecast0', volume: .1 });
+        this.sfxQueue.push({ sfx: rangedAttack.sfx || 'firecast0', volume: .25 });
         const CAST_TIME = rangedAttack.castTime || 100;
 
         if (source.hasComponent('Animation') && source.hasComponent('AnimationState')) {
@@ -276,9 +276,9 @@ export class CombatSystem extends System {
             this.entityManager.addComponentToEntity(projectile.id, new PositionComponent(sourcePos.x, sourcePos.y));
             this.entityManager.addComponentToEntity(projectile.id, new LastPositionComponent(0, 0));
             this.entityManager.addComponentToEntity(projectile.id, new ProjectileComponent(direction, range, entityId, rangedAttack.weapon, isPiercing));
-            this.entityManager.addComponentToEntity(projectile.id, new MovementSpeedComponent(rangedAttack.projectileSpeed || 320));
-            this.entityManager.addComponentToEntity(projectile.id, new HitboxComponent(32, 32));
-            this.entityManager.addComponentToEntity(projectile.id, new VisualsComponent(24, 24));
+            this.entityManager.addComponentToEntity(projectile.id, new MovementSpeedComponent(rangedAttack.projectileSpeed || 288));
+            this.entityManager.addComponentToEntity(projectile.id, new HitboxComponent(24, 24));
+            this.entityManager.addComponentToEntity(projectile.id, new VisualsComponent(32, 32));
             const visuals = this.entityManager.getEntity(projectile.id).getComponent('Visuals');
             visuals.avatar = rangedAttack.projectileAvatar || 'img/avatars/projectile.png';
             console.warn(`CombatSystem: initiateRangedAttack - projectile visuals component set to ${visuals}`);

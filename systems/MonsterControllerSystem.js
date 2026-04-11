@@ -13,7 +13,7 @@ export class MonsterControllerSystem extends System {
         this.TILE_SIZE = this.utilities.TILE_SIZE
         this.BUCKET_SIZE = 16; // Matches existing bucket size (16 tiles)
         this.invTileBucket = 1 / (this.TILE_SIZE * this.BUCKET_SIZE);
-        this.AGGRO_RANGE = 4 * this.TILE_SIZE; // 4 tiles in pixels (32 pixels per tile)
+        this.AGGRO_RANGE = 6 * this.TILE_SIZE; // 6 tiles in pixels (32 pixels per tile)
         this.MELEE_RANGE = 1.5 * this.TILE_SIZE; // Pixel distance to trigger melee attack
         this.MONSTER_WANDER_CHANCE = .005;
 
@@ -39,6 +39,19 @@ export class MonsterControllerSystem extends System {
         monsters.forEach(monster => {
             const health = monster.getComponent('Health');
             const hpBarWidth = Math.floor((health.hp / health.maxHp) * (this.TILE_SIZE / 2));
+
+            const healthPercent = (health.hp / health.maxHp) * 100;
+            let healthArgoMultipler = 1;
+            switch (true) {
+                case healthPercent <= 25:
+                    healthArgoMultipler = 0.5;
+                    break;
+                case healthPercent <= 75:
+                    healthArgoMultipler = 2;
+                    break;
+                default:
+                    healthArgoMultipler = 1;
+            }
             const monsterData = monster.getComponent('MonsterData');
             monsterData.hpBarWidth = hpBarWidth;
 
@@ -77,7 +90,10 @@ export class MonsterControllerSystem extends System {
 
             // Double de-aggro range for waypointing monsters to allow them to complete pathfinding
             const deAggroMultiplier = monster.hasComponent('AvoidanceWaypoint') ? 4 : 2;
-            if (distance > this.AGGRO_RANGE * deAggroMultiplier && !isInCombat) { monsterData.isAggro = false; }
+
+            if (distance > (this.AGGRO_RANGE * deAggroMultiplier * healthArgoMultipler) && monsterData.isAggro && !isInCombat) {
+                monsterData.isAggro = false;
+            }
 
             // Handle retreat to spawn behavior
             if (monsterData.isRetreating) {

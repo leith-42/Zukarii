@@ -251,7 +251,7 @@ export class EntityGenerationSystem extends System {
                 x, y,
                 triggerAreaSize, triggerAreaSize,
                 'PlayTrackControl',
-                { track: 'fountain_loop', play: true, volume: 0.2, fadeIn: 0.75 },
+                { track: 'fountain_loop', play: true, volume: 0.25, fadeIn: 0.75 },
                 'PlayTrackControl',
                 { track: 'fountain_loop', play: false, fadeOut: 0.75 },
                 'Presence'
@@ -399,6 +399,9 @@ export class EntityGenerationSystem extends System {
 
         const visuals = stashEntity.getComponent('Visuals');
         visuals.avatar = 'img/avatars/stash.png';
+
+        const stash = stashEntity.getComponent('Stash');
+        stash.name = 'Stash Chest';
 
         console.log(`EntityGenerationSystem: Created stash chest at (${tileX}, ${tileY}) on tier ${tier}`, stashEntity);
         return stashId;

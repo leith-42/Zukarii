@@ -216,6 +216,10 @@ export class HudUiSystem extends System {
             const lootData = targetEntity.getComponent('LootData');
             targetName = lootData.name || targetName;
         }
+        else if (targetEntity.hasComponent('Stash')) {
+            const stash = targetEntity.getComponent('Stash');
+            targetName = stash.name || targetName;
+        }
         else if (targetEntity.hasComponent('PlayerState')) {
             const playerState = targetEntity.getComponent('PlayerState');
             targetName = playerState.name || targetName;
