@@ -74,7 +74,15 @@ export class MenuUiSystem extends System {
             //console.log('MenuUiSystem: GameLoaded event received:', { saveId, success, message });
             if (success) {
                 this.utilities.logMessage({ channel: "system", message: 'Load saved game complete' });
-                this.toggleOverlay({ tab: 'log' });
+
+                // Close overlay when loading a saved game to prevent death while menu is open
+                this.toggleOverlay({tab: null});
+
+                if (false) {
+                // TODO: Add option for player to set whether or not they want the menu to stay open 
+                // and to which tab after loading a game
+                    this.toggleOverlay({ tab: 'log' });
+                }
             } else {
                 this.utilities.logMessage({ channel: "system", message });
             }
@@ -371,7 +379,14 @@ export class MenuUiSystem extends System {
                                 this.eventBus.emit('PlaySfxImmediate', { sfx: 'portal1', volume: 0.2 });
                             }
                         });
-                        this.eventBus.emit('ToggleOverlay', { tab: 'journey' });
+                        if (false) {
+                            // TODO: Add option for player to set whether or not they want the menu to stay open 
+                            //and to which tab after loading a game
+
+                            const playeroptionOverlaryTab = 'log'; 
+                            this.eventBus.emit('ToggleOverlay', { tab: playeroptionOverlaryTab });
+                        }
+                        
                     }, 2000);
                 }
 

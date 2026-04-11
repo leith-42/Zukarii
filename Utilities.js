@@ -299,9 +299,14 @@ export class Utilities {
         const blockingEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox']).filter(e => {
             // Skip overlap checks for walls since the isFloor check already handles them
             if (e.hasComponent('Wall')) return false;
-            
+
             if (e.hasComponent('ShopCounter')) return false; // Skip shop counters
-           
+
+            // Allow monsters to pass through other monsters - prevents stuck pathfinding
+            if (e.hasComponent('MonsterData')) return false;
+
+            // Allow monsters to pass through loot - prevents stuck in narrow corridors
+            if (e.hasComponent('LootData') || e.hasComponent('Chest')) return false;
 
             const ePos = e.getComponent('Position');
             const eHitbox = e.getComponent('Hitbox');

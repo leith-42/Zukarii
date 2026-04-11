@@ -48,6 +48,37 @@ export class MovementResolutionSystem extends System {
             if (entity.hasComponent('InCombat') && entity.hasComponent('MovementSpeed')) {
                 actualSpeed *= moveSpeedComp.combatSpeedMultiplier;
             }
+
+            // Slow monsters when passing through chests/loot (50% speed penalty)
+            if (entity.hasComponent('MonsterData')) {
+                const hitbox = entity.getComponent('Hitbox');
+                if (hitbox) {
+                    const monsterLeft = pos.x + (hitbox.offsetX || 0);
+                    const monsterTop = pos.y + (hitbox.offsetY || 0);
+                    const monsterRight = monsterLeft + hitbox.width;
+                    const monsterBottom = monsterTop + hitbox.height;
+
+                    const lootEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox'])
+                        .filter(e => e.hasComponent('LootData') || e.hasComponent('Chest'));
+
+                    for (const lootEntity of lootEntities) {
+                        const lootPos = lootEntity.getComponent('Position');
+                        const lootHitbox = lootEntity.getComponent('Hitbox');
+                        const lootLeft = lootPos.x + (lootHitbox.offsetX || 0);
+                        const lootTop = lootPos.y + (lootHitbox.offsetY || 0);
+                        const lootRight = lootLeft + lootHitbox.width;
+                        const lootBottom = lootTop + lootHitbox.height;
+
+                        // Check overlap
+                        if (monsterLeft < lootRight && monsterRight > lootLeft &&
+                            monsterTop < lootBottom && monsterBottom > lootTop) {
+                            actualSpeed *= 0.5; // 50% speed penalty
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (actualSpeed > this.MAX_ACTUAL_SPEED && !hasProjectile) actualSpeed = this.MAX_ACTUAL_SPEED;
 
             const dx = intent.targetX - pos.x;
@@ -157,9 +188,12 @@ export class MovementResolutionSystem extends System {
     }
 
     wouldOverlap(entity, newX, newY, hitboxEntities) {
-        
+
         const hitbox = entity.getComponent('Hitbox');
         if (!hitbox) return false;
+
+        const isMonster = entity.hasComponent('MonsterData');
+
         for (let i = 0; i < hitboxEntities.length; i++) {
             const other = hitboxEntities[i];
             if (other === entity) continue;
@@ -167,6 +201,13 @@ export class MovementResolutionSystem extends System {
                 (entity.id === 'player' && other.hasComponent('Portal')) ||
                 (entity.id === 'player' && other.hasComponent('Stair'))
             ) continue;
+
+            // Allow monsters to pass through other monsters - prevents stuck pathfinding
+            if (isMonster && other.hasComponent('MonsterData')) continue;
+
+            // Allow monsters to pass through loot - prevents stuck in narrow corridors
+            if (isMonster && (other.hasComponent('LootData') || other.hasComponent('Chest'))) continue;
+
             const otherPos = other.getComponent('Position');
             const otherHitbox = other.getComponent('Hitbox');
             const thisLeft = newX + (hitbox.offsetX || 0);

@@ -41,8 +41,14 @@ export class MonsterCollisionSystem extends System {
 
                 if (target.hasComponent('MonsterData') && target.getComponent('Health').hp > 0 && !target.hasComponent('Dead')) {
                     const targetMonsterData = target.getComponent('MonsterData');
-                    if (monsterData.isAggro) targetMonsterData.isAggro = true;
-                    ////console.log(`MonsterCollisionSystem: Monster ${monster.id} collided with monster ${target.id}`,monster, target);
+
+                    // Aggro contagion safety checks:
+                    // 1. Don't spread aggro FROM retreating monsters
+                    // 2. Don't spread aggro TO retreating monsters (they're heading to spawn)
+                    // 3. Only spread if source monster is actively aggressive
+                    if (monsterData.isAggro && !monsterData.isRetreating && !targetMonsterData.isRetreating) {
+                        targetMonsterData.isAggro = true;
+                    }
                 }
                 /*
                 if (target.hasComponent('Fountain')) {

@@ -277,7 +277,7 @@ export class SplashSystem extends System {
     }
 
     handleSelection(index) {
-        
+       
         if (index === 0) {
             this.eventBus.emit('ToggleOverlay', { tab: 'menu' });
             setTimeout(() => {
