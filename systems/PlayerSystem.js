@@ -300,11 +300,18 @@ export class PlayerSystem extends System {
             playerState.level++;
             levelUp = true
 
-            if (playerState.level % 2 === 0) {
-                stats.unallocated++;
-                stats.isLocked = false; // Unlock allocation
-                statAllocationMessage = ', Gained 1 stat point to allocate!';
+            let statPointsGained = 1; 
+            if (playerState.level % 5=== 0) {
+                statPointsGained = 3;
+                if (playerState.level >= 30) {
+                    statPointsGained = 5;
+                }
+
             }
+            stats.unallocated++;
+            stats.isLocked = false; // Unlock allocation
+            statAllocationMessage = ', Gained 1 stat point to allocate!';
+            
 
             playerState.xp = newXp;
             const x = playerState.level - 1;
