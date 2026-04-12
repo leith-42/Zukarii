@@ -24,7 +24,8 @@ import {
     AnimationStateComponent,
     AnimationComponent,
     LogComponent,
-    LightSourceComponent
+    LightSourceComponent,
+    SkillsComponent
 } from '../core/Components.js';
 
 export class PlayerFactory {
@@ -91,7 +92,8 @@ export class PlayerFactory {
             new PlayerActionQueueComponent(),
             new PlayerAchievementsComponent(),
             new AnimationStateComponent(),
-            new AnimationComponent()
+            new AnimationComponent(),
+            new SkillsComponent()
         ];
 
         // Add all components to player

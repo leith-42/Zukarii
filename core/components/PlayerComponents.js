@@ -199,6 +199,19 @@ export class HotBarIntentComponent {
     }
 }
 
+export class SkillsComponent {
+    constructor({
+        unallocatedSkillPoints = 0,
+        learnedSkills = [],
+        skillTree = {}
+    } = {}) {
+        this.type = 'Skills';
+        this.unallocatedSkillPoints = unallocatedSkillPoints;
+        this.learnedSkills = learnedSkills; // Array of skill IDs that have been learned
+        this.skillTree = skillTree; // Object tracking skill tree progress { treeId: { nodeId: { level: 0, maxLevel: 5 } } }
+    }
+}
+
 export class HotBarSkillMapComponent {
     constructor(skillMap = {}) {
         this.type = 'HotBarSkillMap';

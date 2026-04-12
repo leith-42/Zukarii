@@ -36,6 +36,7 @@ import {
     HotBarActionIntentComponent,
     SkillIntentComponent,
     PortalBindingComponent,
+    SkillsComponent,
 } from './components/PlayerComponents.js';
 
 import {
@@ -131,6 +132,7 @@ export {
     HotBarActionIntentComponent,
     SkillIntentComponent,
     PortalBindingComponent,
+    SkillsComponent,
 
     // Game-related components
     UIComponent,

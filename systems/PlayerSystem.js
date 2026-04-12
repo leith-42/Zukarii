@@ -4,7 +4,7 @@ import { System } from '../core/Systems.js';
 export class PlayerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
         super(entityManager, eventBus, utilities);
-        this.requiredComponents = ['PlayerState', 'Stats', 'Health', 'Mana', 'Inventory', 'Resource'];
+        this.requiredComponents = ['PlayerState', 'Stats', 'Skills', 'Health', 'Mana', 'Inventory', 'Resource'];
     }
 
     init() {
@@ -104,6 +104,11 @@ export class PlayerSystem extends System {
         this.getRandomStartItems().then(startItems => {
             inventory.items = startItems.map(item => ({ ...item, uniqueId: this.utilities.generateUniqueId() }));
         });
+
+        const skills = player.getComponent('Skills');
+        skills.unallocatedSkillPoints = 0;
+        skills.learnedSkills = [];
+        skills.skillTree = {};
 
         this.calculateStats(player);
     }
@@ -293,10 +298,18 @@ export class PlayerSystem extends System {
         const playerHealth = player.getComponent('Health');
         const playerMana = player.getComponent('Mana');
         const stats = player.getComponent('Stats');
+        const skills = player.getComponent('Skills');
         let statAllocationMessage = '';
         let levelUp = false;
+        let totalStatPointsGained = 0;
+        let totalSkillPointsGained = 0;
+
         while (playerState.xp >= playerState.nextLevelXp) {
             const newXp = playerState.xp - playerState.nextLevelXp;
+            playerState.xp = newXp;
+
+            playerState.nextLevelXp = Math.round(playerState.nextLevelXp * this.getXpMultiplier(playerState.level));
+
             playerState.level++;
             levelUp = true
 
@@ -308,20 +321,26 @@ export class PlayerSystem extends System {
                 }
 
             }
-            stats.unallocated++;
+            stats.unallocated += statPointsGained;
+            totalStatPointsGained += statPointsGained;
             stats.isLocked = false; // Unlock allocation
-            statAllocationMessage = ', Gained 1 stat point to allocate!';
-            
 
-            playerState.xp = newXp;
-            const x = playerState.level - 1;
-
-            playerState.nextLevelXp = Math.round(playerState.nextLevelXp * this.getXpMultiplier(x));
+            // Award skill points (1 per level)
+            const skillPointsGained = 1;
+            skills.unallocatedSkillPoints += skillPointsGained;
+            totalSkillPointsGained += skillPointsGained;
 
             this.sfxQueue.push({ sfx: 'ding', volume: .05 });
             this.eventBus.emit('LogMessage', { message: `Level up! Now level ${playerState.level}, ${statAllocationMessage}` });
         }
         if (levelUp) {
+
+            if (totalStatPointsGained > 0) {
+                this.eventBus.emit('LogMessage', { message: `Gained ${totalStatPointsGained} unallocated stat points!` });
+            }
+            if (totalSkillPointsGained > 0) {
+                this.eventBus.emit('LogMessage', { message: `Gained ${totalSkillPointsGained} unallocated skill points!` });
+            }
             this.calculateStats(player);
             this.healthUpdates.push({ entityId: 'player', amount: stats.maxHp - playerHealth.hp, attackerId: 'player' });
             this.manaUpdates.push({ entityId: 'player', amount: stats.maxMana - playerMana.mana, attackerId: 'player' });

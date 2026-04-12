@@ -114,6 +114,7 @@ export class GameDataIOSystem extends System {
                 Health: player.getComponent('Health'),
                 Mana: player.getComponent('Mana'),
                 Stats: player.getComponent('Stats'),
+                Skills: player.getComponent('Skills'),
                 Inventory: player.getComponent('Inventory'),
                 Resource: player.getComponent('Resource'),
                 AttackSpeed: player.getComponent('AttackSpeed'),

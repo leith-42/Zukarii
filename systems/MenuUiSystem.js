@@ -1310,6 +1310,8 @@ export class MenuUiSystem extends System {
     }
 
     updateCharacter(stats, inventory) {
+        const player = this.entityManager.getEntity('player');
+        const skills = player.getComponent('Skills');
         const statWrapper = document.getElementById('character-stat-wrapper');
 
         const statList = [
@@ -1331,7 +1333,7 @@ export class MenuUiSystem extends System {
         let statHtml = `
         <div><p style="font-weight:bold;">Unspent Points:</p></div>
         <div>Stat Points: <span>${stats.unallocated}</span></div>
-        <div>Skill Points: <span>0</span></div>
+        <div>Skill Points: <span>${skills.unallocatedSkillPoints}</span></div>
         <div><hr></div>`;
 
         statList.forEach(statEntry => {
