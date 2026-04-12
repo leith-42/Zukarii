@@ -60,6 +60,7 @@ export class DialogueUISystem extends System {
                 dialogue.options = [];
                 dialogue.npcId = '';
                 dialogue.dialogueStage = 'greeting';
+                dialogue.dialogueType = null; // Clear dialogue type on close
                 this.lastRenderedText = null;
                 this.lastRenderedOptions = null;
                 //console.log('DialogueUISystem: Closed dialogue via button click');
@@ -82,6 +83,13 @@ export class DialogueUISystem extends System {
 
                 dialogue.options = Array.isArray(message.options) ? [...message.options] : [];
 
+                // Store dialogueType if provided (e.g., 'portal-tiers')
+                if (message.dialogueType) {
+                    dialogue.dialogueType = message.dialogueType;
+                } else {
+                    dialogue.dialogueType = null; // Clear if not provided
+                }
+
                 // Check if "Close" option exists, add it if not
                 if (!dialogue.options.some(option => option.action === 'closeDialogue')) {
                     dialogue.options.unshift({ label: 'Close', action: 'closeDialogue', params: {} });     
@@ -100,6 +108,7 @@ export class DialogueUISystem extends System {
                     dialogue.options = [{ label: 'Close', action: 'closeDialogue', params: {} }];
                     dialogue.isOpen = true;
                     dialogue.dialogueStage = 'taskCompletion';
+                    dialogue.dialogueType = null; // Clear dialogueType for string messages
                     //console.log(`DialogueUISystem: Updated dialogue for completion message`, { message });
                     this.refreshDialogueTimeout();
                 } else {
@@ -108,6 +117,7 @@ export class DialogueUISystem extends System {
                     dialogue.options = [{ label: 'Close', action: 'closeDialogue', params: {} }];
                     dialogue.isOpen = true;
                     dialogue.dialogueStage = 'greeting';
+                    dialogue.dialogueType = null; // Clear dialogueType for string messages
                     //console.log(`DialogueUISystem: Updated dialogue for string message`, { message });
                     this.refreshDialogueTimeout();
                     */
@@ -127,6 +137,7 @@ export class DialogueUISystem extends System {
             dialogue.options = [];
             dialogue.npcId = '';
             dialogue.dialogueStage = 'greeting';
+            dialogue.dialogueType = null; // Clear dialogue type on timeout
             this.closeTimeout = null;
             this.lastRenderedText = null;
             this.lastRenderedOptions = null;
@@ -168,6 +179,16 @@ export class DialogueUISystem extends System {
             this.dialogueButtons.style.display = 'flex';
             this.dialogueText.style.display = 'flex';
 
+            // Add portal-specific class for 2-row layout
+            console.log('DialogueUISystem: Checking dialogueType', { dialogueType: dialogue.dialogueType, isPortalTiers: dialogue.dialogueType === 'portal-tiers' });
+            if (dialogue.dialogueType === 'portal-tiers') {
+                console.log('DialogueUISystem: Adding portal-tier-buttons class');
+                this.dialogueButtons.classList.add('portal-tier-buttons');
+            } else {
+                console.log('DialogueUISystem: Removing portal-tier-buttons class');
+                this.dialogueButtons.classList.remove('portal-tier-buttons');
+            }
+            console.log('DialogueUISystem: Current classes on dialogueButtons:', this.dialogueButtons.className);
 
              if (dialogue.npcId) {
                 const npc = this.entityManager.getEntity(dialogue.npcId);

@@ -1750,7 +1750,7 @@ tooltip-description {
     transform: translate(-50%, -50%);
     width: 480px;
     height: 270px;
-    background: rgba(25, 30, 20, 0.99);
+    background: rgba(25, 30, 20, 0.80);
     border: 2px solid #0f0;
     border-radius: 10px;
     color: #0f0;
@@ -1780,7 +1780,7 @@ tooltip-description {
    
     text-align: left;
    
-    background: rgba(20, 25, 20, 1);
+    background: rgba(20, 25, 20, .90);
     border-radius: .625rem .625rem 0 0;
     padding: .625rem;
     overflow-y: auto; /* Allow scrolling if buttons overflow */
@@ -1792,6 +1792,7 @@ tooltip-description {
 #dialogue-buttons {
     display: flex;
     flex-direction: row;
+    background: rgba(20, 25, 20, .80);
     flex-wrap: wrap;
     gap: .625rem; /* Space between buttons */
     border-top: 1px solid #00ff0066;
@@ -1799,11 +1800,19 @@ tooltip-description {
     justify-content: center; /* Center buttons horizontally */
     padding: .4rem;
     min-height: 2.75rem;
-    max-height: 3.0rem;
+    max-height: 3.0rem; /* Default: 1 row for standard dialogues */
     overflow-y: auto; /* Allow scrolling if buttons overflow */
     scrollbar-color: #0f0 #111;
     scrollbar-width: thin;
     scrollbar-gutter: stable;
+}
+
+/* Portal tier selection - 2 rows, more buttons visible */
+#dialogue-buttons.portal-tier-buttons {
+    padding: .25rem;
+    min-height: 7.25rem;
+    max-height: 7.5rem; /* ~2 rows instead of 1 */
+    align-content: flex-start; /* Align rows to top */
 }
 
 #dialogue-close {

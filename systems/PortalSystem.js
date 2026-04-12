@@ -135,14 +135,24 @@ export class PortalSystem extends System {
         }
 
         const bindings = Array.isArray(portalBindComp.bindings) ? [...portalBindComp.bindings] : [];
-        bindings.sort((a, b) => a - b);
 
-        const options = bindings.map(tier => ({
-            label: tier ,
+        // Separate tier 0 (surface) from other tiers
+        const hasSurface = bindings.includes(0);
+        const otherTiers = bindings.filter(t => t !== 0);
+
+        // Sort other tiers descending (highest first)
+        otherTiers.sort((a, b) => b - a);
+
+        // Build options: 0 first (if unlocked), then descending tiers
+        const sortedTiers = hasSurface ? [0, ...otherTiers] : otherTiers;
+
+        const options = sortedTiers.map(tier => ({
+            label: tier === 0 ? 'Surface' : tier,
             action: 'selectPortalTier',
             params: { tier }
         }));
 
+        // Add random option at the start
         options.unshift({
             label: '?',
             action: 'selectPortalTier',
@@ -157,7 +167,8 @@ export class PortalSystem extends System {
         this.eventBus.emit('DialogueMessage', {
             message: {
                 message: 'Select a destination tier:',
-                options
+                options,
+                dialogueType: 'portal-tiers'
             }
         });
 
