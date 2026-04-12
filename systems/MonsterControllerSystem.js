@@ -444,8 +444,14 @@ export class MonsterControllerSystem extends System {
                     monsterData.stuckCooldownUntil = null;
                 }
 
-                // Set MovementIntent destimnation as the player's current position
-                this.entityManager.addComponentToEntity(monster.id, new MovementIntentComponent(playerPos.x, playerPos.y));
+                // Calculate avoidance-adjusted target position to prevent stacking
+                // Skip avoidance for ranged monsters - they naturally spread by maintaining attack range
+                const targetPos = monster.hasComponent('RangedAttack') 
+                    ? { x: playerPos.x, y: playerPos.y }
+                    : this.calculateAvoidanceTarget(monster, pos, playerPos, nearbyMonsters);
+
+                // Set MovementIntent destination with avoidance offset
+                this.entityManager.addComponentToEntity(monster.id, new MovementIntentComponent(targetPos.x, targetPos.y));
 
             } else {
                 // Monster not aggro - waypoint cleanup now handled by de-aggro logic above
@@ -668,6 +674,69 @@ export class MonsterControllerSystem extends System {
         this.eventBus.emit('DropLoot', { lootSource });
 
 
+    }
+
+    /**
+     * Calculate an avoidance-adjusted target position to prevent monsters from stacking on top of each other.
+     * Uses a "best effort" approach: spreads monsters in a circle around the player when crowded,
+     * but allows pass-through to prevent getting stuck.
+     * 
+     * @param {Entity} monster - The monster entity
+     * @param {Object} monsterPos - Monster's current position {x, y}
+     * @param {Object} playerPos - Player's position {x, y}
+     * @param {Array} nearbyMonsters - Array of nearby monster objects with {entityId, distance}
+     * @returns {Object} Target position {x, y} with avoidance offset applied
+     */
+    calculateAvoidanceTarget(monster, monsterPos, playerPos, nearbyMonsters) {
+        const AVOIDANCE_DISTANCE = this.MELEE_RANGE * 2; // Check monsters within 3 tiles
+        const SPREAD_RADIUS = this.MELEE_RANGE * 1.5; // Spread monsters 2.25 tiles from player
+        const MIN_SEPARATION = this.TILE_SIZE; // Try to maintain 1 tile separation
+
+        // Count how many monsters are very close to the player (crowding detection)
+        const crowdedMonsters = nearbyMonsters.filter(m => m.distance <= AVOIDANCE_DISTANCE);
+
+        // If not crowded (less than 3 monsters nearby), move directly to player
+        if (crowdedMonsters.length < 3) {
+            return { x: playerPos.x, y: playerPos.y };
+        }
+
+        // Generate a consistent angle for this monster based on its ID
+        // This ensures each monster gets its own "slot" in the circle around the player
+        const monsterIndex = parseInt(monster.id.replace(/\D/g, ''), 10) || 0;
+        const angleOffset = (monsterIndex % 8) * (Math.PI / 4); // Divide circle into 8 slots
+
+        // Add some randomness based on current frame to prevent perfect symmetry
+        const timeVariation = (Date.now() % 1000) / 1000 * 0.3; // 0-0.3 radians variation
+
+        // Calculate spread position in a circle around the player
+        const targetAngle = angleOffset + timeVariation;
+        const spreadX = playerPos.x + Math.cos(targetAngle) * SPREAD_RADIUS;
+        const spreadY = playerPos.y + Math.sin(targetAngle) * SPREAD_RADIUS;
+
+        // Check if the spread position would put us too close to another monster
+        const wouldCollide = nearbyMonsters.some(m => {
+            if (m.entityId === monster.id) return false; // Skip self
+            const otherMonster = this.entityManager.getEntity(m.entityId);
+            if (!otherMonster) return false;
+            const otherPos = otherMonster.getComponent('Position');
+            const distToOther = this.utilities.getDistance({ x: spreadX, y: spreadY }, otherPos);
+            return distToOther < MIN_SEPARATION;
+        });
+
+        // If spread position would cause collision, fall back to direct targeting (pass-through)
+        if (wouldCollide) {
+            // Check if we're already close enough to attack
+            const distToPlayer = this.utilities.getDistance(monsterPos, playerPos);
+            if (distToPlayer <= this.MELEE_RANGE) {
+                // Already in melee range, hold position
+                return { x: monsterPos.x, y: monsterPos.y };
+            }
+            // Otherwise, move directly toward player (pass-through mode)
+            return { x: playerPos.x, y: playerPos.y };
+        }
+
+        // Use the spread position for avoidance
+        return { x: spreadX, y: spreadY };
     }
 
 }
