@@ -2,9 +2,10 @@
 import { InCombatComponent } from '../core/Components.js'; 
 
 export class PlayerTimerSystem extends System {
-    constructor(entityManager, eventBus) {
+    constructor(entityManager, eventBus, utilities) {
         super(entityManager, eventBus);
         this.requiredComponents = ['PlayerState'];
+        this.utilities = utilities;
     }
 
     init() {
