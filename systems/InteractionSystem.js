@@ -204,21 +204,25 @@ export class InteractionSystem extends System {
             return;
         }
 
-        // Check if stash is unlocked
-        if (!player.hasComponent('Stash')) {
-            this.utilities.logMessage({ channel: "system", message: 'Stash is locked. Purchase access from the shopkeeper.' });
-            return;
-        }
+        const isUnlocked = player.hasComponent('Stash');
 
-        // Add StashInteraction component if not present
+        // Always add StashInteraction component
         if (!player.hasComponent('StashInteraction')) {
             player.addComponent(new StashInteractionComponent());
             console.log('InteractionSystem: Added StashInteractionComponent to player');
         }
 
+        // Always open the stash UI - let MenuUiSystem handle locked/unlocked display
         this.eventBus.emit('ToggleOverlay', { tab: 'stash', fromStash: true });
-        this.utilities.logMessage({ channel: "system", message: 'Opened stash' });
-        console.log('InteractionSystem: Emitted ToggleOverlay for stash');
+
+        // Different messages based on lock state
+        if (isUnlocked) {
+            this.utilities.logMessage({ channel: "system", message: 'Opened stash' });
+            console.log('InteractionSystem: Emitted ToggleOverlay for unlocked stash');
+        } else {
+            this.utilities.logMessage({ channel: "system", message: 'Stash is locked. Purchase access from the shopkeeper.' });
+            console.log('InteractionSystem: Emitted ToggleOverlay for locked stash - UI will show locked state');
+        }
     }
 
     handleTurnIn({ taskId, resourceType, itemId, quantity, npcId }) {
