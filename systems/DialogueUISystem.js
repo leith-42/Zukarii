@@ -168,7 +168,8 @@ export class DialogueUISystem extends System {
             this.dialogueButtons.style.display = 'flex';
             this.dialogueText.style.display = 'flex';
 
-            if (dialogue.npcId) {
+
+             if (dialogue.npcId) {
                 const npc = this.entityManager.getEntity(dialogue.npcId);
                 if (npc && npc.hasComponent('Position')) {
                     const npcPos = npc.getComponent('Position');
@@ -191,24 +192,41 @@ export class DialogueUISystem extends System {
                     const screenX = (npcPos.x - startX) * SCALE_FACTOR;
                     const screenY = (npcPos.y - startY) * SCALE_FACTOR;
 
-                    // Clamp to viewport if needed
-                    const dialogueWidth = this.dialogueWindow.offsetWidth;
-                    const dialogueHeight = this.dialogueWindow.offsetHeight;
-                    const maxX = canvas.width - dialogueWidth;
-                    const maxY = canvas.height - dialogueHeight;
+                    // Get dialogue dimensions (with fallback to CSS defaults)
+                    const dialogueWidth = this.dialogueWindow.offsetWidth || 480;
+                    const dialogueHeight = this.dialogueWindow.offsetHeight || 270;
 
-                    const X_OFFSET = 48; // pixels to the right
-                    const Y_OFFSET = 64; // pixels down
+                    const X_OFFSET = 48;      // pixels to the right of NPC
+                    const Y_OFFSET = 160;     // pixels down from NPC
+                    const EDGE_MARGIN = 10;   // minimum pixels from screen edges
 
-                    let left = Math.max(0, Math.min(screenX + X_OFFSET, maxX));
-                    let top = Math.max(0, Math.min(screenY - dialogueHeight - 20 + Y_OFFSET, maxY));
+                    // Calculate desired position with offsets
+                    const desiredLeft = screenX + X_OFFSET;
+                    const desiredTop = screenY - dialogueHeight - 20 + Y_OFFSET;
+
+                    // Calculate clamping bounds to keep dialogue fully on screen
+                    const minLeft = EDGE_MARGIN;
+                    const maxLeft = Math.max(EDGE_MARGIN, canvas.width - dialogueWidth - EDGE_MARGIN);
+                    const minTop = EDGE_MARGIN;
+                    const maxTop = Math.max(EDGE_MARGIN, canvas.height - dialogueHeight - EDGE_MARGIN);
+
+                    // Apply clamping
+                    let left = Math.max(minLeft, Math.min(desiredLeft, maxLeft));
+                    let top = Math.max(minTop, Math.min(desiredTop, maxTop));
 
                     this.dialogueWindow.style.position = 'absolute';
                     this.dialogueWindow.style.left = `${left}px`;
                     this.dialogueWindow.style.top = `${top}px`;
                 }
             }
+            /*
+            
 
+            // Clear any inline positioning to use CSS centering
+            this.dialogueWindow.style.position = '';
+            this.dialogueWindow.style.left = '';
+            this.dialogueWindow.style.top = '';
+  */ 
             this.lastRenderedText = dialogue.text;
             this.lastRenderedOptions = optionsString;
             //console.log('DialogueUISystem: Rendered dialogue, text:', dialogue.text, 'options:', dialogue.options, 'window display:', this.dialogueWindow.style.display);

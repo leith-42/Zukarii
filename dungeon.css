@@ -1,6 +1,4 @@
-﻿/* dungeon.css */
-
-/* CUSTOM BASELINE - START */
+﻿/* CUSTOM BASELINE - START */
 body {
     display: flex;
     justify-content: center;
@@ -1750,8 +1748,8 @@ tooltip-description {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 320px;
-    height: 188px;
+    width: 480px;
+    height: 270px;
     background: rgba(25, 30, 20, 0.99);
     border: 2px solid #0f0;
     border-radius: 10px;

@@ -62,12 +62,7 @@
 
     <div id="hud-layer" style="visibility:hidden;">
 
-        <div id="dialogue-window" style="display: none;">
-            <div id="dialogue-text" class="sharp-text"></div>
-            <div id="dialogue-buttons">
-                <!-- Buttons will be dynamically added by DialogueUISystem.js -->
-            </div>
-        </div>
+       
 
         <div id="hud-top-panel">
 
@@ -246,6 +241,13 @@
             <button id="view-log"> View Log </button><button id="restart-button"> Play Again </button><button id="menu"> Menu </button>
         </div>
 
+        <div id="dialogue-window" style="display: none;">
+            <div id="dialogue-text" class="sharp-text"></div>
+            <div id="dialogue-buttons">
+                <!-- Buttons will be dynamically added by DialogueUISystem.js -->
+            </div>
+        </div>
+
         <div id="tabs" class="hidden">
             <div id="tab-wrapper">
                 <div id="tab-menu"></div>
@@ -290,32 +292,33 @@
                                 </ul>
                             </div>
                             <!--
-                            <div id="map-key-data" style="display:none;">
-                                <h3>Map Key:</h3>
-                                <ul>
-                                    <li>𓀠: The Battle Mage - (You) </li>
-                                    <li> $: Treasure (aka Da Lootz!)</li>
-                                    <li> a-z, A-Z: Monster (Kill or Be Killed)</li>
-                                    <li>≅: Magic Fountain (Heal, Boost, ???)</li>
-                                    <li>#: Wall (You Can't Go Here)</li>
-                                    <li> ⇓: Stairs Down ∞ (Infinite) </li>
-                                    <li>⇑: Stairs Up (Tier 1 Exit Game)</li>
-                                </ul>
-                            </div>
-                                -->
-                            <div id="options-data" style="display:none;"><h3>Options:</h3>
-                            <div id="sound">
-                                <h5>Audio Settings:</h5>
-                                <div>
-                                    <span id="sound-enabled-cell"><label>Sound Enabled</label> <input id="sound-enabled" type="checkbox" value="true" checked /></span> <br />
-                                    <span id="global-volume-cell"><label>Master Volume</label> <input id="global-volume" type="range" min="0" max="100" value="100" /> <span id="global-volume-value">100%</span></span> <br />
-                                    <span id="music-volume-cell"><label>Music Volume</label> <input id="music-volume" type="range" min="0" max="100" value="100" /> <span id="music-volume-value">100%</span></span> <br />
-                                    <span id="ambient-volume-cell"><label>Ambient Volume</label> <input id="ambient-volume" type="range" min="0" max="100" value="100" /> <span id="ambient-volume-value">100%</span></span> <br />
-                                    <span id="sfx-volume-cell"><label>SFX Volume</label> <input id="sfx-volume" type="range" min="0" max="100" value="100" /> <span id="sfx-volume-value">100%</span></span> <br />
-                                    <span id="dialogue-volume-cell"><label>Dialogue Volume</label> <input id="dialogue-volume" type="range" min="0" max="100" value="100" /> <span id="dialogue-volume-value">100%</span></span>
+                        <div id="map-key-data" style="display:none;">
+                            <h3>Map Key:</h3>
+                            <ul>
+                                <li>𓀠: The Battle Mage - (You) </li>
+                                <li> $: Treasure (aka Da Lootz!)</li>
+                                <li> a-z, A-Z: Monster (Kill or Be Killed)</li>
+                                <li>≅: Magic Fountain (Heal, Boost, ???)</li>
+                                <li>#: Wall (You Can't Go Here)</li>
+                                <li> ⇓: Stairs Down ∞ (Infinite) </li>
+                                <li>⇑: Stairs Up (Tier 1 Exit Game)</li>
+                            </ul>
+                        </div>
+                            -->
+                            <div id="options-data" style="display:none;">
+                                <h3>Options:</h3>
+                                <div id="sound">
+                                    <h5>Audio Settings:</h5>
+                                    <div>
+                                        <span id="sound-enabled-cell"><label>Sound Enabled</label> <input id="sound-enabled" type="checkbox" value="true" checked /></span> <br />
+                                        <span id="global-volume-cell"><label>Master Volume</label> <input id="global-volume" type="range" min="0" max="100" value="100" /> <span id="global-volume-value">100%</span></span> <br />
+                                        <span id="music-volume-cell"><label>Music Volume</label> <input id="music-volume" type="range" min="0" max="100" value="100" /> <span id="music-volume-value">100%</span></span> <br />
+                                        <span id="ambient-volume-cell"><label>Ambient Volume</label> <input id="ambient-volume" type="range" min="0" max="100" value="100" /> <span id="ambient-volume-value">100%</span></span> <br />
+                                        <span id="sfx-volume-cell"><label>SFX Volume</label> <input id="sfx-volume" type="range" min="0" max="100" value="100" /> <span id="sfx-volume-value">100%</span></span> <br />
+                                        <span id="dialogue-volume-cell"><label>Dialogue Volume</label> <input id="dialogue-volume" type="range" min="0" max="100" value="100" /> <span id="dialogue-volume-value">100%</span></span>
 
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                             <div id="save-games-data" style="display:none;"><h3>Saved Games:</h3></div>
                             <div id="load-games-data" style="display:none;"><h3>Load Games:</h3></div>
@@ -336,7 +339,7 @@
                                 <ul>
                                     <li>Creator: Leith42</li>
                                 </ul>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -396,27 +399,27 @@
                                     </div>
                                 </div>
                             </div>
-</div>
                         </div>
+                    </div>
 
-                        <div id="inventory">
-                            <h2>Inventory Items</h2>
-                            <div id=inventory-window-wrapper>
-                                <div id="inventory-tabs">
-                                    <button id="inventory-tab-all" class="inventory-tab-button tab">All</button>
-                                    <button id="inventory-tab-armor" class="inventory-tab-button tab">Armor</button>
-                                    <button id="inventory-tab-weapon" class="inventory-tab-button tab">Weapons</button>
-                                    <button id="inventory-tab-jewelry" class="inventory-tab-button tab">Jewelry</button>
-                                    <button id="inventory-tab-journey" class="inventory-tab-button tab">Journey</button>
-                                    <button id="inventory-tab-consumables" class="inventory-tab-button tab">Consumables</button>
-                                    <button id="sort-inventory-tab" class="inventory-tab-button sort">Sort</button>
-                                </div>
+                    <div id="inventory">
+                        <h2>Inventory Items</h2>
+                        <div id=inventory-window-wrapper>
+                            <div id="inventory-tabs">
+                                <button id="inventory-tab-all" class="inventory-tab-button tab">All</button>
+                                <button id="inventory-tab-armor" class="inventory-tab-button tab">Armor</button>
+                                <button id="inventory-tab-weapon" class="inventory-tab-button tab">Weapons</button>
+                                <button id="inventory-tab-jewelry" class="inventory-tab-button tab">Jewelry</button>
+                                <button id="inventory-tab-journey" class="inventory-tab-button tab">Journey</button>
+                                <button id="inventory-tab-consumables" class="inventory-tab-button tab">Consumables</button>
+                                <button id="sort-inventory-tab" class="inventory-tab-button sort">Sort</button>
+                            </div>
 
-                                <div id="inventory-item-wrapper">
-                                </div>
+                            <div id="inventory-item-wrapper">
                             </div>
                         </div>
                     </div>
+                </div>
 
                 <div id="log-content" class="ui-tab">
                     <div id="log-wrap">
