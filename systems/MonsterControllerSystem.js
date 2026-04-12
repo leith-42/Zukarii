@@ -624,7 +624,7 @@ export class MonsterControllerSystem extends System {
 
         const tier = this.entityManager.getEntity('gameState').getComponent('GameState').tier;
         const baseXp = Math.round((health.maxHp / 3 + (monsterData.minBaseDamage + monsterData.maxBaseDamage * 1.5)) * (1 + tier * 0.1));
-        this.eventBus.emit('LogMessage', { message: `${monsterData.name} defeated!` });
+        this.utilities.logMessage({ channel: "combat", message: `${monsterData.name} defeated!` });
         this.eventBus.emit('AwardXp', { amount: baseXp });
 
         if (monsterData.isBoss) {

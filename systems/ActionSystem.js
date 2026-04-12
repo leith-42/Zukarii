@@ -42,7 +42,7 @@ export class ActionSystem extends System {
         
         const fountainCanHeal = fUseTime - fountainData.healCdExpiresAt || 0; // Default to 0 if not set
         if (fountainCanHeal < 1) {
-            this.eventBus.emit('LogMessage', { message: `The fountain water is cool and refreshing, but it seems the healing magic that was here is now spent.` });
+            this.utilities.logMessage({ channel: "system", message: `The fountain water is cool and refreshing, but it seems the healing magic that was here is now spent.` });
             return;
         }
 
@@ -57,7 +57,7 @@ export class ActionSystem extends System {
         if (Math.random() < critChance && fountainData.used === false) {
             const maxHpBoost = Math.round(1 + (2 * (gameState.tier / 10)));
 
-            this.eventBus.emit('LogMessage', { message: `The fountain surges with power! Fully healed and Max HP increased!` });
+            this.utilities.logMessage({ channel: "system", message: `The fountain surges with power! Fully healed and Max HP increased!` });
 
             this.eventBus.emit('ModifyBaseStat', { stat: 'maxHp', value: maxHpBoost });
 
@@ -72,7 +72,7 @@ export class ActionSystem extends System {
             healAmount = Math.min(playerHealth.hp + Math.round(missingHp * healPercent), playerHealth.maxHp);
             this.healthUpdates.push({ entityId, amount: healAmount });
 
-            this.eventBus.emit('LogMessage', { message: `The fountain restores ${healAmount} HP. Current HP: ${playerHealth.hp}/${playerHealth.maxHp}` });
+            this.utilities.logMessage({ channel: "system", message: `The fountain restores ${healAmount} HP. Current HP: ${playerHealth.hp}/${playerHealth.maxHp}` });
         }
 
         fountainData.used = true;
@@ -111,7 +111,7 @@ export class ActionSystem extends System {
         const message = health.hp + healAmount >= health.maxHp
             ? `The Heal Potion ${critHealText}fully heals you!`
             : `The Heal Potion restores ${healAmount} HP. Current HP: ${health.hp + healAmount}/${health.maxHp}`;
-        this.eventBus.emit('LogMessage', { message });
+        this.utilities.logMessage({ channel: "system", message });
         this.eventBus.emit('StatsUpdated', { entityId: 'player' });
     }
 
@@ -120,9 +120,9 @@ export class ActionSystem extends System {
         if (!player) return;
 
         const resource = player.getComponent('Resource');
-        //console.log('ActionSystem: - LightTorch: resource:', resource);
+        
         if (resource.torches <= 0) {
-            this.eventBus.emit('LogMessage', { message: 'You have no torches left.' });
+            this.utilities.logMessage({ channel: "system", message: 'You have no torches left.' });
             return;
         }
         const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
@@ -136,7 +136,7 @@ export class ActionSystem extends System {
         if (resource.torches < 1) {
             message = 'You light your last torch!';
         }
-        this.eventBus.emit('LogMessage', { message });
-        //console.log('ActionSystem: - LightTorch: resource:', resource);
+        this.utilities.logMessage({ channel: "system", message });
+        
     }
 }

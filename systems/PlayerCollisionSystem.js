@@ -112,7 +112,7 @@ export class PlayerCollisionSystem extends System {
                             stairComp.active = true;
                         } else {
                             player.addComponent(new StairLockComponent());
-                            this.eventBus.emit('LogMessage', { message: 'The Stairs are blocked by a magical barrier' });
+                            this.utilities.logMessage({ channel: "journey", message: 'The Stairs are blocked by a magical barrier' });
                             const fromTier = this.entityManager.getActiveTier();
                             if (fromTier === undefined || fromTier === null) {
                                 console.error('PlayerCollisionSystem: getActiveTier returned invalid value', { fromTier });

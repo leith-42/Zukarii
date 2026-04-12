@@ -411,7 +411,7 @@ export class LevelTransitionSystem extends System {
         if (isNewTier) {
             gameState.highestTier = tier;
             this.eventBus.emit('AwardXp', { amount: 5 * tier });
-            this.eventBus.emit('LogMessage', { message: `You Reached Tier ${tier}` });
+            this.utilities.logMessage({ channel: "journey", message: `You Reached Tier ${tier}` });
         }
 
         const TILE_SIZE = 32; // Match LevelSystem's TILE_SIZE

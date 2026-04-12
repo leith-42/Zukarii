@@ -22,7 +22,7 @@ export class PlayerTimerSystem extends System {
                 combat.elapsed += deltaMs;
                 if (combat.elapsed >= combat.duration && this.gameState) {
                     entity.removeComponent('InCombat');
-                    this.eventBus.emit('LogMessage', { message: 'You are no longer in combat.' });
+                    this.utilities.logMessage({ channel: "combat", message: 'You are no longer in combat.' });
                     this.gameState.needsRender = true;
                 }
             }

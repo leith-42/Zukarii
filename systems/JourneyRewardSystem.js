@@ -79,7 +79,7 @@ export class JourneyRewardSystem extends System {
             if (reward.gold) {
                 const resource = this.entityManager.getEntity('player').getComponent('Resource');
                 resource.gold += reward.gold;
-                this.eventBus.emit('LogMessage', { message: `Gained ${reward.gold} gold` });
+                this.utilities.logMessage({ channel: "loot", message: `Gained ${reward.gold} gold` });
                 console.log(`JourneyRewardSystem: Added ${reward.gold} gold`);
             }
             if (reward.type === 'item' && !reward.rewarded) {

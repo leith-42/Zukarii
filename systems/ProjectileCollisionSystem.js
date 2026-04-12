@@ -78,7 +78,7 @@ export class ProjectileCollisionSystem extends System {
                         projectile.addComponent(new RemoveEntityComponent());
                     }
                     this.sfxQueue.push({ sfx: 'firehit0', volume: .15 });
-                    this.eventBus.emit('LogMessage', { message: 'Your shot hit a wall.' });
+                    this.utilities.logMessage({ channel: "combat", message: 'Your shot hit a wall.' });
                     break;
                 }
 

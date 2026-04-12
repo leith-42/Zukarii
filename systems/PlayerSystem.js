@@ -29,7 +29,7 @@ export class PlayerSystem extends System {
         const playerState = player.getComponent('PlayerState');
         if (playerState.isInCombat) {
             playerState.isInCombat = false;
-            this.eventBus.emit('LogMessage', { message: 'You are no longer in combat.' });
+            this.utilities.logMessage({ channel: "combat", message: 'You are no longer in combat.' });
         }
     }
 
@@ -161,7 +161,7 @@ export class PlayerSystem extends System {
             stats.isLocked = true;
         }
 
-        this.eventBus.emit('LogMessage', { message: `+1 to ${this.utilities.camelToTitleCase(stat)}! Now ${stats[stat]}.` });
+        this.utilities.logMessage({ channel: "journey", message: `+1 to ${this.utilities.camelToTitleCase(stat)}! Now ${stats[stat]}.` });
     }
 
     modifyBaseStat({ stat, value }) {
@@ -183,7 +183,7 @@ export class PlayerSystem extends System {
         this.calculateStats(player);
 
         // Emit a log message for feedback
-        this.eventBus.emit('LogMessage', { message: `Base ${this.utilities.camelToTitleCase(stat)} permanently modified by ${value}!` });
+        this.utilities.logMessage({ channel: "journey", message: `Base ${this.utilities.camelToTitleCase(stat)} permanently modified by ${value}!` });
     }
 
     updateGearStats(entityId) {
@@ -288,7 +288,7 @@ export class PlayerSystem extends System {
         const player = this.entityManager.getEntity('player');
         const playerState = player.getComponent('PlayerState');
         playerState.xp += amount;
-        this.eventBus.emit('LogMessage', { message: `Gained ${amount} XP (${playerState.xp}/${playerState.nextLevelXp})` });
+        this.utilities.logMessage({ channel: "journey", message: `Gained ${amount} XP (${playerState.xp}/${playerState.nextLevelXp})` });
         this.checkLevelUp(player);
         this.eventBus.emit('PlayerStateUpdated', { entityId: player.id });
     }
@@ -331,15 +331,15 @@ export class PlayerSystem extends System {
             totalSkillPointsGained += skillPointsGained;
 
             this.sfxQueue.push({ sfx: 'ding', volume: .05 });
-            this.eventBus.emit('LogMessage', { message: `Level up! Now level ${playerState.level}, ${statAllocationMessage}` });
+            this.utilities.logMessage({ channel: "journey", message: `Level up! Now level ${playerState.level}, ${statAllocationMessage}` });
         }
         if (levelUp) {
 
             if (totalStatPointsGained > 0) {
-                this.eventBus.emit('LogMessage', { message: `Gained ${totalStatPointsGained} unallocated stat points!` });
+                this.utilities.logMessage({ channel: "journey", message: `Gained ${totalStatPointsGained} unallocated stat points!` });
             }
             if (totalSkillPointsGained > 0) {
-                this.eventBus.emit('LogMessage', { message: `Gained ${totalSkillPointsGained} unallocated skill points!` });
+                this.utilities.logMessage({ channel: "journey", message: `Gained ${totalSkillPointsGained} unallocated skill points!` });
             }
             this.calculateStats(player);
             this.healthUpdates.push({ entityId: 'player', amount: stats.maxHp - playerHealth.hp, attackerId: 'player' });
@@ -378,14 +378,14 @@ export class PlayerSystem extends System {
         playerState.dead = true;
         gameState.gameOver = true;
 
-        this.eventBus.emit('LogMessage', { message: 'You died! Game Over.' });
+        this.utilities.logMessage({ channel: "system", message: 'You died! Game Over.' });
         this.eventBus.emit('GameOver', { message: `You have been killed by a ${source}!` });
         this.eventBus.emit('StatsUpdated', { entityId: 'player' });
     }
 
     exit() {
         const gameState = this.entityManager.getEntity('gameState').getComponent('GameState');
-        this.eventBus.emit('LogMessage', { message: 'You exited the dungeon! Game Over.' });
+        this.utilities.logMessage({ channel: "system", message: 'You exited the dungeon! Game Over.' });
         gameState.gameOver = true;
         this.eventBus.emit('GameOver', { message: 'You exited the dungeon! Too much adventure to handle eh?' });
         this.eventBus.emit('StatsUpdated', { entityId: 'player' });
@@ -403,7 +403,7 @@ export class PlayerSystem extends System {
         if (currentMilestones > previousMilestones) {
             const xpAward = (currentMilestones - previousMilestones) * 100 * playerState.level;
             this.eventBus.emit('AwardXp', { amount: xpAward });
-            this.eventBus.emit('LogMessage', { message: `Exploration milestone reached! Gained ${xpAward} XP for discovering ${currentMilestones * xpThreshold} tiles.` });
+            this.utilities.logMessage({ channel: "journey", message: `Exploration milestone reached! Gained ${xpAward} XP for discovering ${currentMilestones * xpThreshold} tiles.` });
         }
     }
 }

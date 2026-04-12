@@ -82,7 +82,7 @@ export class PlayerControllerSystem {
         // Ranged mode (keyboard input)
         if (gameState.isRangedMode) {
             if (player.getComponent('Mana').mana <= 2) {
-                this.eventBus.emit('LogMessage', { message: `you cannot cast ranged attacks without mana!` });
+                this.utilities.logMessage({ channel: "combat", message: `you cannot cast ranged attacks without mana!` });
                 return;
             }
 
@@ -212,7 +212,7 @@ export class PlayerControllerSystem {
                // document.body.style.cursor = 'crosshair'; // Change cursor to crosshair for ranged attack
                 gameState.isRangedMode = true;
             } else {
-                this.eventBus.emit('LogMessage', { message: 'You need a valid ranged weapon equipped to use ranged mode!' });
+                this.utilities.logMessage({ channel: "system", message: 'You need a valid ranged weapon equipped to use ranged mode!' });
             }
         }
     }
