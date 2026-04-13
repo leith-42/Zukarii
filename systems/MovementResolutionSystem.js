@@ -30,7 +30,7 @@ export class MovementResolutionSystem extends System {
                 continue;
             }
             const hasProjectile = entity.hasComponent('Projectile');
-            
+
             const intent = entity.getComponent('MovementIntent');
             const pos = entity.getComponent('Position');
             let lastPos = null;
@@ -49,7 +49,7 @@ export class MovementResolutionSystem extends System {
                 actualSpeed *= moveSpeedComp.combatSpeedMultiplier;
             }
 
-            // Apply loot slowdown for monsters - check existing collision data
+            // Apply loot slowdown for monsters - check existing collision data (NEW LOGIC TO KEEP)
             if (entity.hasComponent('MonsterData') && entity.hasComponent('Collision')) {
                 const collisions = entity.getComponent('Collision').collisions;
                 for (const collision of collisions) {
@@ -83,31 +83,11 @@ export class MovementResolutionSystem extends System {
 
             const hasPredictedCollision = filteredCollisions && filteredCollisions.length > 0;
 
-            let hitboxEntities = [];
-            if (collisionComp && collisionComp.nearbyEntities) {
-                hitboxEntities = collisionComp.nearbyEntities;
-            }
+            if (hasPredictedCollision && !hasProjectile) {
+                const hitboxEntities = collisionComp.nearbyEntities || [];
 
-            if (entity.hasComponent('MonsterData') && hasPredictedCollision && !hasProjectile) {
                 // Path checking for monsters/NPCs
-                // Check if any of the ACTUAL collisions are with blocking entities
-                let hasBlockingCollision = false;
-                for (const collision of filteredCollisions) {
-                    const target = this.entityManager.getEntity(collision.targetId);
-                    if (!target) continue;
-
-                    // Skip non-blocking entities
-                    if (target.hasComponent('MonsterData')) continue;
-                    if (target.hasComponent('LootData') || target.hasComponent('Chest')) continue;
-                    if (target.hasComponent('TriggerArea')) continue;
-
-                    // If we get here, it's a blocking collision (wall, obstacle, etc.)
-                    hasBlockingCollision = true;
-                    break;
-                }
-
-                // Only run pathChecking if there's an actual blocking collision
-                if (hasBlockingCollision) {
+                if (entity.hasComponent('MonsterData')) {
                     const pathResult = this.pathChecking(entity, pos, moveX, moveY, 2, hitboxEntities);
 
                     // If pathChecking changed direction, set avoidance waypoint
@@ -136,22 +116,21 @@ export class MovementResolutionSystem extends System {
 
                     moveX = pathResult.moveX;
                     moveY = pathResult.moveY;
+                } else {
+                    // General overlap checks
+                    const newX = pos.x + moveX;
+                    if (this.wouldOverlap(entity, newX, pos.y, hitboxEntities)) {
+                        moveX = 0;
+                        intent.targetX = pos.x;
+                    }
+                    const newY = pos.y + moveY;
+                    if (this.wouldOverlap(entity, pos.x, newY, hitboxEntities)) {
+                        moveY = 0;
+                        intent.targetY = pos.y;
+                    }
                 }
             }
 
-            // Always run general overlap checks for non-monster, non-projectile entities (e.g., player)
-            if (!entity.hasComponent('MonsterData') && !hasProjectile) {
-                const newX = pos.x + moveX;
-                if (this.wouldOverlap(entity, newX, pos.y, hitboxEntities)) {
-                    moveX = 0;
-                    intent.targetX = pos.x;
-                }
-                const newY = pos.y + moveY;
-                if (this.wouldOverlap(entity, pos.x, newY, hitboxEntities)) {
-                    moveY = 0;
-                    intent.targetY = pos.y;
-                }
-            }
             if (lastPos) {
                 lastPos.x = pos.x;
                 lastPos.y = pos.y;
@@ -189,26 +168,16 @@ export class MovementResolutionSystem extends System {
     }
 
     wouldOverlap(entity, newX, newY, hitboxEntities) {
-
         const hitbox = entity.getComponent('Hitbox');
         if (!hitbox) return false;
-
-        const isMonster = entity.hasComponent('MonsterData');
-
         for (let i = 0; i < hitboxEntities.length; i++) {
             const other = hitboxEntities[i];
             if (other === entity) continue;
             if (other.hasComponent('TriggerArea') ||
                 (entity.id === 'player' && other.hasComponent('Portal')) ||
-                (entity.id === 'player' && other.hasComponent('Stair'))
+                (entity.id === 'player' && other.hasComponent('Stair')) ||
+                (entity.hasComponent('MonsterData') && other.hasComponent('LootData'))
             ) continue;
-
-            // Allow monsters to pass through other monsters - prevents stuck pathfinding
-            if (isMonster && other.hasComponent('MonsterData')) continue;
-
-            // Allow monsters to pass through loot - prevents stuck in narrow corridors
-            if (isMonster && (other.hasComponent('LootData') || other.hasComponent('Chest'))) continue;
-
             const otherPos = other.getComponent('Position');
             const otherHitbox = other.getComponent('Hitbox');
             const thisLeft = newX + (hitbox.offsetX || 0);
@@ -231,3 +200,4 @@ export class MovementResolutionSystem extends System {
         return false;
     }
 }
+
