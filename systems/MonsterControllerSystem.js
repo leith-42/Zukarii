@@ -1,6 +1,6 @@
 ﻿// systems/MonsterControllerSystem.js
 import { System } from '../core/Systems.js';
-import { LootSourceData, MovementIntentComponent, AvoidanceWaypointComponent, RemoveEntityComponent, HealthRegenComponent } from '../core/Components.js';
+import { LootSourceData, MovementIntentComponent, AvoidanceWaypointComponent, RemoveEntityComponent, HealthRegenComponent, InCombatComponent } from '../core/Components.js';
 
 export class MonsterControllerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
@@ -20,7 +20,11 @@ export class MonsterControllerSystem extends System {
         const levelEntity = this.entityManager.getEntitiesWith(['Map', 'Tier']).find(e => e.getComponent('Tier').value === tier);
 
         this.bucketsComp = levelEntity.getComponent('SpatialBuckets');
-        
+
+        // Performance optimization: cache for expensive operations
+        this.nearbyMonstersCache = new Map(); // Cache nearby monsters per frame
+        this.lastCacheFrame = 0;
+        this.frameCount = 0;
     }
     update(deltaTime) {
         const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
@@ -34,6 +38,13 @@ export class MonsterControllerSystem extends System {
         const monsters = this.entityManager.getEntitiesWith(this.requiredComponents);
 
         const now = Date.now();
+        this.frameCount++;
+
+        // Clear nearby monsters cache each frame
+        if (this.frameCount !== this.lastCacheFrame) {
+            this.nearbyMonstersCache.clear();
+            this.lastCacheFrame = this.frameCount;
+        }
 
         monsters.forEach(monster => {
             const health = monster.getComponent('Health');
@@ -219,26 +230,36 @@ export class MonsterControllerSystem extends System {
             monsterData.nearbyMonsters = [];
             if (monsterData.isAggro) {
 
-                const nearbyMonsters = this.getNearbyMonsters(monster, this.AGGRO_RANGE);
-                monsterData.nearbyMonsters = nearbyMonsters; // Store nearby monsters with distance in MonsterData
+                // Use cached nearby monsters if available
+                let nearbyMonsters = this.nearbyMonstersCache.get(monster.id);
+                if (!nearbyMonsters) {
+                    nearbyMonsters = this.getNearbyMonsters(monster, this.AGGRO_RANGE);
+                    this.nearbyMonstersCache.set(monster.id, nearbyMonsters);
+                }
+                monsterData.nearbyMonsters = nearbyMonsters;
 
                // console.log(`MonsterControllerSystem: Updated nearbyMonsters for ${monsterData.name} with ${monsterData.nearbyMonsters.length} entries`);
-                nearbyMonsters.forEach(({ entityId, distance }) => {
-                    if (entityId === monster.id) return; // Skip self
-                    const nearbyMonster = this.entityManager.getEntity(entityId);
-                    const nearbyMonsterData = nearbyMonster.getComponent('MonsterData');
+                // Only process aggro spreading every 5 frames to reduce overhead
+                if (this.frameCount % 5 === 0) {
+                    nearbyMonsters.forEach(({ entityId, distance }) => {
+                        if (entityId === monster.id) return; // Skip self
+                        const nearbyMonster = this.entityManager.getEntity(entityId);
+                        if (!nearbyMonster) return;
+                        const nearbyMonsterData = nearbyMonster.getComponent('MonsterData');
+                        if (!nearbyMonsterData) return;
 
-                    if (nearbyMonsterData.isAggro) return; // Skip if already aggro
-                    if (nearbyMonsterData.isRetreating) return; // Skip if retreating to spawn
+                        if (nearbyMonsterData.isAggro) return; // Skip if already aggro
+                        if (nearbyMonsterData.isRetreating) return; // Skip if retreating to spawn
 
-                    nearbyMonsterData.isAggro = true;
+                        nearbyMonsterData.isAggro = true;
 
-                    if (monsterData.isInCombat) {
-                        nearbyMonster.addComponent(new InCombatComponent(3000)); // Set inCombat if the monster is already in combat
-                     }
-                    console.log(`MonsterControllerSystem: Nearby monster ${nearbyMonsterData.name} is now aggro at distance ${distance} from Aggro monster ${monsterData.name}`);
-                                        
-                });
+                        if (monsterData.isInCombat) {
+                            nearbyMonster.addComponent(new InCombatComponent(3000)); // Set inCombat if the monster is already in combat
+                         }
+                        console.log(`MonsterControllerSystem: Nearby monster ${nearbyMonsterData.name} is now aggro at distance ${distance} from Aggro monster ${monsterData.name}`);
+
+                    });
+                }
 
                 if (monster.hasComponent('RangedAttack')) {
                     const rangedAttack = monster.getComponent('RangedAttack');
@@ -309,27 +330,29 @@ export class MonsterControllerSystem extends System {
 
                         console.warn(`[STUCK-REMOVE] ${monsterData.name} stuck for ${waypoint.stuckFrames} frames at (${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}), waypoint was (${waypoint.targetX.toFixed(1)}, ${waypoint.targetY.toFixed(1)}), distance to player: ${distance.toFixed(1)}px, total stuck events: ${monsterData.totalStuckEvents}`);
 
-                        // Log nearby obstacles
-                        const nearbyObstacles = this.entityManager.getEntitiesWith(['Position', 'Hitbox'])
-                            .filter(e => {
-                                if (e === monster || e.id === 'player') return false;
-                                if (e.hasComponent('TriggerArea')) return false;
-                                const ePos = e.getComponent('Position');
-                                const dist = this.utilities.getDistance(ePos, pos);
-                                return dist < 64; // Within 2 tiles
-                            })
-                            .map(e => {
-                                const ePos = e.getComponent('Position');
-                                const dist = this.utilities.getDistance(ePos, pos);
-                                let type = 'unknown';
-                                if (e.hasComponent('MonsterData')) type = 'monster';
-                                else if (e.hasComponent('Chest')) type = 'chest';
-                                else if (e.hasComponent('Portal')) type = 'portal';
-                                else if (e.hasComponent('Stair')) type = 'stair';
-                                else if (e.hasComponent('Fountain')) type = 'fountain';
-                                return { id: e.id, type, dist: dist.toFixed(1) };
-                            });
-                        console.warn(`[STUCK-OBSTACLES] Nearby obstacles (within 2 tiles):`, nearbyObstacles);
+                        // Log nearby obstacles only occasionally (very expensive operation)
+                        if (waypoint.stuckFrames === 10) { // Only log on first stuck detection
+                            const nearbyObstacles = this.entityManager.getEntitiesWith(['Position', 'Hitbox'])
+                                .filter(e => {
+                                    if (e === monster || e.id === 'player') return false;
+                                    if (e.hasComponent('TriggerArea')) return false;
+                                    const ePos = e.getComponent('Position');
+                                    const dist = this.utilities.getDistance(ePos, pos);
+                                    return dist < 64; // Within 2 tiles
+                                })
+                                .map(e => {
+                                    const ePos = e.getComponent('Position');
+                                    const dist = this.utilities.getDistance(ePos, pos);
+                                    let type = 'unknown';
+                                    if (e.hasComponent('MonsterData')) type = 'monster';
+                                    else if (e.hasComponent('Chest')) type = 'chest';
+                                    else if (e.hasComponent('Portal')) type = 'portal';
+                                    else if (e.hasComponent('Stair')) type = 'stair';
+                                    else if (e.hasComponent('Fountain')) type = 'fountain';
+                                    return { id: e.id, type, dist: dist.toFixed(1) };
+                                });
+                            console.warn(`[STUCK-OBSTACLES] Nearby obstacles (within 2 tiles):`, nearbyObstacles);
+                        }
 
                         // Check if exceeded max stuck attempts - if so, retreat to spawn
                         const MAX_STUCK_ATTEMPTS = 3;
@@ -691,11 +714,15 @@ export class MonsterControllerSystem extends System {
         const SPREAD_RADIUS = this.MELEE_RANGE * 1.5; // Spread monsters 2.25 tiles from player
         const MIN_SEPARATION = this.TILE_SIZE; // Try to maintain 1 tile separation
 
-        // Count how many monsters are very close to the player (crowding detection)
-        const crowdedMonsters = nearbyMonsters.filter(m => m.distance <= AVOIDANCE_DISTANCE);
+        // Quick count without creating new array
+        let crowdedCount = 0;
+        for (let i = 0; i < nearbyMonsters.length; i++) {
+            if (nearbyMonsters[i].distance <= AVOIDANCE_DISTANCE) crowdedCount++;
+            if (crowdedCount >= 3) break; // Early exit once we know it's crowded
+        }
 
         // If not crowded (less than 3 monsters nearby), move directly to player
-        if (crowdedMonsters.length < 3) {
+        if (crowdedCount < 3) {
             return { x: playerPos.x, y: playerPos.y };
         }
 
@@ -705,26 +732,37 @@ export class MonsterControllerSystem extends System {
         const angleOffset = (monsterIndex % 8) * (Math.PI / 4); // Divide circle into 8 slots
 
         // Add some randomness based on current frame to prevent perfect symmetry
-        const timeVariation = (Date.now() % 1000) / 1000 * 0.3; // 0-0.3 radians variation
+        const timeVariation = (this.frameCount % 60) / 60 * 0.3; // Use frame count instead of Date.now()
 
         // Calculate spread position in a circle around the player
         const targetAngle = angleOffset + timeVariation;
         const spreadX = playerPos.x + Math.cos(targetAngle) * SPREAD_RADIUS;
         const spreadY = playerPos.y + Math.sin(targetAngle) * SPREAD_RADIUS;
 
-        // Check if the spread position would put us too close to another monster
-        const wouldCollide = nearbyMonsters.some(m => {
-            if (m.entityId === monster.id) return false; // Skip self
+        // Optimized collision check - only check closest monsters
+        let wouldCollide = false;
+        for (let i = 0; i < nearbyMonsters.length && i < 5; i++) { // Only check 5 closest
+            const m = nearbyMonsters[i];
+            if (m.entityId === monster.id) continue; // Skip self
             const otherMonster = this.entityManager.getEntity(m.entityId);
-            if (!otherMonster) return false;
+            if (!otherMonster) continue;
             const otherPos = otherMonster.getComponent('Position');
-            const distToOther = this.utilities.getDistance({ x: spreadX, y: spreadY }, otherPos);
-            return distToOther < MIN_SEPARATION;
-        });
+
+            // Fast distance check using squared distance to avoid sqrt
+            const dx = spreadX - otherPos.x;
+            const dy = spreadY - otherPos.y;
+            const distSq = dx * dx + dy * dy;
+            const minSepSq = MIN_SEPARATION * MIN_SEPARATION;
+
+            if (distSq < minSepSq) {
+                wouldCollide = true;
+                break;
+            }
+        }
 
         // If spread position would cause collision, fall back to direct targeting (pass-through)
         if (wouldCollide) {
-            // Check if we're already close enough to attack
+            // Fast distance check using pre-calculated distance
             const distToPlayer = this.utilities.getDistance(monsterPos, playerPos);
             if (distToPlayer <= this.MELEE_RANGE) {
                 // Already in melee range, hold position

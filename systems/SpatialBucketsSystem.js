@@ -37,10 +37,15 @@ export class SpatialBucketsSystem extends System {
         // Black box optimization: clear arrays in place instead of clearing the map
         for (const arr of bucketsComp.buckets.values()) arr.length = 0;
         for (const arr of bucketsComp.monsterBuckets.values()) arr.length = 0;
+
         // Find all entities with Position and Visuals components
         const entities = this.entityManager.getEntitiesWith(['Position', 'Visuals']);
-        const monsters = entities.filter(entity => entity.hasComponent('MonsterData'));
         const invTileBucket = this.invTileBucket;
+
+        // Pre-allocate monster array for better performance (avoid filter)
+        const monsterCount = entities.reduce((count, e) => count + (e.hasComponent('MonsterData') ? 1 : 0), 0);
+        const monsters = new Array(monsterCount);
+        let monsterIndex = 0;
 
         for (let i = 0; i < entities.length; i++) {
             const entity = entities[i];
@@ -55,6 +60,10 @@ export class SpatialBucketsSystem extends System {
             }
             arr.push(entity.id);
 
+            // Collect monsters during the main loop to avoid second iteration
+            if (entity.hasComponent('MonsterData')) {
+                monsters[monsterIndex++] = entity;
+            }
         }
 
         for (let i = 0; i < monsters.length; i++) {

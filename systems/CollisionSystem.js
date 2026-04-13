@@ -60,49 +60,46 @@ export class CollisionSystem extends System {
 
             const range = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-            const nearbyEntities = entities.filter(target => this.isWithinProjectedPath(
-                {
-                    x: moverPos.x + (moverHitbox.offsetX || 0),
-                    y: moverPos.y + (moverHitbox.offsetY || 0),
-                    width: moverHitbox.width,
-                    height: moverHitbox.height
-                },
-                {
-                    x: target.getComponent('Position').x + (target.getComponent('Hitbox').offsetX || 0),
-                    y: target.getComponent('Position').y + (target.getComponent('Hitbox').offsetY || 0),
-                    width: target.getComponent('Hitbox').width,
-                    height: target.getComponent('Hitbox').height
-                },
-                deltaX,
-                deltaY
-            ));
-
+            // Optimize: avoid filter() - use direct loop and collect nearby entities
             let hasCollision = false;
             if (!mover.hasComponent('Collision')) {
                 mover.addComponent(new CollisionComponent());
             }
 
             const moverCollisionComp = mover.getComponent('Collision');
+            const moverBounds = {
+                x: moverPos.x + (moverHitbox.offsetX || 0),
+                y: moverPos.y + (moverHitbox.offsetY || 0),
+                width: moverHitbox.width,
+                height: moverHitbox.height
+            };
 
-            for (const target of nearbyEntities) {
+            // Collect nearby entities for MovementResolutionSystem
+            const nearbyEntities = [];
+
+            for (const target of entities) {
                 if (mover === target) continue;
 
                 const targetPos = target.getComponent('Position');
                 const targetHitbox = target.getComponent('Hitbox');
+                const targetBounds = {
+                    x: targetPos.x + (targetHitbox.offsetX || 0),
+                    y: targetPos.y + (targetHitbox.offsetY || 0),
+                    width: targetHitbox.width,
+                    height: targetHitbox.height
+                };
+
+                // Quick check if target is within projected path before expensive sweptAABB
+                if (!this.isWithinProjectedPath(moverBounds, targetBounds, deltaX, deltaY)) {
+                    continue;
+                }
+
+                // Add to nearby entities for MovementResolutionSystem
+                nearbyEntities.push(target);
 
                 const collision = this.sweptAABB(
-                    {
-                        x: moverPos.x + (moverHitbox.offsetX || 0),
-                        y: moverPos.y + (moverHitbox.offsetY || 0),
-                        width: moverHitbox.width,
-                        height: moverHitbox.height
-                    },
-                    {
-                        x: targetPos.x + (targetHitbox.offsetX || 0),
-                        y: targetPos.y + (targetHitbox.offsetY || 0),
-                        width: targetHitbox.width,
-                        height: targetHitbox.height
-                    },
+                    moverBounds,
+                    targetBounds,
                     deltaX,
                     deltaY
                 );
@@ -139,10 +136,10 @@ export class CollisionSystem extends System {
                 }
             }
 
-            if (hasCollision) {
-                // If there are collisions, prevent movement by resetting intent
-                moverCollisionComp.nearbyEntities = nearbyEntities; // Store nearby entities for potential use
-            } 
+            // Store nearby entities for MovementResolutionSystem to use
+            if (hasCollision || nearbyEntities.length > 0) {
+                moverCollisionComp.nearbyEntities = nearbyEntities;
+            }
         }
     }
 

@@ -316,6 +316,7 @@ export class Game {
             'collisions',
             'triggerArea',
             'movementResolution',
+            'spatialBuckets',  // MOVED: Update buckets immediately after movement so collision systems have fresh data
             'playerCollision',
             'portal',
             'monsterCollision',
@@ -333,8 +334,7 @@ export class Game {
             'npcController',
             'audio',
             'levelTransition',
-            'spatialBuckets',
-            'animation',
+            'animation',  // MOVED: Update animations before rendering
             'mapRender',
             'hudUi',
             'menuUi',
@@ -346,6 +346,10 @@ export class Game {
             this.gameLoopId = requestAnimationFrame(gameLoop);
             const deltaTime = (currentTime - lastTime) / 1000;
             lastTime = currentTime;
+
+            // Early exit check for transition lock - skip heavy processing during transitions
+            const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
+            const isTransitioning = gameState?.transitionLock;
 
             // FPS calculation
             frameCount++;
@@ -370,9 +374,22 @@ export class Game {
                 }
             }
 
-            this.updateSystems(updateSystems, deltaTime);
+            // Update systems - most systems respect transitionLock internally, but we optimize rendering
+            if (!isTransitioning) {
+                this.updateSystems(updateSystems, deltaTime);
+            } else {
+                // During transitions, only update essential systems
+                const essentialSystems = [
+                    'playerInput',
+                    'audio',
+                    'levelTransition',
+                    'mapRender',
+                    'hudUi',
+                    'menuUi'
+                ];
+                this.updateSystems(essentialSystems, deltaTime);
+            }
 
-            const gameState = this.entityManager.getEntity('gameState')?.getComponent('GameState');
             if (gameState?.transitionLock) { gameState.transitionLock = false; }
         };
         this.gameLoopId = requestAnimationFrame(gameLoop);
