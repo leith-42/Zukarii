@@ -241,7 +241,7 @@ export class Game {
         activeGameSystems.monsterCollision = new MonsterCollisionSystem(this.entityManager, this.state.eventBus);
         activeGameSystems.collisions = new CollisionSystem(this.entityManager, this.state.eventBus);
         activeGameSystems.triggerArea = new TriggerAreaSystem(this.entityManager, this.state.eventBus);
-        activeGameSystems.movementResolution = new MovementResolutionSystem(this.entityManager, this.state.eventBus);
+        activeGameSystems.movementResolution = new MovementResolutionSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.projectileCollisions = new ProjectileCollisionSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.playerCollision = new PlayerCollisionSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.entityRemoval = new EntityRemovalSystem(this.entityManager);

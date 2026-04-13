@@ -172,6 +172,24 @@ export class MovementSpeedComponent {
     }
 }
 
+export class SlowMovementComponent {
+    constructor(slowFactor = 0.5, duration = 2000) { // slowFactor is a multiplier (e.g., 0.5 for 50% slow)
+        this.type = 'SlowMovement';
+        this.slowFactor = slowFactor;
+        this.duration = duration;
+        this.elapsed = 0;
+    }
+}
+
+export class StopMovementComponent {
+    constructor(breakOnDamage = true, duration = 2000) { // slowFactor is a multiplier (e.g., 0.5 for 50% slow)
+        this.type = 'StopMovement';
+        this.breakOnDamage = breakOnDamage; // Whether taking damage should break the stop effect
+        this.duration = duration;
+        this.elapsed = 0;
+    }
+}
+
 export class AffixComponent {
     constructor(affixes = []) {
         this.type = 'Affix';
