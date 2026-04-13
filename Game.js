@@ -280,9 +280,42 @@ export class Game {
     }
 
     updateSystems(systemsToUpdate, deltaTime) {
+        // Performance profiling disabled - uncomment to re-enable
+        // const frameStartTime = performance.now();
+        // const systemTimings = [];
+
         systemsToUpdate.forEach(systemName => {
+            // const startTime = performance.now();
             this.systems[systemName].update(deltaTime);
+            // const endTime = performance.now();
+            // const duration = endTime - startTime;
+
+            // systemTimings.push({ name: systemName, duration });
+
+            // Log systems that take more than 1ms per frame (lowered threshold)
+            // if (duration > 1) {
+            //     console.warn(`⚠️ SLOW SYSTEM: ${systemName} took ${duration.toFixed(2)}ms`);
+            // }
         });
+
+        // const frameEndTime = performance.now();
+        // const totalSystemTime = systemTimings.reduce((sum, t) => sum + t.duration, 0);
+        // const totalFrameTime = frameEndTime - frameStartTime;
+        // const overhead = totalFrameTime - totalSystemTime;
+
+        // Log frame summary if total time is concerning (>16.67ms for 60fps)
+        // if (totalFrameTime > 16.67) {
+        //     console.warn(`🔴 SLOW FRAME: Total ${totalFrameTime.toFixed(2)}ms | Systems ${totalSystemTime.toFixed(2)}ms | Overhead ${overhead.toFixed(2)}ms`);
+
+        //     // Show top 5 slowest systems
+        //     const topSystems = systemTimings
+        //         .sort((a, b) => b.duration - a.duration)
+        //         .slice(0, 5)
+        //         .map(t => `${t.name}: ${t.duration.toFixed(2)}ms`)
+        //         .join(', ');
+        //     console.warn(`   Top 5: ${topSystems}`);
+        // }
+
         this.lastUpdateTime = Date.now();
     }
 

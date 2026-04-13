@@ -8,11 +8,12 @@ export class CollisionSystem extends System {
     }
 
     update(deltaTime) {
+        // Cache entity queries - only get each list ONCE per frame
         const entities = this.entityManager.getEntitiesWith(['Position', 'Hitbox']);
         const movingEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox', 'MovementIntent']);
 
-        // Clear previous collision results
-        for (const entity of entities) {
+        // Clear previous collision results - only for moving entities (optimization)
+        for (const entity of movingEntities) {
             if (entity.hasComponent('Collision')) {
                 entity.getComponent('Collision').collisions = [];
             }
@@ -27,32 +28,45 @@ export class CollisionSystem extends System {
             const deltaX = intent.targetX - moverPos.x;
             const deltaY = intent.targetY - moverPos.y;
 
-                // Static overlap check for all entities except self and projectile source
-                const sourceEntityId = mover.getComponent('Projectile')?.sourceEntityId;
-                for (const target of entities) {
-                    if (!mover.hasComponent('Projectile') && !target.hasComponent('Projectile')) continue; // Only check for projectiles)
-                    if (mover === target) continue;
-                    if (!target.hasComponent('Health')) continue;
-                    if (target.id === sourceEntityId) continue; // Skip the source entity
-                    const targetPos = target.getComponent('Position');
-                    const targetHitbox = target.getComponent('Hitbox');
-                    if (
-                        moverPos.x + (moverHitbox.offsetX || 0) < targetPos.x + (targetHitbox.offsetX || 0) + targetHitbox.width &&
-                        moverPos.x + (moverHitbox.offsetX || 0) + moverHitbox.width > targetPos.x + (targetHitbox.offsetX || 0) &&
-                        moverPos.y + (moverHitbox.offsetY || 0) < targetPos.y + (targetHitbox.offsetY || 0) + targetHitbox.height &&
-                        moverPos.y + (moverHitbox.offsetY || 0) + moverHitbox.height > targetPos.y + (targetHitbox.offsetY || 0)
-                    ) {
-                        if (!mover.hasComponent('Collision')) {
-                            mover.addComponent(new CollisionComponent());
+                // OPTIMIZATION: Skip projectile static overlap check if not a projectile
+                // This nested loop was checking ALL entities for EVERY mover (expensive!)
+                if (mover.hasComponent('Projectile')) {
+                    const sourceEntityId = mover.getComponent('Projectile').sourceEntityId;
+                    // Use spatial buckets to get nearby entities instead of checking ALL
+                    const level = this.entityManager.getEntity('level');
+                    const bucketsComp = level?.getComponent('SpatialBuckets');
+                    if (bucketsComp) {
+                        const moverX = moverPos.x;
+                        const moverY = moverPos.y;
+                        const tileBucket = 32 * 16; // TILE_SIZE * BUCKET_SIZE
+                        const bucketX = Math.floor(moverX / tileBucket);
+                        const bucketY = Math.floor(moverY / tileBucket);
+                        const bucketKey = `${bucketX},${bucketY}`;
+                        const nearbyFromBucket = bucketsComp.buckets.get(bucketKey) || [];
+
+                        for (const target of nearbyFromBucket) {
+                            if (mover === target || !target.hasComponent('Health') || target.id === sourceEntityId) continue;
+                            const targetPos = target.getComponent('Position');
+                            const targetHitbox = target.getComponent('Hitbox');
+                            if (
+                                moverPos.x + (moverHitbox.offsetX || 0) < targetPos.x + (targetHitbox.offsetX || 0) + targetHitbox.width &&
+                                moverPos.x + (moverHitbox.offsetX || 0) + moverHitbox.width > targetPos.x + (targetHitbox.offsetX || 0) &&
+                                moverPos.y + (moverHitbox.offsetY || 0) < targetPos.y + (targetHitbox.offsetY || 0) + targetHitbox.height &&
+                                moverPos.y + (moverHitbox.offsetY || 0) + moverHitbox.height > targetPos.y + (targetHitbox.offsetY || 0)
+                            ) {
+                                if (!mover.hasComponent('Collision')) {
+                                    mover.addComponent(new CollisionComponent());
+                                }
+                                mover.getComponent('Collision').collisions.push({
+                                    moverId: mover.id,
+                                    targetId: target.id,
+                                    collisionType: "current",
+                                    normalX: 0,
+                                    normalY: 0,
+                                    distance: 0
+                                });
+                            }
                         }
-                        mover.getComponent('Collision').collisions.push({
-                            moverId: mover.id,
-                            targetId: target.id,
-                            collisionType: "current",
-                            normalX: 0,
-                            normalY: 0,
-                            distance: 0
-                        });
                     }
                 }
                

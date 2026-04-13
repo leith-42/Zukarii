@@ -49,32 +49,14 @@ export class MovementResolutionSystem extends System {
                 actualSpeed *= moveSpeedComp.combatSpeedMultiplier;
             }
 
-            // Slow monsters when passing through chests/loot (50% speed penalty)
-            if (entity.hasComponent('MonsterData')) {
-                const hitbox = entity.getComponent('Hitbox');
-                if (hitbox) {
-                    const monsterLeft = pos.x + (hitbox.offsetX || 0);
-                    const monsterTop = pos.y + (hitbox.offsetY || 0);
-                    const monsterRight = monsterLeft + hitbox.width;
-                    const monsterBottom = monsterTop + hitbox.height;
-
-                    const lootEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox'])
-                        .filter(e => e.hasComponent('LootData') || e.hasComponent('Chest'));
-
-                    for (const lootEntity of lootEntities) {
-                        const lootPos = lootEntity.getComponent('Position');
-                        const lootHitbox = lootEntity.getComponent('Hitbox');
-                        const lootLeft = lootPos.x + (lootHitbox.offsetX || 0);
-                        const lootTop = lootPos.y + (lootHitbox.offsetY || 0);
-                        const lootRight = lootLeft + lootHitbox.width;
-                        const lootBottom = lootTop + lootHitbox.height;
-
-                        // Check overlap
-                        if (monsterLeft < lootRight && monsterRight > lootLeft &&
-                            monsterTop < lootBottom && monsterBottom > lootTop) {
-                            actualSpeed *= 0.5; // 50% speed penalty
-                            break;
-                        }
+            // Apply loot slowdown for monsters - check existing collision data
+            if (entity.hasComponent('MonsterData') && entity.hasComponent('Collision')) {
+                const collisions = entity.getComponent('Collision').collisions;
+                for (const collision of collisions) {
+                    const other = this.entityManager.getEntity(collision.targetId);
+                    if (other && (other.hasComponent('LootData') || other.hasComponent('Chest'))) {
+                        actualSpeed *= 0.5; // 50% speed penalty
+                        break;
                     }
                 }
             }
@@ -107,7 +89,25 @@ export class MovementResolutionSystem extends System {
 
                 // Path checking for monsters/NPCs
                 if (entity.hasComponent('MonsterData')) {
-                    const pathResult = this.pathChecking(entity, pos, moveX, moveY, 2, hitboxEntities);
+                    // Check if any of the ACTUAL collisions are with blocking entities
+                    let hasBlockingCollision = false;
+                    for (const collision of filteredCollisions) {
+                        const target = this.entityManager.getEntity(collision.targetId);
+                        if (!target) continue;
+
+                        // Skip non-blocking entities
+                        if (target.hasComponent('MonsterData')) continue;
+                        if (target.hasComponent('LootData') || target.hasComponent('Chest')) continue;
+                        if (target.hasComponent('TriggerArea')) continue;
+
+                        // If we get here, it's a blocking collision (wall, obstacle, etc.)
+                        hasBlockingCollision = true;
+                        break;
+                    }
+
+                    // Only run pathChecking if there's an actual blocking collision
+                    if (hasBlockingCollision) {
+                        const pathResult = this.pathChecking(entity, pos, moveX, moveY, 2, hitboxEntities);
 
                     // If pathChecking changed direction, set avoidance waypoint
                     if ((pathResult.moveX !== moveX || pathResult.moveY !== moveY) && !entity.hasComponent('AvoidanceWaypoint')) {
