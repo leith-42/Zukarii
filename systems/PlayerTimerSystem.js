@@ -3,9 +3,8 @@ import { InCombatComponent } from '../core/Components.js';
 
 export class PlayerTimerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['PlayerState'];
-        this.utilities = utilities;
     }
 
     init() {

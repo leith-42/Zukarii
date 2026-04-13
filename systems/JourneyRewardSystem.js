@@ -4,9 +4,8 @@ import { System } from '../core/Systems.js';
 
 export class JourneyRewardSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = [JourneyRewardComponent];
-        this.utilities = utilities;
         this.journeyItems = null;
     }
 

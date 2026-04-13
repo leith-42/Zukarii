@@ -3,9 +3,8 @@ import { DialogueComponent, InteractionIntentComponent } from '../core/Component
 
 export class DialogueUISystem extends System {
     constructor(entityManager, eventBus, utilities, interactionSystem) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = [];
-        this.utilities = utilities;
         this.interactionSystem = interactionSystem;
         this.dialogueWindow = document.getElementById('dialogue-window');
         this.dialogueButtons = document.getElementById('dialogue-buttons');

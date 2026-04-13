@@ -235,14 +235,14 @@ export class Game {
         let activeGameSystems = {}
         // activeGameSystems.level = new LevelSystem(this.entityManager, this.state.eventBus, this.state, this.systems.entityGeneration, this.utilities);
 
-        activeGameSystems.playerTimer = new PlayerTimerSystem(this.entityManager, this.state.eventBus);
+        activeGameSystems.playerTimer = new PlayerTimerSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.monsterController = new MonsterControllerSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.monsterTimer = new MonsterTimerSystem(this.entityManager, this.state.eventBus);
         activeGameSystems.monsterCollision = new MonsterCollisionSystem(this.entityManager, this.state.eventBus);
         activeGameSystems.collisions = new CollisionSystem(this.entityManager, this.state.eventBus);
         activeGameSystems.triggerArea = new TriggerAreaSystem(this.entityManager, this.state.eventBus);
         activeGameSystems.movementResolution = new MovementResolutionSystem(this.entityManager, this.state.eventBus);
-        activeGameSystems.projectileCollisions = new ProjectileCollisionSystem(this.entityManager, this.state.eventBus);
+        activeGameSystems.projectileCollisions = new ProjectileCollisionSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.playerCollision = new PlayerCollisionSystem(this.entityManager, this.state.eventBus, this.utilities);
         activeGameSystems.entityRemoval = new EntityRemovalSystem(this.entityManager);
         activeGameSystems.npcController = new NPCControllerSystem(this.entityManager, this.state.eventBus, this.utilities);

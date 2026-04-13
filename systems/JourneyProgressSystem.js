@@ -3,9 +3,8 @@ import { JourneyUpdateQueueComponent, JourneyPathComponent, JourneyStateComponen
 
 export class JourneyProgressSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = [];
-        this.utilities = utilities;
     }
 
     async init() {

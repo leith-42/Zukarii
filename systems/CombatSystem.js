@@ -4,13 +4,12 @@ import { PositionComponent, LastPositionComponent, ProjectileComponent, Movement
 
 export class CombatSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['Position', 'Health'];
         this.queues = this.entityManager.getEntity('gameState').getComponent('DataProcessQueues') || {};
         this.healthUpdates = this.queues.HealthUpdates || [];
         this.manaUpdates = this.queues.ManaUpdates;
-        this.utilities = utilities;
-       
+
         this.sfxQueue = this.entityManager.getEntity('gameState').getComponent('AudioQueue').SFX || []
     }
 

@@ -3,8 +3,7 @@ import { ShopComponent } from '../core/Components.js';
 
 export class NPCControllerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
-        this.utilities = utilities;
+        super(entityManager, eventBus, utilities);
         this.INVENTORY_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
     }
 

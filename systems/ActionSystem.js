@@ -3,9 +3,8 @@ import { System } from '../core/Systems.js';
 import { NeedsRenderComponent, } from '../core/Components.js';
 export class ActionSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['Position', 'Resource', 'PlayerState']; 
-        this.utilities = utilities;
         this.healthUpdates = this.entityManager.getEntity('gameState').getComponent('DataProcessQueues').HealthUpdates;
     }
 

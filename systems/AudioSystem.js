@@ -265,7 +265,7 @@ export class AudioSystem extends System {
     }
 
     playTrackControl({ track, play = true, volume = 1, fadeIn = 0.5, fadeOut = 0.5 }) {
-        console.error(`🎼 playTrackControl called: track="${track}", play=${play}, volume=${volume}, currently in trackSources: ${this.trackSources.has(track)}`);
+        //console.error(`🎼 playTrackControl called: track="${track}", play=${play}, volume=${volume}, currently in trackSources: ${this.trackSources.has(track)}`);
         if (this.gameOptions.soundEnabled === false) return;
         if (this.fadeTimeouts.has(track)) {
             clearTimeout(this.fadeTimeouts.get(track));
@@ -276,13 +276,13 @@ export class AudioSystem extends System {
 
         if (play) {
             if (this.trackSources.has(track)) {
-                console.error(`🔄 playTrackControl: Stopping existing track "${track}" before restarting`);
+                //console.error(`🔄 playTrackControl: Stopping existing track "${track}" before restarting`);
                 const oldSource = this.trackSources.get(track);
                 // Clear the onended callback to prevent it from interfering with the new source
                 oldSource.onended = null;
                 try { oldSource.stop(); } catch (e) { }
                 this.trackSources.delete(track);
-                console.error(`🗑️ Deleted "${track}" from trackSources (before restart)`);
+               // console.error(`🗑️ Deleted "${track}" from trackSources (before restart)`);
                 this.trackState.set(track, 'stopped');
             }
             if (this.soundBuffers[track]) {
@@ -311,7 +311,7 @@ export class AudioSystem extends System {
                 source.baseVolume = volume;
 
                 source.onended = () => {
-                    console.error(`❌ MUSIC SOURCE ENDED for track "${track}" - Removing from trackSources`, new Error().stack);
+                   // console.error(`❌ MUSIC SOURCE ENDED for track "${track}" - Removing from trackSources`, new Error().stack);
                     this.trackState.set(track, 'stopped');
                     this.trackSources.delete(track);
                     this.fadeTimeouts.delete(track);
@@ -324,7 +324,7 @@ export class AudioSystem extends System {
                     gainNode.gain.linearRampToValueAtTime(finalVolume, now + fadeIn);
                     console.warn(`Applying volume ramp for "${track}" (${category}): ${finalVolume}`);
                     this.trackSources.set(track, source);
-                    console.error(`✅ Added "${track}" to trackSources (Map size: ${this.trackSources.size})`, new Error().stack);
+                    //console.error(`✅ Added "${track}" to trackSources (Map size: ${this.trackSources.size})`, new Error().stack);
                     this.trackState.set(track, 'playing');
                 };
                 if (this.audioContext.state === 'suspended') {

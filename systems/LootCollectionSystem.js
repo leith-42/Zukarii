@@ -3,9 +3,8 @@ import { System } from '../core/Systems.js';
 
 export class LootCollectionSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['Position', 'TreasureData'];
-        this.utilities = utilities;
     }
 
     init() {

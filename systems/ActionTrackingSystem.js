@@ -3,9 +3,8 @@ import { PlayerActionQueueComponent, JourneyUpdateQueueComponent, AchievementUpd
 
 export class ActionTrackingSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = [];
-        this.utilities = utilities;
     }
 
     init() {

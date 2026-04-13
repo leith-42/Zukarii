@@ -3,9 +3,8 @@ import { JourneyPathComponent, DialogueComponent, InteractionIntentComponent, Sh
 
 export class InteractionSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = [];
-        this.utilities = utilities;
         this.queues = this.entityManager.getEntity('gameState').getComponent('DataProcessQueues') || {};
         this.pathTransfers = this.queues.pathTransfers || [];
         this.shownCompletions = new Set();

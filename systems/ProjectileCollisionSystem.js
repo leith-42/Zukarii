@@ -2,8 +2,8 @@
 import { RemoveEntityComponent } from '../core/Components.js';
 
 export class ProjectileCollisionSystem extends System {
-    constructor(entityManager, eventBus) {
-        super(entityManager, eventBus);
+    constructor(entityManager, eventBus, utilities) {
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['Projectile', 'Collision'];
         this.sfxQueue = this.entityManager.getEntity('gameState').getComponent('AudioQueue').SFX || []
     }

@@ -4,9 +4,8 @@ import { LootSourceData, MovementIntentComponent, AvoidanceWaypointComponent, Re
 
 export class MonsterControllerSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['Position', 'Health', 'MonsterData'];
-        this.utilities = utilities;
         this.utilities.entityManager = this.entityManager; // Ensure utilities have access to the entity manager     
     }
     init() {

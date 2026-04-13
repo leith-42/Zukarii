@@ -292,14 +292,19 @@ export class DataSystem extends System {
     async loadGame({ key }, callback) {
         try {
             const savedData = localStorage.getItem(key);
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                callback(data);
-            } else {
+
+            // Check if data exists and is not empty/whitespace
+            if (!savedData || savedData.trim().length === 0) {
+                console.warn(`DataSystem: No valid data found for key ${key}`);
                 callback(null);
+                return Promise.resolve();
             }
+
+            const data = JSON.parse(savedData);
+            callback(data);
         } catch (error) {
-            console.error('DataSystem: Failed to load game:', error);
+            console.error(`DataSystem: Failed to load game from key ${key}:`, error);
+            console.warn(`DataSystem: Corrupted save data detected. Save may be incomplete or damaged.`);
             callback(null);
         }
         return Promise.resolve();
@@ -311,12 +316,30 @@ export class DataSystem extends System {
         console.log('DataSystem: Fetching saved games from localStorage, total keys:', localStorage.length);
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            console.log('DataSystem: Processing key:', key);
+
+            // Only process keys that start with 'save_' to avoid parsing non-game data
+            if (!key || !key.startsWith('save_')) {
+                continue;
+            }
+
+            console.log('DataSystem: Processing save key:', key);
             try {
-                const data = JSON.parse(localStorage.getItem(key));
+                const rawData = localStorage.getItem(key);
+
+                // Check if data exists and is not empty/whitespace
+                if (!rawData || rawData.trim().length === 0) {
+                    console.warn(`DataSystem: Empty or whitespace data for key ${key}, skipping`);
+                    continue;
+                }
+
+                const data = JSON.parse(rawData);
                 savedGames.push({ key, data });
             } catch (error) {
                 console.error(`DataSystem: Failed to parse saved game for key ${key}:`, error);
+                console.warn(`DataSystem: Corrupted save detected at ${key}. Consider removing it from localStorage.`);
+                // Optionally auto-remove corrupted saves (uncomment if desired):
+                // localStorage.removeItem(key);
+                // console.log(`DataSystem: Removed corrupted save ${key}`);
             }
         }
         console.log('DataSystem: Saved games fetched:', savedGames);

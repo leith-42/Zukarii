@@ -3,10 +3,9 @@ import { StairLockComponent, PortalInteractionComponent  } from '../core/Compone
 
 export class PlayerCollisionSystem extends System {
     constructor(entityManager, eventBus, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.requiredComponents = ['PlayerStateComponent', 'Collision'];
         this.sfxQueue = this.entityManager.getEntity('gameState').getComponent('AudioQueue').SFX || [];
-        this.utilities = utilities;
         this.utilities.entityManager = this.entityManager;
     }
 

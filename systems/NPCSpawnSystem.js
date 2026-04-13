@@ -3,9 +3,8 @@ import { PositionComponent, VisualsComponent, HitboxComponent, NPCDataComponent,
 
 export class NPCSpawnSystem extends System {
     constructor(entityManager, eventBus, dataSystem, utilities) {
-        super(entityManager, eventBus);
+        super(entityManager, eventBus, utilities);
         this.dataSystem = dataSystem;
-        this.utilities = utilities;
         this.TILE_SIZE = 32;
     }
 
