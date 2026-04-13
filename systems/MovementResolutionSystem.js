@@ -20,7 +20,7 @@ export class MovementResolutionSystem extends System {
         }
         const entities = this.entityManager.getEntitiesWith(this.requiredComponents);
         // Cache all entities with hitboxes once per frame
-        //nst hitboxEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox']);
+        //const hitboxEntities = this.entityManager.getEntitiesWith(['Position', 'Hitbox']);
 
         for (let i = 0; i < entities.length; i++) {
             const entity = entities[i];
@@ -83,31 +83,32 @@ export class MovementResolutionSystem extends System {
 
             const hasPredictedCollision = filteredCollisions && filteredCollisions.length > 0;
 
-            if (hasPredictedCollision && !hasProjectile) {
+            let hitboxEntities = [];
+            if (collisionComp && collisionComp.nearbyEntities) {
+                hitboxEntities = collisionComp.nearbyEntities;
+            }
 
-               const hitboxEntities = collisionComp.nearbyEntities || [];
-
+            if (entity.hasComponent('MonsterData') && hasPredictedCollision && !hasProjectile) {
                 // Path checking for monsters/NPCs
-                if (entity.hasComponent('MonsterData')) {
-                    // Check if any of the ACTUAL collisions are with blocking entities
-                    let hasBlockingCollision = false;
-                    for (const collision of filteredCollisions) {
-                        const target = this.entityManager.getEntity(collision.targetId);
-                        if (!target) continue;
+                // Check if any of the ACTUAL collisions are with blocking entities
+                let hasBlockingCollision = false;
+                for (const collision of filteredCollisions) {
+                    const target = this.entityManager.getEntity(collision.targetId);
+                    if (!target) continue;
 
-                        // Skip non-blocking entities
-                        if (target.hasComponent('MonsterData')) continue;
-                        if (target.hasComponent('LootData') || target.hasComponent('Chest')) continue;
-                        if (target.hasComponent('TriggerArea')) continue;
+                    // Skip non-blocking entities
+                    if (target.hasComponent('MonsterData')) continue;
+                    if (target.hasComponent('LootData') || target.hasComponent('Chest')) continue;
+                    if (target.hasComponent('TriggerArea')) continue;
 
-                        // If we get here, it's a blocking collision (wall, obstacle, etc.)
-                        hasBlockingCollision = true;
-                        break;
-                    }
+                    // If we get here, it's a blocking collision (wall, obstacle, etc.)
+                    hasBlockingCollision = true;
+                    break;
+                }
 
-                    // Only run pathChecking if there's an actual blocking collision
-                    if (hasBlockingCollision) {
-                        const pathResult = this.pathChecking(entity, pos, moveX, moveY, 2, hitboxEntities);
+                // Only run pathChecking if there's an actual blocking collision
+                if (hasBlockingCollision) {
+                    const pathResult = this.pathChecking(entity, pos, moveX, moveY, 2, hitboxEntities);
 
                     // If pathChecking changed direction, set avoidance waypoint
                     if ((pathResult.moveX !== moveX || pathResult.moveY !== moveY) && !entity.hasComponent('AvoidanceWaypoint')) {
@@ -135,22 +136,22 @@ export class MovementResolutionSystem extends System {
 
                     moveX = pathResult.moveX;
                     moveY = pathResult.moveY;
-                } else {
-                    // General overlap checks
-                    const newX = pos.x + moveX;
-                    if (this.wouldOverlap(entity, newX, pos.y, hitboxEntities)) {
-                        moveX = 0;
-                        intent.targetX = pos.x;
-                    }
-                    const newY = pos.y + moveY;
-                    if (this.wouldOverlap(entity, pos.x, newY, hitboxEntities)) {
-                        moveY = 0;
-                        intent.targetY = pos.y;
-                    }
                 }
-                
             }
 
+            // Always run general overlap checks for non-monster, non-projectile entities (e.g., player)
+            if (!entity.hasComponent('MonsterData') && !hasProjectile) {
+                const newX = pos.x + moveX;
+                if (this.wouldOverlap(entity, newX, pos.y, hitboxEntities)) {
+                    moveX = 0;
+                    intent.targetX = pos.x;
+                }
+                const newY = pos.y + moveY;
+                if (this.wouldOverlap(entity, pos.x, newY, hitboxEntities)) {
+                    moveY = 0;
+                    intent.targetY = pos.y;
+                }
+            }
             if (lastPos) {
                 lastPos.x = pos.x;
                 lastPos.y = pos.y;
