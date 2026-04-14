@@ -91,6 +91,7 @@
     "hp": 35,
     "minBaseDamage": 3.75,
     "maxBaseDamage": 5.2,
+    "attackSpeed": 1500,
     "isAggro": false,
     "isElite": true,
     "isBoss": false,
@@ -119,11 +120,11 @@
     "rangedAttack": {
       "name": "Ball Lightning",
       "manaCost": 0,
-      "range": 9,
+      "range": 12,
       "piercing": false,
       "sfx": "ballLightning0",
-      "castTime": 200,
-      "projectileSpeed": 120,
+      "castTime": 100,
+      "projectileSpeed": 128,
       "projectileAvatar": "img/avatars/ball-lightning.png",
       "weapon": {
         "name": "Ball Lightning",

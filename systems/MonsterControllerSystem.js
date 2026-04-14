@@ -263,8 +263,11 @@ export class MonsterControllerSystem extends System {
 
                 if (monster.hasComponent('RangedAttack')) {
                     const rangedAttack = monster.getComponent('RangedAttack');
+                    let engagementRange = rangedAttack.range;
+                    if (engagementRange > 6) { engagementRange = 6; } // Cap engagement range to prevent firing from off screen
+
                    // console.warn(`MonsterControllerSystem: ${monsterData.name} has ranged attack with range ${rangedAttack.range} distance to player`);
-                    if (distance <= rangedAttack.range * this.TILE_SIZE) {
+                    if (distance <= engagementRange * this.TILE_SIZE) {
                        // console.warn(`MonsterControllerSystem: ${monsterData.name} is in ranged attack range of player at distance ${distance.toFixed(2)} pixels`);
                         //console.warn(`MonsterControllerSystem: ${monsterData.name} attack cooldown data: `,attackSpeed.elapsedSinceLastAttack, attackSpeed.attackSpeed);
                         if (attackSpeed.elapsedSinceLastAttack >= attackSpeed.attackSpeed) {
