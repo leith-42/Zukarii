@@ -216,7 +216,7 @@ export class CombatSystem extends System {
             this.entityManager.addComponentToEntity(projectile.id, new HitboxComponent(24, 24));
             this.entityManager.addComponentToEntity(projectile.id, new VisualsComponent(32, 32));
             const visuals = this.entityManager.getEntity(projectile.id).getComponent('Visuals');
-            visuals.avatar = 'img/avatars/projectile.png';
+            visuals.avatar = 'img/avatars/firebolt.png';
             visuals.offsetX = 8; visuals.offsetY = 8;
             this.entityManager.addComponentToEntity(projectile.id, new NeedsRenderComponent(playerPos.x, playerPos.y));
             this.eventBus.emit('LightSourceActivated', ({ type: 'firebolt', entityId: projectile.id }));
@@ -251,6 +251,8 @@ export class CombatSystem extends System {
             }
         }
 
+       
+
         const combat = source.getComponent('InCombat');
         if (!combat) {
             source.addComponent(new InCombatComponent(3000));
@@ -279,7 +281,9 @@ export class CombatSystem extends System {
             this.entityManager.addComponentToEntity(projectile.id, new HitboxComponent(24, 24));
             this.entityManager.addComponentToEntity(projectile.id, new VisualsComponent(32, 32));
             const visuals = this.entityManager.getEntity(projectile.id).getComponent('Visuals');
+
             visuals.avatar = rangedAttack.projectileAvatar || 'img/avatars/projectile.png';
+
             console.warn(`CombatSystem: initiateRangedAttack - projectile visuals component set to ${visuals}`);
             visuals.offsetX = 8; visuals.offsetY = 8;
             this.entityManager.addComponentToEntity(projectile.id, new NeedsRenderComponent(sourcePos.x, sourcePos.y));

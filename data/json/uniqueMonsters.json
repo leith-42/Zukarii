@@ -117,16 +117,57 @@
       }
     ],
     "rangedAttack": {
-      "name": "Firebolt",
+      "name": "Ball Lightning",
+      "manaCost": 0,
+      "range": 9,
+      "piercing": false,
+      "sfx": "ballLightning0",
+      "castTime": 200,
+      "projectileSpeed": 120,
+      "projectileAvatar": "img/avatars/ball-lightning.png",
+      "weapon": {
+        "name": "Ball Lightning",
+        "baseDamageMin": 3,
+        "baseDamageMax": 6,
+        "attackType": "ranged",
+        "range": 9,
+        "specialEffects": {
+          "piercing": true,
+          "elemental": "fire"
+        },
+        "critMultiplier": 1.5,
+        "projectileAvatar": "img/avatars/ball-lightning.png"
+      }
+    }
+  },
+  {
+    "x": 0,
+    "y": 0,
+    "name": "Wraith",
+    "classes": "wraith",
+    "family": "undead",
+    "minDungeonTier": 2,
+    "avatar": "img/avatars/monsters/wraith.png",
+    "baseHp": 27,
+    "maxHp": 27,
+    "hp": 27,
+    "minBaseDamage": 2.0,
+    "maxBaseDamage": 3.5,
+    "isAggro": false,
+    "isElite": false,
+    "isBoss": false,
+    "affixes": [],
+    "rangedAttack": {
+      "name": "Icebolt",
       "manaCost": 0,
       "range": 5,
       "piercing": false,
       "sfx": "firecast0",
       "castTime": 100,
       "projectileSpeed": 320,
-      "projectileAvatar": "img/avatars/projectile.png",
+      "projectileAvatar": "img/avatars/icebolt.png",
       "weapon": {
-        "name": "Firebolt",
+        "name": "Icebolt",
         "baseDamageMin": 2,
         "baseDamageMax": 5,
         "attackType": "ranged",
@@ -136,10 +177,10 @@
           "elemental": "fire"
         },
         "critMultiplier": 1.5,
-        "projectileAvatar": "img/avatars/projectile.png"
+        "projectileAvatar": "img/avatars/icebolt.png"
       }
     }
-   },
+  },
   {
     "x": 0,
     "y": 0,

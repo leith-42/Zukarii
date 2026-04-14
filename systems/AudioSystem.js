@@ -31,7 +31,7 @@ export class AudioSystem extends System {
             dialogue: ['intro'],
             sfx: [
                 'ding', 'loot0', 'portal0', 'portal1', 'bossLevel0',
-                'fountain0', 'firecast0', 'firehit0',
+                'fountain0', 'firecast0', 'firehit0','ballLightning0',
                 'miss0', 'miss1', 'miss2', 'miss3', 'miss4', 'miss5', 'miss6', 'miss7', 'miss8',
                 'block0', 'block1', 'block2', 'block3', 'block4', 'block5', 'block6', 'block7', 'block8',
                 'hit0', 'hit1', 'hit2', 'hit3', 'hit4', 'hit5', 'hit6', 'hit7', 'hit8', 'hit9',
@@ -381,6 +381,7 @@ export class AudioSystem extends System {
             fountain_loop: 'audio/fountain/fountain_loop.mp3',
             firecast0: 'audio/spell/cast/firecast_0.wav',
             firehit0: 'audio/spell/hit/firehit_0.wav',
+            ballLightning0: 'audio/spell/cast/ball-lightning_0.m4a',
             miss0: 'audio/miss/miss_0.wav',
             miss1: 'audio/miss/miss_1.wav',
             miss2: 'audio/miss/miss_2.wav',

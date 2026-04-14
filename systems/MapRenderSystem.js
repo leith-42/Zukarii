@@ -495,6 +495,20 @@ export class MapRenderSystem extends System {
                     visuals.w * this.SCALE_FACTOR,
                     visuals.h * this.SCALE_FACTOR
                 );
+            } else if (entity.hasComponent('Projectile')) {
+                const visuals = entity.getComponent('Visuals');
+                const angle = visuals.rotation || 0;
+                this.ctx.save();
+                this.ctx.translate(renderX + visuals.w * this.SCALE_FACTOR / 2, renderY + visuals.h * this.SCALE_FACTOR / 2);
+                this.ctx.rotate(angle);
+                this.ctx.drawImage(
+                    sprite,
+                    -visuals.w * this.SCALE_FACTOR / 2,
+                    -visuals.h * this.SCALE_FACTOR / 2,
+                    visuals.w * this.SCALE_FACTOR,
+                    visuals.h * this.SCALE_FACTOR
+                );
+                this.ctx.restore();
             } else {
                 this.ctx.drawImage(
                     sprite,

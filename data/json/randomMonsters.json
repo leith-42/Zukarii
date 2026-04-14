@@ -186,16 +186,16 @@
     "isBoss": false,
     "affixes": [],
     "rangedAttack": {
-      "name": "Firebolt",
+      "name": "Icebolt",
       "manaCost": 0,
       "range": 5,
       "piercing": false,
       "sfx": "firecast0",
       "castTime": 100,
       "projectileSpeed": 320,
-      "projectileAvatar": "img/avatars/projectile.png",
+      "projectileAvatar": "img/avatars/icebolt.png",
       "weapon": {
-        "name": "Firebolt",
+        "name": "Icebolt",
         "baseDamageMin": 2,
         "baseDamageMax": 5,
         "attackType": "ranged",
@@ -205,7 +205,7 @@
           "elemental": "fire"
         },
         "critMultiplier": 1.5,
-        "projectileAvatar": "img/avatars/projectile.png"
+        "projectileAvatar": "img/avatars/icebolt.png"
       }
     }
   },

@@ -23,7 +23,7 @@ export class ProjectileSystem extends System {
                 console.warn(`ProjectileSystem: No level entity found for tier ${tier}, skipping projectile ${projectile.id}`);
                 continue;
             }
-
+            
             const pos = projectile.getComponent('Position');
             const moveSpeedComp = projectile.getComponent('MovementSpeed');
             const map = levelEntity.getComponent('Map').map;
@@ -32,6 +32,9 @@ export class ProjectileSystem extends System {
 
                 //console.log(`ProjectileSystem: ${projectile.id} has direction:`, projData.direction);
                 const { dx, dy } = projData.direction; 
+
+                const angle = Math.atan2(dy, dx); 
+                projectile.getComponent('Visuals').rotation = angle;
 
                 // Normalize direction vector (dx, dy)
                 const magnitude = Math.sqrt(dx * dx + dy * dy);
